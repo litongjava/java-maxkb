@@ -124,25 +124,28 @@ public class MaxKbApplicationChatMessageService {
 
     //获取模型
     Long model_id = applicationVo.getModel_id();
-    Record modelRecord = Db.findById(TableNames.max_kb_model, model_id);
-    CredentialVo crdentianlVo = null;
     String api_key = null;
     String api_base = null;
     String modelName = null;
-    if (modelRecord != null) {
-      Object credential = modelRecord.getColumns().remove("credential");
-      if (credential instanceof String) {
-        String credentialStr = (String) credential;
-        crdentianlVo = JsonUtils.parse(credentialStr, CredentialVo.class);
-        api_key = crdentianlVo.getApi_key();
-        api_base = crdentianlVo.getApi_base();
-      }
-      if (api_base == null || api_key == null) {
-        api_key = EnvUtils.get("OPENAI_API_KEY");
-        api_base = OpenAiConstants.api_perfix_url;
-      }
 
-      modelName = modelRecord.getStr("model_name");
+    if (model_id != null) {
+      Record modelRecord = Db.findById(TableNames.max_kb_model, model_id);
+      CredentialVo crdentianlVo = null;
+      if (modelRecord != null) {
+        Object credential = modelRecord.getColumns().remove("credential");
+        if (credential instanceof String) {
+          String credentialStr = (String) credential;
+          crdentianlVo = JsonUtils.parse(credentialStr, CredentialVo.class);
+          api_key = crdentianlVo.getApi_key();
+          api_base = crdentianlVo.getApi_base();
+        }
+        if (api_base == null || api_key == null) {
+          api_key = EnvUtils.get("OPENAI_API_KEY");
+          api_base = OpenAiConstants.api_perfix_url;
+        }
+
+        modelName = modelRecord.getStr("model_name");
+      }
     } else {
       api_key = EnvUtils.get("OPENAI_API_KEY");
       api_base = OpenAiConstants.api_perfix_url;
