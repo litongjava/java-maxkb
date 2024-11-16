@@ -1,0 +1,2 @@
+--@ get_user_permission.sql
+--@ kb.sql
