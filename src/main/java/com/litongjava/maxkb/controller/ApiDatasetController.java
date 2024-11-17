@@ -9,8 +9,8 @@ import com.litongjava.annotation.Put;
 import com.litongjava.annotation.RequestPath;
 import com.litongjava.jfinal.aop.Aop;
 import com.litongjava.maxkb.service.DatasetDocumentVectorService;
+import com.litongjava.maxkb.service.MaxKbDatasetHitTestService;
 import com.litongjava.maxkb.service.MaxKbDatasetService;
-import com.litongjava.maxkb.service.MaxKbDatasetServiceHitTest;
 import com.litongjava.maxkb.service.MaxKbDocumentService;
 import com.litongjava.maxkb.service.MaxKbParagraphServcie;
 import com.litongjava.maxkb.service.MaxKbProblemService;
@@ -64,7 +64,7 @@ public class ApiDatasetController {
     Integer top_number = request.getInt("top_number");
     String search_mode = request.getParam("search_mode");
     Long userId = TioRequestContext.getUserIdLong();
-    return Aop.get(MaxKbDatasetServiceHitTest.class).hitTest(userId, id, query_text, similarity, top_number, search_mode);
+    return Aop.get(MaxKbDatasetHitTestService.class).hitTest(userId, id, query_text, similarity, top_number, search_mode);
   }
 
   @Post("/{id}/document/_bach")

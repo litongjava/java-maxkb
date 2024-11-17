@@ -24,8 +24,14 @@ public class MaxKbEmbeddingService {
 
     if (pGobject == null) {
       float[] embeddingArray = null;
-      synchronized (vectorLock) {
+      try {
         embeddingArray = OpenAiClient.embeddingArray(text, model);
+      } catch (Exception e) {
+        try {
+          embeddingArray = OpenAiClient.embeddingArray(text, model);
+        } catch (Exception e1) {
+          embeddingArray = OpenAiClient.embeddingArray(text, model);
+        }
       }
 
       String string = Arrays.toString(embeddingArray);

@@ -11,8 +11,6 @@ import java.util.List;
 import java.util.concurrent.CompletionService;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorCompletionService;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 import javax.imageio.ImageIO;
@@ -27,6 +25,7 @@ import com.litongjava.db.activerecord.Db;
 import com.litongjava.db.activerecord.Record;
 import com.litongjava.maxkb.constant.MaxKbPrompt;
 import com.litongjava.maxkb.constant.TableNames;
+import com.litongjava.maxkb.utils.ExecutorServiceUtils;
 import com.litongjava.maxkb.vo.UploadResultVo;
 import com.litongjava.model.result.ResultVo;
 import com.litongjava.openai.chat.ChatResponseUsage;
@@ -57,10 +56,8 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class DatasetDocumentSplitService {
 
-  private static final int CONCURRENT_REQUESTS = 100;
   private static final int MAX_HEIGHT = 2200;
   private final Object lock = new Object();
-  private final ExecutorService executorService = Executors.newFixedThreadPool(CONCURRENT_REQUESTS);
 
   /**
    * 拆分文档（多并发）
@@ -79,8 +76,8 @@ public class DatasetDocumentSplitService {
     String markdown = toMarkdown(apiKey, data, suffix);
 
     Document document = new Document(markdown);
-    // 使用较小的块大小（500）和相同的重叠（100）以实现更细粒度的分割
-    DocumentSplitter splitter = DocumentSplitters.recursive(500, 100, new OpenAiTokenizer());
+    // 使用较小的块大小（150）和相同的重叠（50）以实现更细粒度的分割
+    DocumentSplitter splitter = DocumentSplitters.recursive(150, 100, new OpenAiTokenizer());
     List<TextSegment> segments = splitter.split(document);
 
     // 创建包含文件名和ID的KV对象
@@ -151,7 +148,7 @@ public class DatasetDocumentSplitService {
     }
 
     // 使用CompletionService来管理并发任务
-    CompletionService<String> completionService = new ExecutorCompletionService<>(executorService);
+    CompletionService<String> completionService = new ExecutorCompletionService<>(ExecutorServiceUtils.getExecutorService());
     List<Future<String>> futures = new ArrayList<>();
     for (byte[] imageBytes : documentBytes) {
       futures.add(completionService.submit(() -> convertPdfPageToMarkdown(apiKey, imageBytes, suffix)));
@@ -248,21 +245,25 @@ public class DatasetDocumentSplitService {
 
     // 调用OpenAI API将图像转换为文本
     long start = System.currentTimeMillis();
-    ChatResponseVo chatResponseVo = OpenAiClient.chatWithImage(apiKey, MaxKbPrompt.image_to_text, imageBytes, suffix);
+    ChatResponseVo chatResponseVo = null;
+    try {
+      chatResponseVo = OpenAiClient.chatWithImage(apiKey, MaxKbPrompt.image_to_text, imageBytes, suffix);
+    } catch (Exception e) {
+      try {
+        chatResponseVo = OpenAiClient.chatWithImage(apiKey, MaxKbPrompt.image_to_text, imageBytes, suffix);
+      } catch (Exception e1) {
+        chatResponseVo = OpenAiClient.chatWithImage(apiKey, MaxKbPrompt.image_to_text, imageBytes, suffix);
+      }
+    }
+
     content = chatResponseVo.getChoices().get(0).getMessage().getContent();
     if (content.startsWith("```")) {
       content = content.substring(3, content.length() - 3);
     }
 
     ChatResponseUsage usage = chatResponseVo.getUsage();
-    TableInput saveInput = TableInput.by("id", id)
-        .set("target", imagePath)
-        .set("content", content)
-        .set("elapsed", System.currentTimeMillis() - start)
-        .set("model", OpenAiModels.gpt_4o)
-        .set("system_fingerprint", chatResponseVo.getSystem_fingerprint())
-        .set("completion_tokens", usage.getCompletion_tokens())
-        .set("prompt_tokens", usage.getPrompt_tokens())
+    TableInput saveInput = TableInput.by("id", id).set("target", imagePath).set("content", content).set("elapsed", System.currentTimeMillis() - start).set("model", OpenAiModels.gpt_4o)
+        .set("system_fingerprint", chatResponseVo.getSystem_fingerprint()).set("completion_tokens", usage.getCompletion_tokens()).set("prompt_tokens", usage.getPrompt_tokens())
         .set("total_tokens", usage.getTotal_tokens());
 
     // 再次检查缓存以防止并发情况下的重复保存
