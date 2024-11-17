@@ -1,5 +1,6 @@
 package com.litongjava.maxkb.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.jfinal.kit.Kv;
@@ -21,6 +22,10 @@ import com.litongjava.table.services.ApiTable;
 
 public class MaxKbDatasetService {
 
+  private String application_mapping_count_sql = String.format("select count(1) from %s where dataset_id=?", TableNames.max_kb_application_dataset_mapping);
+  private String document_count_sql = String.format("select count(1) from %s where dataset_id=?", TableNames.max_kb_document);
+  private String sum_char_length_sql = String.format("select sum(char_length) from %s where dataset_id=?", TableNames.max_kb_document);
+
   public ResultVo page(Long userId, Integer pageNo, Integer pageSize, String name) {
     TableInput tableInput = new TableInput();
     tableInput.setPageNo(pageNo).setPageSize(pageSize);
@@ -37,7 +42,21 @@ public class MaxKbDatasetService {
     TableResult<Page<Record>> tableResult = ApiTable.page(TableNames.max_kb_dataset, tableInput);
     Page<Record> page = tableResult.getData();
     int totalRow = page.getTotalRow();
-    List<Kv> kvs = RecordUtils.recordsToKv(page.getList(), false);
+    List<Record> list = page.getList();
+    List<Kv> kvs = new ArrayList<>();
+    for (Record record : list) {
+      Kv kv = record.toKv();
+      Long datasetId = kv.getLong("id");
+
+      Long application_mapping_count = Db.queryLong(application_mapping_count_sql, datasetId);
+      kv.set("application_mapping_count", application_mapping_count);
+      Long document_count = Db.queryLong(document_count_sql, datasetId);
+      kv.set("document_count", document_count);
+      Long charLength = Db.queryLong(sum_char_length_sql, datasetId);
+      kv.set("char_length", charLength);
+      kvs.add(kv);
+    }
+
     ResultPage<Kv> resultPage = new ResultPage<>(pageNo, pageSize, totalRow, kvs);
     return ResultVo.ok(resultPage);
   }

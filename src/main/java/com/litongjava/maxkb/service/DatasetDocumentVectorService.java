@@ -66,8 +66,15 @@ public class DatasetDocumentVectorService {
 
       if (documentId == null) {
         documentId = SnowflakeIdUtils.id();
-        Record record = Record.by("id", documentId).set("file_id", fileId).set("user_id", userId).set("name", filename).set("char_length", char_length).set("status", "1").set("is_active", true)
-            .set("type", type).set("dataset_id", dataset_id).set("paragraph_count", paragraphs.size()).set("hit_handling_method", "optimization").set("directly_return_similarity", 0.9);
+        Record record = Record.by("id", documentId)
+            //
+            .set("file_id", fileId).set("user_id", userId).set("name", filename)
+            //
+            .set("char_length", char_length).set("status", "1").set("is_active", true)
+            //
+            .set("type", type).set("dataset_id", dataset_id).set("paragraph_count", paragraphs.size())
+            //
+            .set("hit_handling_method", "optimization").set("directly_return_similarity", 0.9);
         Db.save(TableNames.max_kb_document, record);
         Kv kv = record.toKv();
         kvs.add(kv);
