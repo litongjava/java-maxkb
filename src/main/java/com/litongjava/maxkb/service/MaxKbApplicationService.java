@@ -1,10 +1,7 @@
 package com.litongjava.maxkb.service;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-
-import org.postgresql.util.PGobject;
 
 import com.jfinal.kit.Kv;
 import com.litongjava.db.TableInput;
@@ -12,7 +9,7 @@ import com.litongjava.db.TableResult;
 import com.litongjava.db.activerecord.Db;
 import com.litongjava.db.activerecord.Record;
 import com.litongjava.jfinal.aop.Aop;
-import com.litongjava.kit.PGJsonUtils;
+import com.litongjava.kit.JsonFieldUtils;
 import com.litongjava.maxkb.constant.TableNames;
 import com.litongjava.maxkb.model.MaxKbApplication;
 import com.litongjava.maxkb.model.MaxKbApplicationDatasetMapping;
@@ -24,8 +21,6 @@ import com.litongjava.maxkb.vo.MaxKbModelSetting;
 import com.litongjava.model.page.Page;
 import com.litongjava.model.result.ResultVo;
 import com.litongjava.table.services.ApiTable;
-import com.litongjava.tio.utils.hutool.StrUtil;
-import com.litongjava.tio.utils.json.JsonUtils;
 import com.litongjava.tio.utils.snowflake.SnowflakeIdUtils;
 
 import lombok.extern.slf4j.Slf4j;
@@ -89,9 +84,9 @@ public class MaxKbApplicationService {
     List<Record> records = page.getList();
     List<Kv> kvs = new ArrayList<>();
     for (Record record : records) {
-      PGJsonUtils.toBean(record, "model_setting", MaxKbModelSetting.class);
-      PGJsonUtils.toBean(record, "model_params_setting", MaxKbModelParamsSetting.class);
-      PGJsonUtils.toBean(record, "dataset_setting", MaxKbDatasetSettingVo.class);
+      JsonFieldUtils.toBean(record, "model_setting", MaxKbModelSetting.class);
+      JsonFieldUtils.toBean(record, "model_params_setting", MaxKbModelParamsSetting.class);
+      JsonFieldUtils.toBean(record, "dataset_setting", MaxKbDatasetSettingVo.class);
       kvs.add(record.toKv());
     }
     Kv kv = Kv.by("current", pageNo).set("size", pageSize).set("total", page.getTotalRow()).set("records", kvs);
@@ -109,9 +104,9 @@ public class MaxKbApplicationService {
     List<Record> records = Db.find(TableNames.max_kb_application, quereyRecord);
     List<Kv> kvs = new ArrayList<>();
     for (Record record : records) {
-      PGJsonUtils.toBean(record, "model_params_setting", MaxKbModelParamsSetting.class);
-      PGJsonUtils.toBean(record, "model_setting", MaxKbModelSetting.class);
-      PGJsonUtils.toBean(record, "dataset_setting", MaxKbDatasetSettingVo.class);
+      JsonFieldUtils.toBean(record, "model_params_setting", MaxKbModelParamsSetting.class);
+      JsonFieldUtils.toBean(record, "model_setting", MaxKbModelSetting.class);
+      JsonFieldUtils.toBean(record, "dataset_setting", MaxKbDatasetSettingVo.class);
       Kv kv = record.toKv();
       kvs.add(kv);
     }
@@ -129,21 +124,12 @@ public class MaxKbApplicationService {
     }
 
     Record record = Db.findFirst(MaxKbApplication.tableName, quereyRecord);
-    PGJsonUtils.toBean(record, "model_params_setting", MaxKbModelParamsSetting.class);
-    PGJsonUtils.toBean(record, "dataset_setting", MaxKbDatasetSettingVo.class);
+    JsonFieldUtils.toBean(record, "model_params_setting", MaxKbModelParamsSetting.class);
+    JsonFieldUtils.toBean(record, "dataset_setting", MaxKbDatasetSettingVo.class);
 
     Object object = record.get("model_setting");
     if (object != null) {
-      if (object instanceof PGobject) {
-        PGobject pgObject1 = (PGobject) object;
-        String value = pgObject1.getValue();
-        if (StrUtil.isNotBlank(value)) {
-          MaxKbModelSetting setting = JsonUtils.parse(value, MaxKbModelSetting.class);
-          record.set("model_setting", setting);
-        } else {
-          record.set("model_setting", new HashMap<>(1));
-        }
-      }
+      JsonFieldUtils.toBean(record, "model_setting", MaxKbModelSetting.class);
     } else {
       MaxKbModelSetting maxKbModelSetting = new MaxKbModelSetting();
       maxKbModelSetting.setSystem("你是 xxx 小助手").setPrompt("已知信息：{data}\n用户问题：{question}\n回答要求：\n - 请使用中文回答用户问题")

@@ -8,7 +8,7 @@ import org.postgresql.util.PGobject;
 import com.litongjava.db.activerecord.Db;
 import com.litongjava.db.activerecord.Record;
 import com.litongjava.jfinal.aop.Aop;
-import com.litongjava.kit.PGJsonUtils;
+import com.litongjava.kit.JsonFieldUtils;
 import com.litongjava.maxkb.constant.TableNames;
 import com.litongjava.maxkb.model.MaxKbApplicationChat;
 import com.litongjava.maxkb.model.MaxKbApplicationChatRecord;
@@ -60,7 +60,7 @@ public class MaxKbApplicationChatMessageService {
     MaxKbApplicationVo applicationVo = null;
     if (chat_type == 1) {
       PGobject pgObject = Db.queryPGobjectById(MaxKbApplicationTempSetting.tableName, "setting", application_id);
-      applicationVo = PGJsonUtils.toBean(pgObject, MaxKbApplicationVo.class);
+      applicationVo = JsonFieldUtils.toBean(pgObject, MaxKbApplicationVo.class);
     } else {
 
     }
