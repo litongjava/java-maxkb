@@ -10,8 +10,8 @@ public interface MaxKbPrompt {
       + "- Need to recognize table,title and page number.\r\n"
       + "- If you encounter an image, display a placeholder for the image.\r\n"
       + "- Output format is markdown.\r\n"
+      + "- You can directly output Markdown without using Markdown tags.\r\n"
       + "- If you cannot recognize , please output \"not_working\"\r\n"
-      + "\r\n"
       + "markdown:";
   //@formatter:on
 }
