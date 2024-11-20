@@ -19,11 +19,11 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.rendering.PDFRenderer;
 
 import com.jfinal.kit.Kv;
+import com.jfinal.template.Engine;
 import com.litongjava.db.TableInput;
 import com.litongjava.db.TableResult;
 import com.litongjava.db.activerecord.Db;
 import com.litongjava.db.activerecord.Record;
-import com.litongjava.maxkb.constant.MaxKbPrompt;
 import com.litongjava.maxkb.constant.TableNames;
 import com.litongjava.maxkb.utils.ExecutorServiceUtils;
 import com.litongjava.maxkb.vo.UploadResultVo;
@@ -246,13 +246,14 @@ public class DatasetDocumentSplitService {
     // 调用OpenAI API将图像转换为文本
     long start = System.currentTimeMillis();
     ChatResponseVo chatResponseVo = null;
+    String imageToTextPrompt = Engine.use().getTemplate("image_to_text_prompt.txt").renderToString();
     try {
-      chatResponseVo = OpenAiClient.chatWithImage(apiKey, MaxKbPrompt.image_to_text, imageBytes, suffix);
+      chatResponseVo = OpenAiClient.chatWithImage(apiKey, imageToTextPrompt, imageBytes, suffix);
     } catch (Exception e) {
       try {
-        chatResponseVo = OpenAiClient.chatWithImage(apiKey, MaxKbPrompt.image_to_text, imageBytes, suffix);
+        chatResponseVo = OpenAiClient.chatWithImage(apiKey, imageToTextPrompt, imageBytes, suffix);
       } catch (Exception e1) {
-        chatResponseVo = OpenAiClient.chatWithImage(apiKey, MaxKbPrompt.image_to_text, imageBytes, suffix);
+        chatResponseVo = OpenAiClient.chatWithImage(apiKey, imageToTextPrompt, imageBytes, suffix);
       }
     }
 
