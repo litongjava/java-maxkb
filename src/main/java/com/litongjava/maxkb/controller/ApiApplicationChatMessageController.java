@@ -12,6 +12,7 @@ import com.litongjava.tio.http.common.HeaderName;
 import com.litongjava.tio.http.common.HeaderValue;
 import com.litongjava.tio.http.common.HttpRequest;
 import com.litongjava.tio.http.common.HttpResponse;
+import com.litongjava.tio.http.server.util.CORSUtils;
 import com.litongjava.tio.server.ServerChannelContext;
 import com.litongjava.tio.utils.json.JsonUtils;
 
@@ -23,6 +24,7 @@ public class ApiApplicationChatMessageController {
     String bodyString = request.getBodyString();
     MaxKbChatRequestVo maxKbChatRequestVo = JsonUtils.parse(bodyString, MaxKbChatRequestVo.class);
     HttpResponse httpResponse = TioRequestContext.getResponse();
+    CORSUtils.enableCORS(httpResponse);
     // 设置sse请求头
     httpResponse.addServerSentEventsHeader();
     // 设置响应头

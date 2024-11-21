@@ -33,6 +33,8 @@ public class ApiUserController {
   @Get("/list/APPLICATION")
   public ResultVo listApplication() {
     List<Kv> kvs = new ArrayList<>();
+//    kvs.add(Kv.by("username", "all").set("id", "1"));
+//    kvs.add(Kv.by("username", "type").set("id", "2"));
     return ResultVo.ok(kvs);
   }
 

@@ -89,7 +89,7 @@ public class ChatStreamCallbackImpl implements Callback {
 
     }
     cleanup(chatId);
-    SseEmitter.closeSeeConnection(channelContext);
+    SseEmitter.closeChunkConnection(channelContext);
   }
 
   @Override
@@ -97,7 +97,7 @@ public class ChatStreamCallbackImpl implements Callback {
     String message = "error: " + e.getMessage();
     SseEmitter.pushSSEChunk(channelContext, "error", message);
     cleanup(chatId);
-    SseEmitter.closeSeeConnection(channelContext);
+    SseEmitter.closeChunkConnection(channelContext);
   }
 
   public StringBuffer processResponseBody(Long chatId, Long messageId, ChannelContext channelContext, ResponseBody responseBody) throws IOException {
@@ -128,7 +128,7 @@ public class ChatStreamCallbackImpl implements Callback {
       } else {
         long end = System.currentTimeMillis();
         log.info("finish llm in {} (ms):", (end - start));
-        SseEmitter.closeSeeConnection(channelContext);
+        SseEmitter.closeChunkConnection(channelContext);
       }
     }
     return completionContent;

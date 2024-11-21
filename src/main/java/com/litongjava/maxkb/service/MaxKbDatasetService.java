@@ -70,7 +70,7 @@ public class MaxKbDatasetService {
   public ResultVo get(Long userId, Long id) {
     ResultVo resultVo = new ResultVo();
     TableInput tableInput = new TableInput();
-    if (userId.equals(1L)) {
+    if (userId != null && userId.equals(1L)) {
       tableInput.set("id", id);
     } else {
       tableInput.set("id", id).set("user_id", userId);
@@ -95,7 +95,13 @@ public class MaxKbDatasetService {
   }
 
   public ResultVo delete(Long userId, Long id) {
-    TableInput tableInput = TableInput.by("id", id).set("user_id", userId);
+    TableInput tableInput = null;
+    if (userId != null && userId.equals(1L)) {
+      tableInput = TableInput.by("id", id);
+    } else {
+      tableInput = TableInput.by("id", id).set("user_id", userId);
+    }
+
     TableResult<Boolean> result = ApiTable.delete(TableNames.max_kb_dataset, tableInput);
     Record deleteRecord = Record.by("dataset_id", id);
     Db.delete(TableNames.max_kb_document, deleteRecord);
