@@ -21,7 +21,7 @@ public class DbConfig {
     String jdbcUrl = EnvUtils.getStr("jdbc.url");
     String jdbcUser = EnvUtils.getStr("jdbc.user");
     String jdbcPswd = EnvUtils.getStr("jdbc.pswd");
-
+    log.info("jdbc.url:{}", jdbcUrl);
     // 初始化 HikariCP 数据库连接池
     HikariCpPlugin hikariCpPlugin = new HikariCpPlugin(jdbcUrl, jdbcUser, jdbcPswd);
     hikariCpPlugin.start();

@@ -32,6 +32,11 @@ public class MaxKbApplicationCharRecordService {
         if (StrUtil.isNotBlank(value)) {
           detail = JsonUtils.parse(value, MaxKbChatRecordDetail.class);
         }
+      } else if (object instanceof String) {
+        String value = (String) object;
+        if (StrUtil.isNotBlank(value)) {
+          detail = JsonUtils.parse(value, MaxKbChatRecordDetail.class);
+        }
       }
 
       Kv kv = record.toKv();

@@ -16,6 +16,7 @@ import com.litongjava.maxkb.service.MaxKbParagraphServcie;
 import com.litongjava.maxkb.service.MaxKbProblemService;
 import com.litongjava.maxkb.vo.DocumentBatchVo;
 import com.litongjava.maxkb.vo.KbDatasetModel;
+import com.litongjava.maxkb.vo.Paragraph;
 import com.litongjava.maxkb.vo.ProbrolemCreateBatch;
 import com.litongjava.model.result.ResultVo;
 import com.litongjava.tio.boot.http.TioRequestContext;
@@ -102,6 +103,14 @@ public class ApiDatasetController {
   @Get("/{datasetId}/application")
   public ResultVo getApplicationByDatasetId(Long datasetId) {
     return Aop.get(MaxKbDatasetService.class).getApplicationByDatasetId(datasetId);
+  }
+
+  @Post("/{datasetId}/document/{documentId}/paragraph")
+  public ResultVo createParagraph(Long datasetId, Long documentId, HttpRequest request) {
+    String bodyString = request.getBodyString();
+    Paragraph paragraph = JsonUtils.parse(bodyString, Paragraph.class);
+    Long userId = TioRequestContext.getUserIdLong();
+    return Aop.get(MaxKbParagraphServcie.class).create(userId, datasetId, documentId, paragraph);
   }
 
   //paragraph

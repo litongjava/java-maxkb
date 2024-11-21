@@ -57,11 +57,16 @@ public class DatasetDocumentVectorService {
 
       List<Paragraph> paragraphs = documentBatchVo.getParagraphs();
       int char_length = 0;
-      for (Paragraph p : paragraphs) {
-        if (p.getContent() != null) {
-          char_length += p.getContent().length();
+      int size = 0;
+      if (paragraphs != null) {
+        size = paragraphs.size();
+        for (Paragraph p : paragraphs) {
+          if (p.getContent() != null) {
+            char_length += p.getContent().length();
+          }
         }
       }
+
       String type = FilenameUtils.getSuffix(filename);
 
       if (documentId == null) {
@@ -72,7 +77,7 @@ public class DatasetDocumentVectorService {
             //
             .set("char_length", char_length).set("status", "1").set("is_active", true)
             //
-            .set("type", type).set("dataset_id", dataset_id).set("paragraph_count", paragraphs.size())
+            .set("type", type).set("dataset_id", dataset_id).set("paragraph_count", size)
             //
             .set("hit_handling_method", "optimization").set("directly_return_similarity", 0.9);
         Db.save(TableNames.max_kb_document, record);
@@ -91,57 +96,60 @@ public class DatasetDocumentVectorService {
 
       MaxKbEmbeddingService maxKbEmbeddingService = Aop.get(MaxKbEmbeddingService.class);
 
-      List<Future<Record>> futures = new ArrayList<>();
-      final long documentIdFinal = documentId;
-      for (Paragraph p : paragraphs) {
-        futures.add(completionService.submit(() -> {
-          String title = p.getTitle();
-          String content = p.getContent();
-          PGobject vector = maxKbEmbeddingService.getVector(content, modelName);
-          return Record.by("id", SnowflakeIdUtils.id())
-              //
-              .set("source_id", fileId)
-              //
-              .set("source_type", type)
-              //
-              .set("title", title)
-              //
-              .set("content", content)
-              //
-              .set("md5", Md5Utils.getMD5(content))
-              //
-              .set("status", "1")
-              //
-              .set("hit_num", 0)
-              //
-              .set("is_active", true).set("dataset_id", dataset_id).set("document_id", documentIdFinal)
-              //
-              .set("embedding", vector);
-        }));
-      }
+      if (paragraphs != null) {
+        List<Future<Record>> futures = new ArrayList<>();
+        final long documentIdFinal = documentId;
+        for (Paragraph p : paragraphs) {
+          futures.add(completionService.submit(() -> {
+            String title = p.getTitle();
+            String content = p.getContent();
+            PGobject vector = maxKbEmbeddingService.getVector(content, modelName);
+            return Record.by("id", SnowflakeIdUtils.id())
+                //
+                .set("source_id", fileId)
+                //
+                .set("source_type", type)
+                //
+                .set("title", title)
+                //
+                .set("content", content)
+                //
+                .set("md5", Md5Utils.getMD5(content))
+                //
+                .set("status", "1")
+                //
+                .set("hit_num", 0)
+                //
+                .set("is_active", true).set("dataset_id", dataset_id).set("document_id", documentIdFinal)
+                //
+                .set("embedding", vector);
+          }));
+        }
 
-      List<Record> batchRecord = new ArrayList<>(paragraphs.size());
-      for (int i = 0; i < paragraphs.size(); i++) {
-        try {
-          Future<Record> future = completionService.take();
-          Record record = future.get();
-          if (record != null) {
-            batchRecord.add(record);
+        List<Record> batchRecord = new ArrayList<>(size);
+        for (int i = 0; i < size; i++) {
+          try {
+            Future<Record> future = completionService.take();
+            Record record = future.get();
+            if (record != null) {
+              batchRecord.add(record);
+            }
+          } catch (Exception e) {
+            e.printStackTrace();
           }
-        } catch (Exception e) {
-          e.printStackTrace();
+        }
+
+        boolean transactionSuccess = Db.tx(() -> {
+          Db.delete(TableNames.max_kb_paragraph, Record.by("document_id", documentIdFinal));
+          Db.batchSave(TableNames.max_kb_paragraph, batchRecord, 2000);
+          return true;
+        });
+
+        if (!transactionSuccess) {
+          return ResultVo.fail("Transaction failed while saving paragraphs for document ID: " + documentIdFinal);
         }
       }
 
-      boolean transactionSuccess = Db.tx(() -> {
-        Db.delete(TableNames.max_kb_paragraph, Record.by("document_id", documentIdFinal));
-        Db.batchSave(TableNames.max_kb_paragraph, batchRecord, 2000);
-        return true;
-      });
-
-      if (!transactionSuccess) {
-        return ResultVo.fail("Transaction failed while saving paragraphs for document ID: " + documentIdFinal);
-      }
     }
 
     return ResultVo.ok(kvs);
