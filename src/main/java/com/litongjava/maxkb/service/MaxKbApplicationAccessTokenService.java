@@ -29,7 +29,7 @@ public class MaxKbApplicationAccessTokenService {
     token.save();
   }
 
-  public void delete(Long userId, Long applicationId) {
+  public void delete(Long applicationId) {
     MaxKbApplicationAccessToken token = new MaxKbApplicationAccessToken().setApplicationId(applicationId);
     token.delete();
   }

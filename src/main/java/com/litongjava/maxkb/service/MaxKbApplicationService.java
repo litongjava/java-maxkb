@@ -69,8 +69,14 @@ public class MaxKbApplicationService {
   }
 
   public ResultVo delete(Long userId, Long applicationId) {
-    boolean deleted = new MaxKbApplication().setId(applicationId).setUserId(userId).delete();
-    Aop.get(MaxKbApplicationAccessTokenService.class).delete(userId, applicationId);
+    boolean deleted = false;
+    if (userId != null && userId.equals(1L)) {
+      deleted = new MaxKbApplication().setId(applicationId).delete();
+    } else {
+      deleted = new MaxKbApplication().setId(applicationId).setUserId(userId).delete();
+    }
+    new MaxKbApplicationDatasetMapping().setApplicationId(applicationId).delete();
+    Aop.get(MaxKbApplicationAccessTokenService.class).delete(applicationId);
     return ResultVo.ok(deleted);
   }
 
