@@ -6,9 +6,9 @@ import com.jfinal.kit.Kv;
 import com.litongjava.db.TableInput;
 import com.litongjava.db.TableResult;
 import com.litongjava.db.activerecord.Db;
-import com.litongjava.db.activerecord.Record;
+import com.litongjava.db.activerecord.Row;
 import com.litongjava.jfinal.aop.Aop;
-import com.litongjava.kit.RecordUtils;
+import com.litongjava.kit.RowUtils;
 import com.litongjava.maxkb.constant.AppConstant;
 import com.litongjava.maxkb.constant.TableNames;
 import com.litongjava.maxkb.vo.ResultPage;
@@ -36,7 +36,7 @@ public class UserService {
 
   public ResultVo index(Long userId) {
     String sql = String.format("select id,username,email,phone,nick_name,role from %s where id=?", TableNames.max_kb_user);
-    Record record = Db.findFirst(sql, userId);
+    Row record = Db.findFirst(sql, userId);
     Kv kv = record.toKv();
     List<String> permissions = Aop.get(PermissionsService.class).getPermissionsByRole(kv.getStr("role"));
     kv.set("permissions", permissions);
@@ -51,11 +51,11 @@ public class UserService {
   public ResultVo page(Integer pageNo, Integer pageSize) {
     TableInput tableInput = new TableInput();
     tableInput.setPageNo(pageNo).setPageSize(pageSize).setColumns("id,username,email,phone,is_active,role,nick_name,create_time,update_time,source");
-    TableResult<Page<Record>> tableResult = ApiTable.page(TableNames.max_kb_user, tableInput);
-    Page<Record> page = tableResult.getData();
+    TableResult<Page<Row>> tableResult = ApiTable.page(TableNames.max_kb_user, tableInput);
+    Page<Row> page = tableResult.getData();
     int totalRow = page.getTotalRow();
-    List<Record> list = page.getList();
-    List<Kv> kvs = RecordUtils.recordsToKv(list, false);
+    List<Row> list = page.getList();
+    List<Kv> kvs = RowUtils.recordsToKv(list, false);
     ResultPage<Kv> resultPage = new ResultPage<>(pageNo, pageSize, totalRow, kvs);
     return ResultVo.ok(resultPage);
   }

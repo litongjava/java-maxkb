@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.jfinal.kit.Kv;
 import com.litongjava.db.activerecord.Db;
-import com.litongjava.db.activerecord.Record;
+import com.litongjava.db.activerecord.Row;
 import com.litongjava.maxkb.model.MaxKbApplicationAccessToken;
 import com.litongjava.model.result.ResultVo;
 import com.litongjava.tio.utils.json.JsonUtils;
@@ -35,7 +35,7 @@ public class MaxKbApplicationAccessTokenService {
   }
 
   public ResultVo getById(Long applicationId) {
-    Record record = Db.findById(MaxKbApplicationAccessToken.tableName, MaxKbApplicationAccessToken.primaryKey, applicationId);
+    Row record = Db.findById(MaxKbApplicationAccessToken.tableName, MaxKbApplicationAccessToken.primaryKey, applicationId);
     if(record!=null) {
       return ResultVo.ok(record.toKv());
     }else {

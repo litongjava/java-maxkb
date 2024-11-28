@@ -12,7 +12,7 @@ import com.jfinal.kit.Kv;
 import com.litongjava.db.TableInput;
 import com.litongjava.db.TableResult;
 import com.litongjava.db.activerecord.Db;
-import com.litongjava.db.activerecord.Record;
+import com.litongjava.db.activerecord.Row;
 import com.litongjava.jfinal.aop.Aop;
 import com.litongjava.maxkb.constant.TableNames;
 import com.litongjava.maxkb.utils.ExecutorServiceUtils;
@@ -34,9 +34,9 @@ public class DatasetDocumentVectorService {
       tableInput.set("user_id", userId);
     }
 
-    TableResult<Record> result = ApiTable.get(TableNames.max_kb_dataset, tableInput);
+    TableResult<Row> result = ApiTable.get(TableNames.max_kb_dataset, tableInput);
 
-    Record dataset = result.getData();
+    Row dataset = result.getData();
     if (dataset == null) {
       return ResultVo.fail("Dataset not found.");
     }
@@ -48,7 +48,7 @@ public class DatasetDocumentVectorService {
     String sqlDocumentId = String.format("SELECT id FROM %s WHERE user_id = ? AND file_id = ?", TableNames.max_kb_document);
 
     List<Kv> kvs = new ArrayList<>();
-    CompletionService<Record> completionService = new ExecutorCompletionService<>(ExecutorServiceUtils.getExecutorService());
+    CompletionService<Row> completionService = new ExecutorCompletionService<>(ExecutorServiceUtils.getExecutorService());
 
     for (DocumentBatchVo documentBatchVo : list) {
       Long fileId = documentBatchVo.getId();
@@ -71,7 +71,7 @@ public class DatasetDocumentVectorService {
 
       if (documentId == null) {
         documentId = SnowflakeIdUtils.id();
-        Record record = Record.by("id", documentId)
+        Row record = Row.by("id", documentId)
             //
             .set("file_id", fileId).set("user_id", userId).set("name", filename)
             //
@@ -84,7 +84,7 @@ public class DatasetDocumentVectorService {
         Kv kv = record.toKv();
         kvs.add(kv);
       } else {
-        Record existingRecord = Db.findById(TableNames.max_kb_document, documentId);
+        Row existingRecord = Db.findById(TableNames.max_kb_document, documentId);
         if (existingRecord != null) {
           Kv kv = existingRecord.toKv();
           kvs.add(kv);
@@ -97,14 +97,14 @@ public class DatasetDocumentVectorService {
       MaxKbEmbeddingService maxKbEmbeddingService = Aop.get(MaxKbEmbeddingService.class);
 
       if (paragraphs != null) {
-        List<Future<Record>> futures = new ArrayList<>();
+        List<Future<Row>> futures = new ArrayList<>();
         final long documentIdFinal = documentId;
         for (Paragraph p : paragraphs) {
           futures.add(completionService.submit(() -> {
             String title = p.getTitle();
             String content = p.getContent();
             PGobject vector = maxKbEmbeddingService.getVector(content, modelName);
-            return Record.by("id", SnowflakeIdUtils.id())
+            return Row.by("id", SnowflakeIdUtils.id())
                 //
                 .set("source_id", fileId)
                 //
@@ -126,11 +126,11 @@ public class DatasetDocumentVectorService {
           }));
         }
 
-        List<Record> batchRecord = new ArrayList<>(size);
+        List<Row> batchRecord = new ArrayList<>(size);
         for (int i = 0; i < size; i++) {
           try {
-            Future<Record> future = completionService.take();
-            Record record = future.get();
+            Future<Row> future = completionService.take();
+            Row record = future.get();
             if (record != null) {
               batchRecord.add(record);
             }
@@ -140,7 +140,7 @@ public class DatasetDocumentVectorService {
         }
 
         boolean transactionSuccess = Db.tx(() -> {
-          Db.delete(TableNames.max_kb_paragraph, Record.by("document_id", documentIdFinal));
+          Db.delete(TableNames.max_kb_paragraph, Row.by("document_id", documentIdFinal));
           Db.batchSave(TableNames.max_kb_paragraph, batchRecord, 2000);
           return true;
         });

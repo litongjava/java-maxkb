@@ -6,9 +6,9 @@ import com.jfinal.kit.Kv;
 import com.litongjava.db.TableInput;
 import com.litongjava.db.TableResult;
 import com.litongjava.db.activerecord.Db;
-import com.litongjava.db.activerecord.Record;
+import com.litongjava.db.activerecord.Row;
 import com.litongjava.jfinal.aop.Aop;
-import com.litongjava.kit.RecordUtils;
+import com.litongjava.kit.RowUtils;
 import com.litongjava.maxkb.constant.TableNames;
 import com.litongjava.model.result.ResultVo;
 import com.litongjava.openai.constants.OpenAiModels;
@@ -36,9 +36,9 @@ public class MaxKbDatasetHitTestService {
       tableInput.set("user_id", userId);
     }
 
-    TableResult<Record> datasetResult = ApiTable.get(TableNames.max_kb_dataset, tableInput);
+    TableResult<Row> datasetResult = ApiTable.get(TableNames.max_kb_dataset, tableInput);
 
-    Record dataset = datasetResult.getData();
+    Row dataset = datasetResult.getData();
     // 获取模型名称
     Long embeddingModeId = dataset.getLong("embedding_mode_id");
     String modelName = null;
@@ -54,9 +54,9 @@ public class MaxKbDatasetHitTestService {
 
     String sql = SqlTemplates.get("kb.hit_test_by_dataset_id_with_max_kb_embedding_cache");
     Long vectorId = Aop.get(MaxKbEmbeddingService.class).getVectorId(query_text, modelName);
-    List<Record> records = Db.find(sql, vectorId, datasetId, similarity, top_number);
+    List<Row> records = Db.find(sql, vectorId, datasetId, similarity, top_number);
     
-    List<Kv> kvs = RecordUtils.recordsToKv(records, false);
+    List<Kv> kvs = RowUtils.recordsToKv(records, false);
     return ResultVo.ok(kvs);
   }
   
@@ -70,9 +70,9 @@ public class MaxKbDatasetHitTestService {
       tableInput.set("user_id", userId);
     }
 
-    TableResult<Record> datasetResult = ApiTable.get(TableNames.max_kb_dataset, tableInput);
+    TableResult<Row> datasetResult = ApiTable.get(TableNames.max_kb_dataset, tableInput);
 
-    Record dataset = datasetResult.getData();
+    Row dataset = datasetResult.getData();
     // 获取模型名称
     Long embeddingModeId = dataset.getLong("embedding_mode_id");
     String modelName = null;
@@ -88,8 +88,8 @@ public class MaxKbDatasetHitTestService {
 
     String sql = SqlTemplates.get("kb.hit_test_by_dataset_id_with_max_kb_embedding_cache");
     Long vectorId = Aop.get(MaxKbEmbeddingService.class).getVectorId(query_text, modelName);
-    List<Record> records = Db.find(sql, vectorId, datasetId, similarity, top_number);
-    List<Kv> kvs = RecordUtils.recordsToKv(records, false);
+    List<Row> records = Db.find(sql, vectorId, datasetId, similarity, top_number);
+    List<Kv> kvs = RowUtils.recordsToKv(records, false);
     return ResultVo.ok(kvs);
   }
 

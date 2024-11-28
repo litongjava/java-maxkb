@@ -5,7 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import com.litongjava.db.activerecord.Db;
-import com.litongjava.db.activerecord.Record;
+import com.litongjava.db.activerecord.Row;
 import com.litongjava.jfinal.aop.Aop;
 import com.litongjava.maxkb.vo.MaxKbSearchStep;
 import com.litongjava.maxkb.vo.ParagraphSearchResultVo;
@@ -38,11 +38,11 @@ public class MaxKbParagraphSearchService {
     Long vectorId = Aop.get(MaxKbEmbeddingService.class).getVectorId(quesiton, OpenAiModels.text_embedding_3_large);
     String sql = SqlTemplates.get("kb.search_paragraph_with_dataset_ids");
 
-    List<Record> records = Db.find(sql, vectorId, datasetIdArray, similarity, top_n);
+    List<Row> records = Db.find(sql, vectorId, datasetIdArray, similarity, top_n);
 
     log.info("search_paragraph:{},{},{},{},{}", vectorId, Arrays.toString(datasetIdArray), similarity, top_n, records.size());
     List<ParagraphSearchResultVo> results = new ArrayList<>();
-    for (Record record : records) {
+    for (Row record : records) {
       ParagraphSearchResultVo vo = record.toBean(ParagraphSearchResultVo.class);
       results.add(vo);
     }

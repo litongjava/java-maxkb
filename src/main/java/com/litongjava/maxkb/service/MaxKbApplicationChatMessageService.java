@@ -6,7 +6,7 @@ import java.util.List;
 import org.postgresql.util.PGobject;
 
 import com.litongjava.db.activerecord.Db;
-import com.litongjava.db.activerecord.Record;
+import com.litongjava.db.activerecord.Row;
 import com.litongjava.jfinal.aop.Aop;
 import com.litongjava.kit.JsonFieldUtils;
 import com.litongjava.maxkb.constant.TableNames;
@@ -51,8 +51,8 @@ public class MaxKbApplicationChatMessageService {
     }
 
     // 确定聊天类型
-    Record quereyRecord = Record.by("id", chatId).set("is_deleted", false);
-    Record record = Db.findFirst(MaxKbApplicationChat.tableName, "application_id,chat_type", quereyRecord);
+    Row quereyRecord = Row.by("id", chatId).set("is_deleted", false);
+    Row record = Db.findFirst(MaxKbApplicationChat.tableName, "application_id,chat_type", quereyRecord);
     Long application_id = record.getLong("application_id");
     Integer chat_type = record.getInt("chat_type");
     log.info("application_id:{},chat_type:{}", application_id, chat_type);
@@ -68,7 +68,7 @@ public class MaxKbApplicationChatMessageService {
     long messageId = SnowflakeIdUtils.id();
     // 保存历史记录
     int countTokens = TokenCounter.countTokens(quesiton);
-    Record chatRecord = Record.by("id", messageId).set("problem_text", quesiton).set("message_tokens", countTokens).set("chat_id", chatId);
+    Row chatRecord = Row.by("id", messageId).set("problem_text", quesiton).set("message_tokens", countTokens).set("chat_id", chatId);
     Db.save(MaxKbApplicationChatRecord.tableName, chatRecord);
 
     //搜索相关片段,并拼接
@@ -129,7 +129,7 @@ public class MaxKbApplicationChatMessageService {
     String modelName = null;
 
     if (model_id != null) {
-      Record modelRecord = Db.findById(TableNames.max_kb_model, model_id);
+      Row modelRecord = Db.findById(TableNames.max_kb_model, model_id);
       CredentialVo crdentianlVo = null;
       if (modelRecord != null) {
         Object credential = modelRecord.getColumns().remove("credential");

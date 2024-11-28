@@ -7,9 +7,9 @@ import com.jfinal.kit.Kv;
 import com.litongjava.db.TableInput;
 import com.litongjava.db.TableResult;
 import com.litongjava.db.activerecord.Db;
-import com.litongjava.db.activerecord.Record;
+import com.litongjava.db.activerecord.Row;
 import com.litongjava.jfinal.aop.Aop;
-import com.litongjava.kit.RecordUtils;
+import com.litongjava.kit.RowUtils;
 import com.litongjava.maxkb.constant.TableNames;
 import com.litongjava.maxkb.dao.MaxKbDatasetDao;
 import com.litongjava.maxkb.model.MaxKbDataset;
@@ -39,12 +39,12 @@ public class MaxKbDatasetService {
       tableInput.set("name", name).set("name_op", Operators.CT);
     }
 
-    TableResult<Page<Record>> tableResult = ApiTable.page(TableNames.max_kb_dataset, tableInput);
-    Page<Record> page = tableResult.getData();
+    TableResult<Page<Row>> tableResult = ApiTable.page(TableNames.max_kb_dataset, tableInput);
+    Page<Row> page = tableResult.getData();
     int totalRow = page.getTotalRow();
-    List<Record> list = page.getList();
+    List<Row> list = page.getList();
     List<Kv> kvs = new ArrayList<>();
-    for (Record record : list) {
+    for (Row record : list) {
       Kv kv = record.toKv();
       Long datasetId = kv.getLong("id");
 
@@ -75,13 +75,13 @@ public class MaxKbDatasetService {
     } else {
       tableInput.set("id", id).set("user_id", userId);
     }
-    TableResult<Record> result = ApiTable.get(TableNames.max_kb_dataset, tableInput);
+    TableResult<Row> result = ApiTable.get(TableNames.max_kb_dataset, tableInput);
     Kv kv = result.getData().toKv();
     return resultVo.setData(kv);
   }
 
   public ResultVo list(Long userId) {
-    Record queryRecord = new Record();
+    Row queryRecord = new Row();
     if (userId.equals(1L)) {
 
     } else {
@@ -89,8 +89,8 @@ public class MaxKbDatasetService {
     }
 
     String columns = "id,name,\"desc\",type,meta,user_id,embedding_mode_id,create_time,update_time";
-    List<Record> records = Db.find(MaxKbDataset.tableName, columns, queryRecord);
-    List<Kv> kvs = RecordUtils.recordsToKv(records, false);
+    List<Row> records = Db.find(MaxKbDataset.tableName, columns, queryRecord);
+    List<Kv> kvs = RowUtils.recordsToKv(records, false);
     return ResultVo.ok(kvs);
   }
 
@@ -103,7 +103,7 @@ public class MaxKbDatasetService {
     }
 
     TableResult<Boolean> result = ApiTable.delete(TableNames.max_kb_dataset, tableInput);
-    Record deleteRecord = Record.by("dataset_id", id);
+    Row deleteRecord = Row.by("dataset_id", id);
     Db.delete(TableNames.max_kb_document, deleteRecord);
     Db.delete(TableNames.max_kb_paragraph, deleteRecord);
     return new ResultVo(result.getData());

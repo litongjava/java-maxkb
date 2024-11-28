@@ -8,7 +8,7 @@ import org.postgresql.util.PGobject;
 
 import com.jfinal.kit.Kv;
 import com.litongjava.db.activerecord.Db;
-import com.litongjava.db.activerecord.Record;
+import com.litongjava.db.activerecord.Row;
 import com.litongjava.jfinal.aop.Aop;
 import com.litongjava.maxkb.constant.TableNames;
 import com.litongjava.maxkb.dao.ModelDao;
@@ -43,9 +43,9 @@ public class MaxKbModelService {
     if (name == null) {
       sql = "select id,provider,name,model_type,model_name,status,meta,permission_type,user_id from %s";
       sql = String.format(sql, TableNames.max_kb_model);
-      List<Record> list = Db.findWithJsonField(sql, jsonFields);
+      List<Row> list = Db.findWithJsonField(sql, jsonFields);
       List<Kv> kvs = new ArrayList<>();
-      for (Record r : list) {
+      for (Row r : list) {
         Kv kv = r.toKv();
         kv.set("id", kv.get("id").toString());
         kv.set("user_id", kv.get("user_id").toString());
@@ -68,8 +68,8 @@ public class MaxKbModelService {
     sql = String.format(sql, TableNames.max_kb_model);
 
     List<Kv> kvs = new ArrayList<>();
-    List<Record> list = Db.findWithJsonField(sql, jsonFields, name);
-    for (Record record : list) {
+    List<Row> list = Db.findWithJsonField(sql, jsonFields, name);
+    for (Row record : list) {
       Kv kv = record.toKv();
       String username = maxKbUserService.queryUsername(kv.getLong("user_id"));
       kv.set("username", username);
@@ -158,7 +158,7 @@ public class MaxKbModelService {
   }
 
   public ResultVo get(Long id) {
-    Record record = Db.findById(TableNames.max_kb_model, id);
+    Row record = Db.findById(TableNames.max_kb_model, id);
     Object credential = record.getColumns().remove("credential");
     Kv kv = record.toKv();
     if (credential instanceof String) {

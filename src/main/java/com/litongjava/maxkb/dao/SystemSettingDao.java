@@ -7,7 +7,7 @@ import org.postgresql.util.PGobject;
 
 import com.jfinal.kit.Kv;
 import com.litongjava.db.activerecord.Db;
-import com.litongjava.db.activerecord.Record;
+import com.litongjava.db.activerecord.Row;
 import com.litongjava.maxkb.constant.TableNames;
 import com.litongjava.tio.utils.json.JsonUtils;
 
@@ -27,7 +27,7 @@ public class SystemSettingDao {
     } catch (SQLException e) {
       e.printStackTrace();
     }
-    Record record = Record.by("meta", meta).set("type", 1);
+    Row record = Row.by("meta", meta).set("type", 1);
     //timestamptz
     record.set("create_time", new Date());
     record.set("update_time", new Date());

@@ -7,8 +7,8 @@ import com.jfinal.kit.Kv;
 import com.litongjava.db.TableInput;
 import com.litongjava.db.TableResult;
 import com.litongjava.db.activerecord.Db;
-import com.litongjava.db.activerecord.Record;
-import com.litongjava.kit.RecordUtils;
+import com.litongjava.db.activerecord.Row;
+import com.litongjava.kit.RowUtils;
 import com.litongjava.maxkb.constant.TableNames;
 import com.litongjava.maxkb.model.MaxKbParagraphId;
 import com.litongjava.maxkb.vo.ProbrolemCreateBatch;
@@ -23,10 +23,10 @@ public class MaxKbProblemService {
   public ResultVo create(Long datasetId, List<String> problems) {
     List<Long> ids = new ArrayList<>();
 
-    List<Record> records = new ArrayList<>();
+    List<Row> records = new ArrayList<>();
     for (String string : problems) {
       long id = SnowflakeIdUtils.id();
-      records.add(Record.by("id", id).set("content", string).set("dataset_id", datasetId).set("hit_num", 0));
+      records.add(Row.by("id", id).set("content", string).set("dataset_id", datasetId).set("hit_num", 0));
       ids.add(id);
     }
     Db.batchSave(TableNames.max_kb_problem, records, 2000);
@@ -35,10 +35,10 @@ public class MaxKbProblemService {
 
   public ResultVo page(Long datasetId, Integer pageNo, Integer pageSize) {
     TableInput tableInput = TableInput.create().setPageNo(pageNo).setPageSize(pageSize);
-    TableResult<Page<Record>> page = ApiTable.page(TableNames.max_kb_problem, tableInput);
+    TableResult<Page<Row>> page = ApiTable.page(TableNames.max_kb_problem, tableInput);
     int totalRow = page.getData().getTotalRow();
-    List<Record> list = page.getData().getList();
-    List<Kv> kvs = RecordUtils.recordsToKv(list, false);
+    List<Row> list = page.getData().getList();
+    List<Kv> kvs = RowUtils.recordsToKv(list, false);
     ResultPage<Kv> resultPage = new ResultPage<>(pageNo, pageSize, totalRow, kvs);
     return ResultVo.ok(resultPage);
   }
@@ -58,17 +58,17 @@ public class MaxKbProblemService {
   public ResultVo listParagraphByProblemId(Long datasetId, Long probleamId) {
     List<Kv> datas = new ArrayList<>();
     TableInput tableInput = TableInput.by("dataset_id", datasetId).set("problem_id", probleamId).columns("paragraph_id as id");
-    TableResult<List<Record>> tableResult = ApiTable.list(TableNames.max_kb_problem_paragraph_mapping, tableInput);
-    List<Record> records = tableResult.getData();
+    TableResult<List<Row>> tableResult = ApiTable.list(TableNames.max_kb_problem_paragraph_mapping, tableInput);
+    List<Row> records = tableResult.getData();
     if (records != null) {
-      datas = RecordUtils.recordsToKv(records, false);
+      datas = RowUtils.recordsToKv(records, false);
     }
     return ResultVo.ok(datas);
   }
 
   public ResultVo association(Long datasetId, Long documentId, Long paragraphId, Long problemId) {
     long id = SnowflakeIdUtils.id();
-    Record record = Record.by("id", id).set("dataset_id", datasetId).set("document_id", documentId)
+    Row record = Row.by("id", id).set("dataset_id", datasetId).set("document_id", documentId)
         //
         .set("paragraph_id", paragraphId)
         //
@@ -83,7 +83,7 @@ public class MaxKbProblemService {
 
   public ResultVo unAssociation(Long datasetId, Long documentId, Long paragraphId, Long problemId) {
 
-    Record record = Record.by("dataset_id", datasetId).set("document_id", documentId)
+    Row record = Row.by("dataset_id", datasetId).set("document_id", documentId)
         //
         .set("paragraph_id", paragraphId)
         //
@@ -100,7 +100,7 @@ public class MaxKbProblemService {
     List<MaxKbParagraphId> paragraph_list = batchReequest.getParagraph_list();
     List<Long> problem_id_list = batchReequest.getProblem_id_list();
 
-    List<Record> mappings = new ArrayList<>();
+    List<Row> mappings = new ArrayList<>();
     for (int i = 0; i < paragraph_list.size(); i++) {
       MaxKbParagraphId maxKbParagraphId = paragraph_list.get(i);
       Long documentId = maxKbParagraphId.getDocument_id();
@@ -108,7 +108,7 @@ public class MaxKbProblemService {
 
       for (Long problemId : problem_id_list) {
         long id = SnowflakeIdUtils.id();
-        Record record = Record.by("id", id).set("dataset_id", datasetId).set("document_id", documentId)
+        Row record = Row.by("id", id).set("dataset_id", datasetId).set("document_id", documentId)
             //
             .set("paragraph_id", paragraphId)
             //

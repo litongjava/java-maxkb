@@ -3,7 +3,7 @@ package com.litongjava.maxkb.dao;
 import java.util.Map;
 
 import com.litongjava.db.activerecord.Db;
-import com.litongjava.db.activerecord.Record;
+import com.litongjava.db.activerecord.Row;
 import com.litongjava.maxkb.constant.TableNames;
 import com.litongjava.maxkb.vo.ModelVo;
 import com.litongjava.tio.utils.snowflake.SnowflakeIdUtils;
@@ -11,7 +11,7 @@ import com.litongjava.tio.utils.snowflake.SnowflakeIdUtils;
 public class ModelDao {
 
   public void save(Map<String, Object> map) {
-    Db.save(TableNames.max_kb_model, Record.fromMap(map));
+    Db.save(TableNames.max_kb_model, Row.fromMap(map));
   }
 
   public boolean deleteById(Long id) {
@@ -19,7 +19,7 @@ public class ModelDao {
   }
 
   public boolean saveOrUpdate(Long userId, ModelVo modelVo) {
-    Record record = new Record();
+    Row record = new Row();
     record.set("name", modelVo.getName()).set("model_type", modelVo.getModel_type()).set("model_name", modelVo.getModel_name())
         //
         .set("permission_type", modelVo.getPermission_type())

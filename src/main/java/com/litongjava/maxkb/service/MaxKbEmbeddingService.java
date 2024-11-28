@@ -5,7 +5,7 @@ import java.util.Arrays;
 import org.postgresql.util.PGobject;
 
 import com.litongjava.db.activerecord.Db;
-import com.litongjava.db.activerecord.Record;
+import com.litongjava.db.activerecord.Row;
 import com.litongjava.db.utils.PgVectorUtils;
 import com.litongjava.maxkb.constant.TableNames;
 import com.litongjava.openai.client.OpenAiClient;
@@ -38,7 +38,7 @@ public class MaxKbEmbeddingService {
       long id = SnowflakeIdUtils.id();
       v = (String) string;
       pGobject = PgVectorUtils.getPgVector(v);
-      Record saveRecord = new Record().set("t", text).set("v", pGobject).set("id", id).set("md5", md5)
+      Row saveRecord = new Row().set("t", text).set("v", pGobject).set("id", id).set("md5", md5)
           //
           .set("m", model);
       synchronized (writeLock) {
@@ -62,7 +62,7 @@ public class MaxKbEmbeddingService {
       String vString = Arrays.toString(embeddingArray);
       id = SnowflakeIdUtils.id();
       PGobject pGobject = PgVectorUtils.getPgVector(vString);
-      Record saveRecord = new Record().set("t", text).set("v", pGobject).set("id", id).set("md5", md5)
+      Row saveRecord = new Row().set("t", text).set("v", pGobject).set("id", id).set("md5", md5)
           //
           .set("m", model);
       synchronized (writeLock) {

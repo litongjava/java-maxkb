@@ -7,7 +7,7 @@ import java.util.UUID;
 import org.postgresql.util.PGobject;
 
 import com.litongjava.db.activerecord.Db;
-import com.litongjava.db.activerecord.Record;
+import com.litongjava.db.activerecord.Row;
 import com.litongjava.db.utils.PgVectorUtils;
 import com.litongjava.jfinal.aop.Aop;
 import com.litongjava.maxkb.client.RumiClient;
@@ -33,8 +33,8 @@ public class KbParagraphService {
   public void reEmbedding() {
     // Step 1: 根据 paragraph_id 查询 paragraph 表的数据
     String paragraphQuery = "SELECT p.id,p.content, p.dataset_id, p.document_id FROM paragraph p";
-    List<Record> records = Db.find(paragraphQuery);
-    for (Record paragraphResult : records) {
+    List<Row> records = Db.find(paragraphQuery);
+    for (Row paragraphResult : records) {
       String content = paragraphResult.get("content");
       UUID datasetId = paragraphResult.get("dataset_id");
       UUID documentId = paragraphResult.get("document_id");
@@ -48,7 +48,7 @@ public class KbParagraphService {
       log.info("Embedding result: {}", embeddingString);
       PGobject pgVector = PgVectorUtils.getPgVector(embeddingString);
 
-      Record embedding = new Record();
+      Row embedding = new Row();
       embedding.put("id", UUIDUtils.random().toString());
       embedding.set("source_id", paragraphId.toString()).set("source_type", 1);
       embedding.set("is_active", true);
@@ -94,7 +94,7 @@ public class KbParagraphService {
   public void embedding(String id) {
     // Step 1: 根据 paragraph_id 查询 paragraph 表的数据
     String paragraphQuery = "SELECT p.content, p.dataset_id, p.document_id FROM paragraph p WHERE p.id = ?";
-    Record paragraphResult = Db.findFirst(paragraphQuery, UUID.fromString(id));
+    Row paragraphResult = Db.findFirst(paragraphQuery, UUID.fromString(id));
     if (paragraphResult == null) {
       log.warn("No paragraph found for id: {}", id);
       return;
@@ -118,7 +118,7 @@ public class KbParagraphService {
     log.info("Embedding result: {}", embeddingString);
     PGobject pgVector = PgVectorUtils.getPgVector(embeddingString);
 
-    Record embedding = new Record();
+    Row embedding = new Row();
     embedding.put("id", UUIDUtils.random().toString());
     embedding.set("source_id", id).set("source_type", 1);
     embedding.set("is_active", true);

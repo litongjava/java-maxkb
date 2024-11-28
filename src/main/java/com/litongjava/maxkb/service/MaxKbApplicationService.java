@@ -7,7 +7,7 @@ import com.jfinal.kit.Kv;
 import com.litongjava.db.TableInput;
 import com.litongjava.db.TableResult;
 import com.litongjava.db.activerecord.Db;
-import com.litongjava.db.activerecord.Record;
+import com.litongjava.db.activerecord.Row;
 import com.litongjava.jfinal.aop.Aop;
 import com.litongjava.kit.JsonFieldUtils;
 import com.litongjava.maxkb.constant.TableNames;
@@ -31,7 +31,7 @@ public class MaxKbApplicationService {
   public ResultVo create(Long userId, MaxKbApplicationVo application) {
     Long applicationId = SnowflakeIdUtils.id();
     application.setId(applicationId);
-    Record record = Record.fromBean(application);
+    Row record = Row.fromBean(application);
     record.remove("dataset_id_list");
     record.set("user_id", userId);
     Db.save(MaxKbApplication.tableName, record);
@@ -51,7 +51,7 @@ public class MaxKbApplicationService {
       }
     }
 
-    Record record = Record.fromBean(application);
+    Row record = Row.fromBean(application);
     record.remove("dataset_id_list");
     record.set("user_id", userId);
 
@@ -85,11 +85,11 @@ public class MaxKbApplicationService {
     Integer pageSize = tableInput.getPageSize();
     log.info("page:{},{}", pageNo, pageSize);
     tableInput.setFrom(TableNames.max_kb_application);
-    TableResult<Page<Record>> result = ApiTable.page(tableInput);
-    Page<Record> page = result.getData();
-    List<Record> records = page.getList();
+    TableResult<Page<Row>> result = ApiTable.page(tableInput);
+    Page<Row> page = result.getData();
+    List<Row> records = page.getList();
     List<Kv> kvs = new ArrayList<>();
-    for (Record record : records) {
+    for (Row record : records) {
       JsonFieldUtils.toBean(record, "model_setting", MaxKbModelSetting.class);
       JsonFieldUtils.toBean(record, "model_params_setting", MaxKbModelParamsSetting.class);
       JsonFieldUtils.toBean(record, "dataset_setting", MaxKbDatasetSettingVo.class);
@@ -100,16 +100,16 @@ public class MaxKbApplicationService {
   }
 
   public ResultVo list(Long userId) {
-    Record quereyRecord = new Record();
+    Row quereyRecord = new Row();
     if (userId.equals(1L)) {
 
     } else {
       quereyRecord.set("user_id", userId);
     }
 
-    List<Record> records = Db.find(TableNames.max_kb_application, quereyRecord);
+    List<Row> records = Db.find(TableNames.max_kb_application, quereyRecord);
     List<Kv> kvs = new ArrayList<>();
-    for (Record record : records) {
+    for (Row record : records) {
       JsonFieldUtils.toBean(record, "model_params_setting", MaxKbModelParamsSetting.class);
       JsonFieldUtils.toBean(record, "model_setting", MaxKbModelSetting.class);
       JsonFieldUtils.toBean(record, "dataset_setting", MaxKbDatasetSettingVo.class);
@@ -122,14 +122,14 @@ public class MaxKbApplicationService {
   public ResultVo get(Long userId, Long applicationId) {
 
     log.info("user_id:{}", userId);
-    Record quereyRecord = null;
+    Row quereyRecord = null;
     if (userId.equals(1L)) {
-      quereyRecord = Record.by("id", applicationId);
+      quereyRecord = Row.by("id", applicationId);
     } else {
-      quereyRecord = Record.by("id", applicationId).set("user_id", userId);
+      quereyRecord = Row.by("id", applicationId).set("user_id", userId);
     }
 
-    Record record = Db.findFirst(MaxKbApplication.tableName, quereyRecord);
+    Row record = Db.findFirst(MaxKbApplication.tableName, quereyRecord);
     JsonFieldUtils.toBean(record, "model_params_setting", MaxKbModelParamsSetting.class);
     JsonFieldUtils.toBean(record, "dataset_setting", MaxKbDatasetSettingVo.class);
 
@@ -157,13 +157,13 @@ public class MaxKbApplicationService {
   }
 
   public ResultVo listApplicaionModel(Long userId, Long applicationId) {
-    Record queryRecord = Record.by("user_id", userId);
+    Row queryRecord = Row.by("user_id", userId);
     String columns = "id,name,provider,model_type,model_name,status,meta,permission_type,user_id";
-    List<Record> list = Db.find(MaxKbModel.tableName, columns, queryRecord);
+    List<Row> list = Db.find(MaxKbModel.tableName, columns, queryRecord);
     List<Kv> kvs = new ArrayList<>();
     MaxKbUserService maxKbUserService = Aop.get(MaxKbUserService.class);
 
-    for (Record record : list) {
+    for (Row record : list) {
       Long user_id = record.getLong("user_id");
       String username = maxKbUserService.queryUsername(user_id);
       record.set("username", username);
@@ -176,10 +176,10 @@ public class MaxKbApplicationService {
   public ResultVo setModelId(Long userIdLong, Long applicationId, Long modelId) {
     boolean update = false;
     if (userIdLong.equals(1L)) {
-      Record updateRecord = Record.by("id", modelId).set("id", applicationId).set("model_id", modelId);
+      Row updateRecord = Row.by("id", modelId).set("id", applicationId).set("model_id", modelId);
       update = Db.update(MaxKbApplication.tableName, "id", updateRecord);
     } else {
-      Record updateRecord = Record.by("id", modelId).set("id", applicationId).set("user_id", userIdLong).set("model_id", modelId);
+      Row updateRecord = Row.by("id", modelId).set("id", applicationId).set("user_id", userIdLong).set("model_id", modelId);
       update = Db.update(MaxKbApplication.tableName, "id,user_id", updateRecord);
     }
 

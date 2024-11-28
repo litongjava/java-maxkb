@@ -23,7 +23,7 @@ import com.jfinal.template.Engine;
 import com.litongjava.db.TableInput;
 import com.litongjava.db.TableResult;
 import com.litongjava.db.activerecord.Db;
-import com.litongjava.db.activerecord.Record;
+import com.litongjava.db.activerecord.Row;
 import com.litongjava.maxkb.constant.TableNames;
 import com.litongjava.maxkb.utils.ExecutorServiceUtils;
 import com.litongjava.maxkb.vo.UploadResultVo;
@@ -111,8 +111,8 @@ public class DatasetDocumentSplitService {
 
     // 查询缓存以检查是否已经处理过该文档
     TableInput ti = TableInput.create().columns("target,content").set("id", md5);
-    TableResult<Record> tableResult = ApiTable.get(TableNames.max_kb_document_markdown_cache, ti);
-    Record record = tableResult.getData();
+    TableResult<Row> tableResult = ApiTable.get(TableNames.max_kb_document_markdown_cache, ti);
+    Row record = tableResult.getData();
     boolean exists = false;
     String target = null;
 
@@ -176,10 +176,10 @@ public class DatasetDocumentSplitService {
 
     // 更新或保存缓存记录
     if (exists) {
-      Db.update(TableNames.max_kb_document_markdown_cache, Record.by("id", md5).set("target", target));
+      Db.update(TableNames.max_kb_document_markdown_cache, Row.by("id", md5).set("target", target));
       log.info("Cache updated for document MD5: {}", md5);
     } else {
-      Db.save(TableNames.max_kb_document_markdown_cache, Record.by("id", md5).set("target", target));
+      Db.save(TableNames.max_kb_document_markdown_cache, Row.by("id", md5).set("target", target));
       log.info("Cache saved for new document MD5: {}", md5);
     }
 

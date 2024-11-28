@@ -6,7 +6,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import com.litongjava.db.activerecord.Record;
+import com.litongjava.db.activerecord.Row;
 import com.litongjava.jfinal.aop.Aop;
 import com.litongjava.maxkb.dao.SystemUploadFileDao;
 import com.litongjava.maxkb.vo.UploadResultVo;
@@ -32,7 +32,7 @@ public class SystemFileService {
       byte[] fileData = uploadFile.getData();
       String digestHex = Md5Utils.digestHex(fileData);
       SystemUploadFileDao systemUploadFileDao = Aop.get(SystemUploadFileDao.class);
-      Record record = systemUploadFileDao.getFileBasicInfoByMd5(bucketName, digestHex);
+      Row record = systemUploadFileDao.getFileBasicInfoByMd5(bucketName, digestHex);
 
       // 如果文件已存在，返回已有文件信息
       if (record != null) {
@@ -93,7 +93,7 @@ public class SystemFileService {
    */
   public UploadResultVo getUrlById(Long id) {
     SystemUploadFileDao systemUploadFileDao = Aop.get(SystemUploadFileDao.class);
-    Record record = systemUploadFileDao.getFileBasicInfoById(id);
+    Row record = systemUploadFileDao.getFileBasicInfoById(id);
     String md5 = record.getStr("md5");
     String filename = record.getStr("filename");
     String bucketName = record.getStr("bucket_name");
@@ -111,7 +111,7 @@ public class SystemFileService {
    */
   public UploadResultVo getUrlByMd5(String bucketName, String md5) {
     SystemUploadFileDao systemUploadFileDao = Aop.get(SystemUploadFileDao.class);
-    Record record = systemUploadFileDao.getFileBasicInfoByMd5(bucketName, md5);
+    Row record = systemUploadFileDao.getFileBasicInfoByMd5(bucketName, md5);
     Long id = record.getLong("id");
     String filename = record.getStr("filename");
     String targetName = record.getStr("target_name");

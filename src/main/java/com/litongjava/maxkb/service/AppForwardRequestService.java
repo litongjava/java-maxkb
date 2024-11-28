@@ -2,7 +2,7 @@ package com.litongjava.maxkb.service;
 import java.util.Map;
 
 import com.litongjava.db.activerecord.Db;
-import com.litongjava.db.activerecord.Record;
+import com.litongjava.db.activerecord.Row;
 import com.litongjava.tio.boot.http.forward.RequestProxyCallback;
 import com.litongjava.tio.http.common.HeaderName;
 import com.litongjava.tio.http.common.HeaderValue;
@@ -52,7 +52,7 @@ public class AppForwardRequestService implements RequestProxyCallback {
 
     String method = requestLine.getMethod().toString();
     String path = requestLine.getPath();
-    Record record = Record.by("id", id).set("ip", ip).set("ip_region", "")
+    Row record = Row.by("id", id).set("ip", ip).set("ip_region", "")
         //
         .set("method", method).set("uri", path).set("request_header", headers).set("request_body", stringBuffer.toString());
 
@@ -69,7 +69,7 @@ public class AppForwardRequestService implements RequestProxyCallback {
   @Override
   public void saveResponse(long id, long elapsed, int statusCode, Map<HeaderName, HeaderValue> headers,
       HeaderValue contentEncoding, byte[] body) {
-    Record record = Record.by("id", id).set("elapsed", elapsed).set("response_status", statusCode);
+    Row record = Row.by("id", id).set("elapsed", elapsed).set("response_status", statusCode);
 
     if (body != null && body.length > 0) {
       if (contentEncoding != null) {
