@@ -140,6 +140,13 @@
       <artifactId>langchain4j-open-ai</artifactId>
       <version>${langchain4j.version}</version>
     </dependency>
+
+    <dependency>
+      <groupId>com.microsoft.playwright</groupId>
+      <artifactId>playwright</artifactId>
+      <version>1.27.0</version> <!-- 请检查最新版本 -->
+    </dependency>
+
   </dependencies>
   <profiles>
     <!-- development -->
