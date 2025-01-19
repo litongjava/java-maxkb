@@ -13,27 +13,48 @@ public class MaxKbDocument extends BaseMaxKbDocument<MaxKbDocument> {
 	 */
   public static final String tableName = "max_kb_document";
   public static final String primaryKey = "id";
-  // private java.lang.Long id
-  // private java.lang.Long fileId
-  // private java.lang.Long userId
-  // private java.lang.String title
-  // private java.lang.String name
-  // private java.lang.Integer charLength
-  // private java.lang.String status
-  // private java.lang.Boolean isActive
-  // private java.lang.String type
-  // private java.lang.String meta
-  // private java.lang.Long datasetId
-  // private java.lang.String hitHandlingMethod
-  // private java.lang.Double directlyReturnSimilarity
-  // private java.lang.Integer paragraphCount
-  // private java.lang.Object files
-  // private java.lang.String creator
-  // private java.util.Date createTime
-  // private java.lang.String updater
-  // private java.util.Date updateTime
-  // private java.lang.Integer deleted
-  // private java.lang.Long tenantId
+  //java.lang.Long 
+  public static final String id = "id";
+  //java.lang.Long 
+  public static final String fileId = "file_id";
+  //java.lang.Long 
+  public static final String userId = "user_id";
+  //java.lang.String 
+  public static final String title = "title";
+  //java.lang.String 
+  public static final String name = "name";
+  //java.lang.Integer 
+  public static final String charLength = "char_length";
+  //java.lang.String 
+  public static final String status = "status";
+  //java.lang.Boolean 
+  public static final String isActive = "is_active";
+  //java.lang.String 
+  public static final String type = "type";
+  //java.lang.String 
+  public static final String meta = "meta";
+  //java.lang.Long 
+  public static final String datasetId = "dataset_id";
+  //java.lang.String 
+  public static final String hitHandlingMethod = "hit_handling_method";
+  //java.lang.Double 
+  public static final String directlyReturnSimilarity = "directly_return_similarity";
+  //java.lang.Integer 
+  public static final String paragraphCount = "paragraph_count";
+  //java.lang.Object 
+  public static final String files = "files";
+  //java.lang.String 
+  public static final String creator = "creator";
+  //java.util.Date 
+  public static final String createTime = "create_time";
+  //java.lang.String 
+  public static final String updater = "updater";
+  //java.util.Date 
+  public static final String updateTime = "update_time";
+  //java.lang.Integer 
+  public static final String deleted = "deleted";
+  //java.lang.Long 
+  public static final String tenantId = "tenant_id";
 
   @Override
   protected String _getPrimaryKey() {

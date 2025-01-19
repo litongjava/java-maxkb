@@ -36,11 +36,20 @@ public class MaxKbApplicationAccessTokenService {
 
   public ResultVo getById(Long applicationId) {
     Row record = Db.findById(MaxKbApplicationAccessToken.tableName, MaxKbApplicationAccessToken.primaryKey, applicationId);
-    if(record!=null) {
+    if (record != null) {
       return ResultVo.ok(record.toKv());
-    }else {
+    } else {
       return ResultVo.ok(Kv.create());
     }
-    
+
+  }
+
+  public ResultVo authentication(Long access_token) {
+    boolean exists = MaxKbApplicationAccessToken.dao.existsBySql("select count(1) from %s where id=? and deleted=0", access_token);
+    if (exists) {
+
+    }
+    return null;
+
   }
 }

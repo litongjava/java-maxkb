@@ -189,5 +189,4 @@ public class MaxKbApplicationService {
   public ResultVo listApplicaionDataset(Long userId, Long applicationId) {
     return Aop.get(MaxKbDatasetService.class).list(userId);
   }
-
 }

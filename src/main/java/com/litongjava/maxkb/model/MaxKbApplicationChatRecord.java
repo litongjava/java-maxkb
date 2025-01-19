@@ -13,24 +13,42 @@ public class MaxKbApplicationChatRecord extends BaseMaxKbApplicationChatRecord<M
 	 */
   public static final String tableName = "max_kb_application_chat_record";
   public static final String primaryKey = "id";
-  // private java.lang.Long id
-  // private java.lang.String voteStatus
-  // private java.lang.String problemText
-  // private java.lang.String answerText
-  // private java.lang.Integer messageTokens
-  // private java.lang.Integer answerTokens
-  // private java.lang.Integer _const
-  // private java.lang.String details
-  // private java.lang.Long[] improveParagraphIdList
-  // private java.lang.Double runTime
-  // private java.lang.Integer index
-  // private java.lang.Long chatId
-  // private java.lang.String creator
-  // private java.util.Date createTime
-  // private java.lang.String updater
-  // private java.util.Date updateTime
-  // private java.lang.Integer deleted
-  // private java.lang.Long tenantId
+  //java.lang.Long 
+  public static final String id = "id";
+  //java.lang.String 
+  public static final String voteStatus = "vote_status";
+  //java.lang.String 
+  public static final String problemText = "problem_text";
+  //java.lang.String 
+  public static final String answerText = "answer_text";
+  //java.lang.Integer 
+  public static final String messageTokens = "message_tokens";
+  //java.lang.Integer 
+  public static final String answerTokens = "answer_tokens";
+  //java.lang.Integer 
+  public static final String _const = "const";
+  //java.lang.String 
+  public static final String details = "details";
+  //java.lang.Long[] 
+  public static final String improveParagraphIdList = "improve_paragraph_id_list";
+  //java.lang.Double 
+  public static final String runTime = "run_time";
+  //java.lang.Integer 
+  public static final String index = "index";
+  //java.lang.Long 
+  public static final String chatId = "chat_id";
+  //java.lang.String 
+  public static final String creator = "creator";
+  //java.util.Date 
+  public static final String createTime = "create_time";
+  //java.lang.String 
+  public static final String updater = "updater";
+  //java.util.Date 
+  public static final String updateTime = "update_time";
+  //java.lang.Integer 
+  public static final String deleted = "deleted";
+  //java.lang.Long 
+  public static final String tenantId = "tenant_id";
 
   @Override
   protected String _getPrimaryKey() {

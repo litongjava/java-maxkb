@@ -13,8 +13,10 @@ public class MaxKbApplicationTempSetting extends BaseMaxKbApplicationTempSetting
 	 */
   public static final String tableName = "max_kb_application_temp_setting";
   public static final String primaryKey = "id";
-  // private java.lang.Long id
-  // private java.lang.String setting
+  //java.lang.Long 
+  public static final String id = "id";
+  //java.lang.String 
+  public static final String setting = "setting";
 
   @Override
   protected String _getPrimaryKey() {

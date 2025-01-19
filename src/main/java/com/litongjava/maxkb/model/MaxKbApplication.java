@@ -13,40 +13,74 @@ public class MaxKbApplication extends BaseMaxKbApplication<MaxKbApplication> {
 	 */
   public static final String tableName = "max_kb_application";
   public static final String primaryKey = "id";
-  // private java.lang.Long id
-  // private java.lang.Integer code
-  // private java.lang.String courseName
-  // private java.lang.String ownerName
-  // private java.lang.Integer state
-  // private java.lang.String name
-  // private java.lang.String desc
-  // private java.lang.String prompt
-  // private java.lang.String prologue
-  // private java.lang.Integer dialogueNumber
-  // private java.lang.String datasetSetting
-  // private java.lang.String modelSetting
-  // private java.lang.Boolean problemOptimization
-  // private java.lang.Long modelId
-  // private java.lang.Long userId
-  // private java.lang.String icon
-  // private java.lang.String type
-  // private java.lang.String workFlow
-  // private java.lang.String modelParamsSetting
-  // private java.lang.Long sttModelId
-  // private java.lang.Boolean sttModelEnable
-  // private java.lang.Long ttsModelId
-  // private java.lang.Boolean ttsModelEnable
-  // private java.lang.String ttsType
-  // private java.lang.String problemOptimizationPrompt
-  // private java.lang.String ttsModelParamsSetting
-  // private java.lang.Integer cleanTime
-  // private java.lang.String remark
-  // private java.lang.String creator
-  // private java.util.Date createTime
-  // private java.lang.String updater
-  // private java.util.Date updateTime
-  // private java.lang.Integer deleted
-  // private java.lang.Long tenantId
+  //java.lang.Long 
+  public static final String id = "id";
+  //java.lang.Integer 
+  public static final String code = "code";
+  //java.lang.String 
+  public static final String courseName = "course_name";
+  //java.lang.String 
+  public static final String ownerName = "owner_name";
+  //java.lang.Integer 
+  public static final String state = "state";
+  //java.lang.String 
+  public static final String name = "name";
+  //java.lang.String 
+  public static final String desc = "desc";
+  //java.lang.String 
+  public static final String prompt = "prompt";
+  //java.lang.String 
+  public static final String prologue = "prologue";
+  //java.lang.Integer 
+  public static final String dialogueNumber = "dialogue_number";
+  //java.lang.String 
+  public static final String datasetSetting = "dataset_setting";
+  //java.lang.String 
+  public static final String modelSetting = "model_setting";
+  //java.lang.Boolean 
+  public static final String problemOptimization = "problem_optimization";
+  //java.lang.Long 
+  public static final String modelId = "model_id";
+  //java.lang.Long 
+  public static final String userId = "user_id";
+  //java.lang.String 
+  public static final String icon = "icon";
+  //java.lang.String 
+  public static final String type = "type";
+  //java.lang.String 
+  public static final String workFlow = "work_flow";
+  //java.lang.String 
+  public static final String modelParamsSetting = "model_params_setting";
+  //java.lang.Long 
+  public static final String sttModelId = "stt_model_id";
+  //java.lang.Boolean 
+  public static final String sttModelEnable = "stt_model_enable";
+  //java.lang.Long 
+  public static final String ttsModelId = "tts_model_id";
+  //java.lang.Boolean 
+  public static final String ttsModelEnable = "tts_model_enable";
+  //java.lang.String 
+  public static final String ttsType = "tts_type";
+  //java.lang.String 
+  public static final String problemOptimizationPrompt = "problem_optimization_prompt";
+  //java.lang.String 
+  public static final String ttsModelParamsSetting = "tts_model_params_setting";
+  //java.lang.Integer 
+  public static final String cleanTime = "clean_time";
+  //java.lang.String 
+  public static final String remark = "remark";
+  //java.lang.String 
+  public static final String creator = "creator";
+  //java.util.Date 
+  public static final String createTime = "create_time";
+  //java.lang.String 
+  public static final String updater = "updater";
+  //java.util.Date 
+  public static final String updateTime = "update_time";
+  //java.lang.Integer 
+  public static final String deleted = "deleted";
+  //java.lang.Long 
+  public static final String tenantId = "tenant_id";
 
   @Override
   protected String _getPrimaryKey() {

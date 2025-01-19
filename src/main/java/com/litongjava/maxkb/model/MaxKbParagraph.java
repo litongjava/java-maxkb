@@ -13,26 +13,46 @@ public class MaxKbParagraph extends BaseMaxKbParagraph<MaxKbParagraph> {
 	 */
   public static final String tableName = "max_kb_paragraph";
   public static final String primaryKey = "id";
-  // private java.lang.Long id
-  // private java.lang.Long sourceId
-  // private java.lang.String sourceType
-  // private java.lang.String title
-  // private java.lang.String content
-  // private java.lang.String md5
-  // private java.lang.String status
-  // private java.lang.Integer hitNum
-  // private java.lang.Boolean isActive
-  // private java.lang.Long datasetId
-  // private java.lang.Long documentId
-  // private java.lang.String embedding
-  // private java.lang.String meta
-  // private java.lang.String searchVector
-  // private java.lang.String creator
-  // private java.util.Date createTime
-  // private java.lang.String updater
-  // private java.util.Date updateTime
-  // private java.lang.Integer deleted
-  // private java.lang.Long tenantId
+  //java.lang.Long 
+  public static final String id = "id";
+  //java.lang.String 
+  public static final String title = "title";
+  //java.lang.String 
+  public static final String content = "content";
+  //java.lang.String 
+  public static final String md5 = "md5";
+  //java.lang.String 
+  public static final String status = "status";
+  //java.lang.Integer 
+  public static final String hitNum = "hit_num";
+  //java.lang.Boolean 
+  public static final String isActive = "is_active";
+  //java.lang.Long 
+  public static final String datasetId = "dataset_id";
+  //java.lang.Long 
+  public static final String documentId = "document_id";
+  //java.lang.String 
+  public static final String embedding = "embedding";
+  //java.lang.String 
+  public static final String meta = "meta";
+  //java.lang.String 
+  public static final String searchVector = "search_vector";
+  //java.lang.String 
+  public static final String creator = "creator";
+  //java.util.Date 
+  public static final String createTime = "create_time";
+  //java.lang.String 
+  public static final String updater = "updater";
+  //java.util.Date 
+  public static final String updateTime = "update_time";
+  //java.lang.Integer 
+  public static final String deleted = "deleted";
+  //java.lang.Long 
+  public static final String tenantId = "tenant_id";
+  //java.lang.Long 
+  public static final String sourceId = "source_id";
+  //java.lang.String 
+  public static final String sourceType = "source_type";
 
   @Override
   protected String _getPrimaryKey() {

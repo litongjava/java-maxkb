@@ -13,18 +13,30 @@ public class MaxKbApplicationChat extends BaseMaxKbApplicationChat<MaxKbApplicat
 	 */
   public static final String tableName = "max_kb_application_chat";
   public static final String primaryKey = "id";
-  // private java.lang.Long id
-  // private java.lang.String _abstract
-  // private java.lang.Long applicationId
-  // private java.lang.Long clientId
-  // private java.lang.Integer chatType
-  // private java.lang.Boolean isDeleted
-  // private java.lang.String creator
-  // private java.util.Date createTime
-  // private java.lang.String updater
-  // private java.util.Date updateTime
-  // private java.lang.Integer deleted
-  // private java.lang.Long tenantId
+  //java.lang.Long 
+  public static final String id = "id";
+  //java.lang.String 
+  public static final String _abstract = "abstract";
+  //java.lang.Long 
+  public static final String applicationId = "application_id";
+  //java.lang.Long 
+  public static final String clientId = "client_id";
+  //java.lang.Integer 
+  public static final String chatType = "chat_type";
+  //java.lang.Boolean 
+  public static final String isDeleted = "is_deleted";
+  //java.lang.String 
+  public static final String creator = "creator";
+  //java.util.Date 
+  public static final String createTime = "create_time";
+  //java.lang.String 
+  public static final String updater = "updater";
+  //java.util.Date 
+  public static final String updateTime = "update_time";
+  //java.lang.Integer 
+  public static final String deleted = "deleted";
+  //java.lang.Long 
+  public static final String tenantId = "tenant_id";
 
   @Override
   protected String _getPrimaryKey() {

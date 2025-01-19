@@ -13,15 +13,24 @@ public class MaxKbDocumentMarkdownPageCache extends BaseMaxKbDocumentMarkdownPag
 	 */
   public static final String tableName = "max_kb_document_markdown_page_cache";
   public static final String primaryKey = "id";
-  // private java.lang.String id
-  // private java.lang.String target
-  // private java.lang.String content
-  // private java.lang.Long elapsed
-  // private java.lang.String model
-  // private java.lang.String systemFingerprint
-  // private java.lang.Integer completionTokens
-  // private java.lang.Integer promptTokens
-  // private java.lang.Integer totalTokens
+  //java.lang.String 
+  public static final String id = "id";
+  //java.lang.String 
+  public static final String target = "target";
+  //java.lang.String 
+  public static final String content = "content";
+  //java.lang.Long 
+  public static final String elapsed = "elapsed";
+  //java.lang.String 
+  public static final String model = "model";
+  //java.lang.String 
+  public static final String systemFingerprint = "system_fingerprint";
+  //java.lang.Integer 
+  public static final String completionTokens = "completion_tokens";
+  //java.lang.Integer 
+  public static final String promptTokens = "prompt_tokens";
+  //java.lang.Integer 
+  public static final String totalTokens = "total_tokens";
 
   @Override
   protected String _getPrimaryKey() {

@@ -10,7 +10,7 @@ import com.litongjava.db.activerecord.Db;
 import com.litongjava.db.activerecord.Row;
 import com.litongjava.kit.RowUtils;
 import com.litongjava.maxkb.constant.TableNames;
-import com.litongjava.maxkb.model.MaxKbParagraphId;
+import com.litongjava.maxkb.vo.MaxKbParagraphId;
 import com.litongjava.maxkb.vo.ProbrolemCreateBatch;
 import com.litongjava.maxkb.vo.ResultPage;
 import com.litongjava.model.page.Page;

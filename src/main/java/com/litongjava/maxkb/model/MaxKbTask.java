@@ -13,20 +13,34 @@ public class MaxKbTask extends BaseMaxKbTask<MaxKbTask> {
 	 */
   public static final String tableName = "max_kb_task";
   public static final String primaryKey = "id";
-  // private java.lang.Long id
-  // private java.lang.Long fileId
-  // private java.lang.String fileName
-  // private java.lang.Long fileSize
-  // private java.lang.Long datasetId
-  // private java.lang.Long documentId
-  // private java.lang.Integer progress
-  // private java.lang.String status
-  // private java.lang.String creator
-  // private java.util.Date createTime
-  // private java.lang.String updater
-  // private java.util.Date updateTime
-  // private java.lang.Integer deleted
-  // private java.lang.Long tenantId
+  //java.lang.Long 
+  public static final String id = "id";
+  //java.lang.Long 
+  public static final String fileId = "file_id";
+  //java.lang.String 
+  public static final String fileName = "file_name";
+  //java.lang.Long 
+  public static final String fileSize = "file_size";
+  //java.lang.Long 
+  public static final String datasetId = "dataset_id";
+  //java.lang.Long 
+  public static final String documentId = "document_id";
+  //java.lang.Integer 
+  public static final String progress = "progress";
+  //java.lang.String 
+  public static final String status = "status";
+  //java.lang.String 
+  public static final String creator = "creator";
+  //java.util.Date 
+  public static final String createTime = "create_time";
+  //java.lang.String 
+  public static final String updater = "updater";
+  //java.util.Date 
+  public static final String updateTime = "update_time";
+  //java.lang.Integer 
+  public static final String deleted = "deleted";
+  //java.lang.Long 
+  public static final String tenantId = "tenant_id";
 
   @Override
   protected String _getPrimaryKey() {

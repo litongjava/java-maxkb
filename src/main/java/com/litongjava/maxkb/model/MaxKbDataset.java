@@ -13,20 +13,34 @@ public class MaxKbDataset extends BaseMaxKbDataset<MaxKbDataset> {
 	 */
   public static final String tableName = "max_kb_dataset";
   public static final String primaryKey = "id";
-  // private java.lang.Long id
-  // private java.lang.String name
-  // private java.lang.String desc
-  // private java.lang.String type
-  // private java.lang.Long embeddingModeId
-  // private java.lang.String meta
-  // private java.lang.Long userId
-  // private java.lang.String remark
-  // private java.lang.String creator
-  // private java.util.Date createTime
-  // private java.lang.String updater
-  // private java.util.Date updateTime
-  // private java.lang.Integer deleted
-  // private java.lang.Long tenantId
+  //java.lang.Long 
+  public static final String id = "id";
+  //java.lang.String 
+  public static final String name = "name";
+  //java.lang.String 
+  public static final String desc = "desc";
+  //java.lang.String 
+  public static final String type = "type";
+  //java.lang.Long 
+  public static final String embeddingModeId = "embedding_mode_id";
+  //java.lang.String 
+  public static final String meta = "meta";
+  //java.lang.Long 
+  public static final String userId = "user_id";
+  //java.lang.String 
+  public static final String remark = "remark";
+  //java.lang.String 
+  public static final String creator = "creator";
+  //java.util.Date 
+  public static final String createTime = "create_time";
+  //java.lang.String 
+  public static final String updater = "updater";
+  //java.util.Date 
+  public static final String updateTime = "update_time";
+  //java.lang.Integer 
+  public static final String deleted = "deleted";
+  //java.lang.Long 
+  public static final String tenantId = "tenant_id";
 
   @Override
   protected String _getPrimaryKey() {

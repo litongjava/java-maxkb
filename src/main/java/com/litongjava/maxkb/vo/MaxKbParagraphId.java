@@ -1,4 +1,5 @@
-package com.litongjava.maxkb.model;
+
+package com.litongjava.maxkb.vo;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

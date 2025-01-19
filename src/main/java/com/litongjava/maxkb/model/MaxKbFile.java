@@ -7,30 +7,47 @@ import com.litongjava.maxkb.model.base.BaseMaxKbFile;
  */
 public class MaxKbFile extends BaseMaxKbFile<MaxKbFile> {
   private static final long serialVersionUID = 1L;
-  public static final MaxKbFile dao = new MaxKbFile().dao();
-  /**
-   * 
-   */
+	public static final MaxKbFile dao = new MaxKbFile().dao();
+	/**
+	 * 
+	 */
   public static final String tableName = "max_kb_file";
   public static final String primaryKey = "id";
+  //java.lang.Long 
+  public static final String id = "id";
+  //java.lang.String 
+  public static final String md5 = "md5";
+  //java.lang.String 
+  public static final String filename = "filename";
+  //java.lang.Long 
+  public static final String fileSize = "file_size";
+  //java.lang.String 
+  public static final String userId = "user_id";
+  //java.lang.String 
+  public static final String platform = "platform";
+  //java.lang.String 
+  public static final String regionName = "region_name";
+  //java.lang.String 
+  public static final String bucketName = "bucket_name";
+  //java.lang.String 
+  public static final String fileId = "file_id";
+  //java.lang.String 
+  public static final String targetName = "target_name";
+  //java.lang.Object 
+  public static final String tags = "tags";
+  //java.lang.String 
+  public static final String creator = "creator";
+  //java.util.Date 
+  public static final String createTime = "create_time";
+  //java.lang.String 
+  public static final String updater = "updater";
+  //java.util.Date 
+  public static final String updateTime = "update_time";
+  //java.lang.Integer 
+  public static final String deleted = "deleted";
+  //java.lang.Long 
+  public static final String tenantId = "tenant_id";
 
-  // private java.lang.Long id
-  // private java.lang.String md5
-  // private java.lang.String filename
-  // private java.lang.Long fileSize
-  // private java.lang.String userId
-  // private java.lang.String platform
-  // private java.lang.String regionName
-  // private java.lang.String bucketName
-  // private java.lang.String fileId
-  // private java.lang.String targetName
-  // private java.lang.Object tags
-  // private java.lang.String creator
-  // private java.util.Date createTime
-  // private java.lang.String updater
-  // private java.util.Date updateTime
-  // private java.lang.Integer deleted
-  // private java.lang.Long tenantId
   @Override
   protected String _getPrimaryKey() {
     return primaryKey;
@@ -41,3 +58,4 @@ public class MaxKbFile extends BaseMaxKbFile<MaxKbFile> {
     return tableName;
   }
 }
+

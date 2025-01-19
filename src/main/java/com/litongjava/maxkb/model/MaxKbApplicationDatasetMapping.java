@@ -13,9 +13,12 @@ public class MaxKbApplicationDatasetMapping extends BaseMaxKbApplicationDatasetM
 	 */
   public static final String tableName = "max_kb_application_dataset_mapping";
   public static final String primaryKey = "id";
-  // private java.lang.Long id
-  // private java.lang.Long applicationId
-  // private java.lang.Long datasetId
+  //java.lang.Long 
+  public static final String id = "id";
+  //java.lang.Long 
+  public static final String applicationId = "application_id";
+  //java.lang.Long 
+  public static final String datasetId = "dataset_id";
 
   @Override
   protected String _getPrimaryKey() {

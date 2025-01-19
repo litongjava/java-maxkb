@@ -13,11 +13,16 @@ public class MaxKbEmbeddingCache extends BaseMaxKbEmbeddingCache<MaxKbEmbeddingC
 	 */
   public static final String tableName = "max_kb_embedding_cache";
   public static final String primaryKey = "id";
-  // private java.lang.Long id
-  // private java.lang.String t
-  // private java.lang.String m
-  // private java.lang.String v
-  // private java.lang.String md5
+  //java.lang.Long 
+  public static final String id = "id";
+  //java.lang.String 
+  public static final String t = "t";
+  //java.lang.String 
+  public static final String m = "m";
+  //java.lang.String 
+  public static final String v = "v";
+  //java.lang.String 
+  public static final String md5 = "md5";
 
   @Override
   protected String _getPrimaryKey() {

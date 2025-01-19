@@ -8,6 +8,10 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class AuthService {
+  /**
+   * @param authorization
+   * @return
+   */
   public Long getIdByToken(String authorization) {
     log.info("authorization:{}", authorization);
     if (StrUtil.isBlank(authorization)) {

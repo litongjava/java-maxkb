@@ -13,22 +13,34 @@ public class MaxKbApplicationAccessToken extends BaseMaxKbApplicationAccessToken
 	 */
   public static final String tableName = "max_kb_application_access_token";
   public static final String primaryKey = "application_id";
-  // private java.lang.Long applicationId
-  // private java.lang.String accessToken
-  // private java.lang.Boolean isActive
-  // private java.lang.Integer accessNum
-  // private java.lang.Boolean whiteActive
-  // private java.lang.String[] whiteList
-  // private java.lang.Long[] longList
-  // private java.lang.Integer[] intList
-  // private java.lang.Boolean showSource
-  // private java.lang.String remark
-  // private java.lang.String creator
-  // private java.util.Date createTime
-  // private java.lang.String updater
-  // private java.util.Date updateTime
-  // private java.lang.Integer deleted
-  // private java.lang.Long tenantId
+  //java.lang.Long 
+  public static final String applicationId = "application_id";
+  //java.lang.String 
+  public static final String accessToken = "access_token";
+  //java.lang.Boolean 
+  public static final String isActive = "is_active";
+  //java.lang.Integer 
+  public static final String accessNum = "access_num";
+  //java.lang.Boolean 
+  public static final String whiteActive = "white_active";
+  //java.lang.String[] 
+  public static final String whiteList = "white_list";
+  //java.lang.Boolean 
+  public static final String showSource = "show_source";
+  //java.lang.String 
+  public static final String remark = "remark";
+  //java.lang.String 
+  public static final String creator = "creator";
+  //java.util.Date 
+  public static final String createTime = "create_time";
+  //java.lang.String 
+  public static final String updater = "updater";
+  //java.util.Date 
+  public static final String updateTime = "update_time";
+  //java.lang.Integer 
+  public static final String deleted = "deleted";
+  //java.lang.Long 
+  public static final String tenantId = "tenant_id";
 
   @Override
   protected String _getPrimaryKey() {

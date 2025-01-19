@@ -24,6 +24,7 @@ public class _MappingKit {
 		arp.addMapping("max_kb_application_temp_setting", "id", MaxKbApplicationTempSetting.class);
 		arp.addMapping("max_kb_dataset", "id", MaxKbDataset.class);
 		arp.addMapping("max_kb_document", "id", MaxKbDocument.class);
+		arp.addMapping("max_kb_document_markdown_cache", "id", MaxKbDocumentMarkdownCache.class);
 		arp.addMapping("max_kb_document_markdown_page_cache", "id", MaxKbDocumentMarkdownPageCache.class);
 		arp.addMapping("max_kb_embedding_cache", "id", MaxKbEmbeddingCache.class);
 		arp.addMapping("max_kb_file", "id", MaxKbFile.class);

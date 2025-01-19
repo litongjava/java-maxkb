@@ -13,22 +13,38 @@ public class MaxKbUser extends BaseMaxKbUser<MaxKbUser> {
 	 */
   public static final String tableName = "max_kb_user";
   public static final String primaryKey = "id";
-  // private java.lang.Long id
-  // private java.lang.String email
-  // private java.lang.String phone
-  // private java.lang.String nickName
-  // private java.lang.String username
-  // private java.lang.String password
-  // private java.lang.String role
-  // private java.lang.Boolean isActive
-  // private java.lang.String source
-  // private java.lang.String remark
-  // private java.lang.String creator
-  // private java.util.Date createTime
-  // private java.lang.String updater
-  // private java.util.Date updateTime
-  // private java.lang.Integer deleted
-  // private java.lang.Long tenantId
+  //java.lang.Long 
+  public static final String id = "id";
+  //java.lang.String 
+  public static final String email = "email";
+  //java.lang.String 
+  public static final String phone = "phone";
+  //java.lang.String 
+  public static final String nickName = "nick_name";
+  //java.lang.String 
+  public static final String username = "username";
+  //java.lang.String 
+  public static final String password = "password";
+  //java.lang.String 
+  public static final String role = "role";
+  //java.lang.Boolean 
+  public static final String isActive = "is_active";
+  //java.lang.String 
+  public static final String source = "source";
+  //java.lang.String 
+  public static final String remark = "remark";
+  //java.lang.String 
+  public static final String creator = "creator";
+  //java.util.Date 
+  public static final String createTime = "create_time";
+  //java.lang.String 
+  public static final String updater = "updater";
+  //java.util.Date 
+  public static final String updateTime = "update_time";
+  //java.lang.Integer 
+  public static final String deleted = "deleted";
+  //java.lang.Long 
+  public static final String tenantId = "tenant_id";
 
   @Override
   protected String _getPrimaryKey() {

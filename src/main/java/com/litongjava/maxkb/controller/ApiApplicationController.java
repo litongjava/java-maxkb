@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.alibaba.fastjson2.JSONObject;
 import com.litongjava.annotation.Delete;
 import com.litongjava.annotation.Get;
 import com.litongjava.annotation.Post;
@@ -22,6 +23,8 @@ import com.litongjava.model.result.ResultVo;
 import com.litongjava.table.constants.Operators;
 import com.litongjava.tio.boot.http.TioRequestContext;
 import com.litongjava.tio.http.common.HttpRequest;
+import com.litongjava.tio.utils.hutool.StrUtil;
+import com.litongjava.tio.utils.json.FastJson2Utils;
 import com.litongjava.tio.utils.json.JsonUtils;
 
 @RequestPath("/api/application")
@@ -140,7 +143,17 @@ public class ApiApplicationController {
     Integer top_number = request.getInt("top_number");
     String search_mode = request.getParam("search_mode");
     return Aop.get(MaxKbApplicationHitTestService.class).hitTest(userId, applicationId, query_text, similarity, top_number, search_mode);
-
+  }
+  
+  @Post("/authentication")
+  public ResultVo authentication(HttpRequest request) {
+    String bodyString = request.getBodyString();
+    if(StrUtil.isBlank(bodyString)) {
+      return ResultVo.fail();
+    }
+    JSONObject parseObject = FastJson2Utils.parseObject(bodyString);
+    Long access_token = parseObject.getLong("access_token");
+    return Aop.get(MaxKbApplicationAccessTokenService.class).authentication(access_token);
   }
 
 }
