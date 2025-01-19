@@ -144,16 +144,26 @@ public class ApiApplicationController {
     String search_mode = request.getParam("search_mode");
     return Aop.get(MaxKbApplicationHitTestService.class).hitTest(userId, applicationId, query_text, similarity, top_number, search_mode);
   }
-  
+
   @Post("/authentication")
   public ResultVo authentication(HttpRequest request) {
+    String authorization = request.getAuthorization();
     String bodyString = request.getBodyString();
-    if(StrUtil.isBlank(bodyString)) {
+    if (StrUtil.isBlank(bodyString)) {
       return ResultVo.fail();
     }
+
     JSONObject parseObject = FastJson2Utils.parseObject(bodyString);
     Long access_token = parseObject.getLong("access_token");
-    return Aop.get(MaxKbApplicationAccessTokenService.class).authentication(access_token);
+    return Aop.get(MaxKbApplicationAccessTokenService.class).authentication(access_token, authorization);
+  }
+
+  @Get("/profile")
+  public ResultVo profile(HttpRequest httpRequest) {
+    String referer = httpRequest.getReferer();
+    
+    Long clientId = TioRequestContext.getUserIdLong();
+    return Aop.get(MaxKbApplicationService.class).profile(clientId);
   }
 
 }

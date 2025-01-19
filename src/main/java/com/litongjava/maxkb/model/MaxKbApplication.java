@@ -49,6 +49,10 @@ public class MaxKbApplication extends BaseMaxKbApplication<MaxKbApplication> {
   public static final String type = "type";
   //java.lang.String 
   public static final String workFlow = "work_flow";
+  //java.lang.Boolean 
+  public static final String showSource = "show_source";
+  //java.lang.Boolean 
+  public static final String multipleRoundsDialogue = "multiple_rounds_dialogue";
   //java.lang.String 
   public static final String modelParamsSetting = "model_params_setting";
   //java.lang.Long 

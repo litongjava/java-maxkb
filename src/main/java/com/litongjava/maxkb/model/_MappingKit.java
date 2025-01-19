@@ -21,6 +21,7 @@ public class _MappingKit {
 		arp.addMapping("max_kb_application_chat", "id", MaxKbApplicationChat.class);
 		arp.addMapping("max_kb_application_chat_record", "id", MaxKbApplicationChatRecord.class);
 		arp.addMapping("max_kb_application_dataset_mapping", "id", MaxKbApplicationDatasetMapping.class);
+		arp.addMapping("max_kb_application_public_access_client", "id", MaxKbApplicationPublicAccessClient.class);
 		arp.addMapping("max_kb_application_temp_setting", "id", MaxKbApplicationTempSetting.class);
 		arp.addMapping("max_kb_dataset", "id", MaxKbDataset.class);
 		arp.addMapping("max_kb_document", "id", MaxKbDocument.class);

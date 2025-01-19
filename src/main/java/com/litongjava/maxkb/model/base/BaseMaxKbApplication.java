@@ -171,6 +171,24 @@ public abstract class BaseMaxKbApplication<M extends BaseMaxKbApplication<M>> ex
 		return getStr("work_flow");
 	}
 	
+	public M setShowSource(java.lang.Boolean showSource) {
+		set("show_source", showSource);
+		return (M)this;
+	}
+	
+	public java.lang.Boolean getShowSource() {
+		return getBoolean("show_source");
+	}
+	
+	public M setMultipleRoundsDialogue(java.lang.Boolean multipleRoundsDialogue) {
+		set("multiple_rounds_dialogue", multipleRoundsDialogue);
+		return (M)this;
+	}
+	
+	public java.lang.Boolean getMultipleRoundsDialogue() {
+		return getBoolean("multiple_rounds_dialogue");
+	}
+	
 	public M setModelParamsSetting(java.lang.String modelParamsSetting) {
 		set("model_params_setting", modelParamsSetting);
 		return (M)this;

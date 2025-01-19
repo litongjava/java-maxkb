@@ -11,8 +11,10 @@ import com.litongjava.db.activerecord.Row;
 import com.litongjava.jfinal.aop.Aop;
 import com.litongjava.kit.JsonFieldUtils;
 import com.litongjava.maxkb.constant.TableNames;
+import com.litongjava.maxkb.dao.MaxKbApplicationDao;
 import com.litongjava.maxkb.model.MaxKbApplication;
 import com.litongjava.maxkb.model.MaxKbApplicationDatasetMapping;
+import com.litongjava.maxkb.model.MaxKbApplicationPublicAccessClient;
 import com.litongjava.maxkb.model.MaxKbModel;
 import com.litongjava.maxkb.vo.MaxKbApplicationVo;
 import com.litongjava.maxkb.vo.MaxKbDatasetSettingVo;
@@ -188,5 +190,19 @@ public class MaxKbApplicationService {
 
   public ResultVo listApplicaionDataset(Long userId, Long applicationId) {
     return Aop.get(MaxKbDatasetService.class).list(userId);
+  }
+
+  public ResultVo profile(Long clientId) {
+    Long applicationId = Db.queryLongById(MaxKbApplicationPublicAccessClient.tableName, "client_id", clientId);
+    if (applicationId == null) {
+      return ResultVo.fail("applicationId is null");
+    }
+    Row applicaiton = Aop.get(MaxKbApplicationDao.class).getBasicInfoById(applicationId);
+    if (applicaiton == null) {
+      return ResultVo.ok();
+    }
+
+    return ResultVo.ok(applicaiton.toMap());
+
   }
 }

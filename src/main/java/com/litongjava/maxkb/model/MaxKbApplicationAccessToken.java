@@ -15,7 +15,7 @@ public class MaxKbApplicationAccessToken extends BaseMaxKbApplicationAccessToken
   public static final String primaryKey = "application_id";
   //java.lang.Long 
   public static final String applicationId = "application_id";
-  //java.lang.String 
+  //java.lang.Long 
   public static final String accessToken = "access_token";
   //java.lang.Boolean 
   public static final String isActive = "is_active";
