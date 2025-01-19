@@ -15,6 +15,7 @@ import com.litongjava.db.TableInput;
 import com.litongjava.jfinal.aop.Aop;
 import com.litongjava.maxkb.service.MaxKbApplicationAccessTokenService;
 import com.litongjava.maxkb.service.MaxKbApplicationCharRecordService;
+import com.litongjava.maxkb.service.MaxKbApplicationHitTestService;
 import com.litongjava.maxkb.service.MaxKbApplicationService;
 import com.litongjava.maxkb.vo.MaxKbApplicationVo;
 import com.litongjava.model.result.ResultVo;
@@ -128,6 +129,18 @@ public class ApiApplicationController {
   public ResultVo getRecord(Long applicationId, Long chatId, Long recordId) {
     Long userId = TioRequestContext.getUserIdLong();
     return Aop.get(MaxKbApplicationCharRecordService.class).get(userId, applicationId, chatId, recordId);
+  }
+
+  @Get("/{applicationId}/hit_test")
+  public ResultVo hitTest(Long applicationId, HttpRequest request) {
+    Long userId = TioRequestContext.getUserIdLong();
+
+    String query_text = request.getParam("query_text");
+    Double similarity = request.getDouble("similarity");
+    Integer top_number = request.getInt("top_number");
+    String search_mode = request.getParam("search_mode");
+    return Aop.get(MaxKbApplicationHitTestService.class).hitTest(userId, applicationId, query_text, similarity, top_number, search_mode);
+
   }
 
 }

@@ -8,7 +8,7 @@ import com.litongjava.db.activerecord.ActiveRecordPlugin;
 import com.litongjava.db.activerecord.OrderedFieldContainerFactory;
 import com.litongjava.db.activerecord.dialect.PostgreSqlDialect;
 import com.litongjava.db.hikaricp.HikariCpPlugin;
-import com.litongjava.tio.boot.server.TioBootServer;
+import com.litongjava.hook.HookCan;
 import com.litongjava.tio.utils.environment.EnvUtils;
 
 import lombok.extern.slf4j.Slf4j;
@@ -50,7 +50,7 @@ public class DbConfig {
     // start
     arp.start();
     // add stop
-    TioBootServer.me().addDestroyMethod(() -> {
+    HookCan.me().addDestroyMethod(() -> {
       arp.stop();
       hikariCpPlugin.stop();
     });

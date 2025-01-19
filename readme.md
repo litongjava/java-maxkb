@@ -4,6 +4,10 @@
 
 [!演示视频](https://www.bilibili.com/video/BV1yJU8YHEgg/?vd_source=69e3cff470444b21e8c322dddec00def)
 
+## 开发文档
+
+[!开发文档](https://www.tio-boot.com/zh/58_knowlege_base/01.html)
+
 ## 项目简介
 
 **java-maxkb** 是一个基于 Java 开发的智能知识库系统，利用先进的自然语言处理和向量检索技术，为用户提供高效、准确的问答服务。通过集成文档管理、片段向量化、语义搜索和大语言模型（如 GPT-4）等功能，系统能够理解用户的问题，并从知识库中检索最相关的内容生成回答。

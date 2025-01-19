@@ -8,6 +8,7 @@ import org.postgresql.util.PGobject;
 import com.litongjava.db.activerecord.Db;
 import com.litongjava.db.activerecord.Row;
 import com.litongjava.kit.JsonFieldUtils;
+import com.litongjava.maxkb.constant.SSEConstant;
 import com.litongjava.maxkb.constant.TableNames;
 import com.litongjava.maxkb.service.ChatStreamCallCan;
 import com.litongjava.maxkb.utils.TokenCounter;
@@ -57,9 +58,11 @@ public class ChatStreamCallbackImpl implements Callback {
   public void onResponse(Call call, Response response) throws IOException {
     if (!response.isSuccessful()) {
       String message = "chatgpt response an unsuccessful message:" + response.body().string();
-      SsePacket ssePacket = new SsePacket("error", message);
+      log.error(message);
+      SsePacket ssePacket = new SsePacket(SSEConstant.error, message);
       Tio.send(channelContext, ssePacket);
       cleanup(chatId);
+      SseEmitter.closeChunkConnection(channelContext);
       return;
     }
 
@@ -76,7 +79,7 @@ public class ChatStreamCallbackImpl implements Callback {
       double runTime = ((double) elpased) / 1000;
       int answer_tokens = TokenCounter.countTokens(completionContent.toString());
       chatStep.setRun_time(runTime).setAnswer_tokens(answer_tokens);
-      
+
       MaxKbChatRecordDetail detail = new MaxKbChatRecordDetail(chatStep, searchStep);
       String json = JsonUtils.toJson(detail);
       PGobject pgobject = JsonFieldUtils.json(json);
@@ -87,9 +90,15 @@ public class ChatStreamCallbackImpl implements Callback {
           .set("details", pgobject);
       Db.update(TableNames.max_kb_application_chat_record, record);
 
+    } catch (Exception e) {
+      String message = "chatgpt response an unsuccessful message:" + e.getMessage();
+      SsePacket ssePacket = new SsePacket(SSEConstant.error, message);
+      Tio.send(channelContext, ssePacket);
+    } finally {
+      cleanup(chatId);
+      SseEmitter.closeChunkConnection(channelContext);
     }
-    cleanup(chatId);
-    SseEmitter.closeChunkConnection(channelContext);
+
   }
 
   @Override

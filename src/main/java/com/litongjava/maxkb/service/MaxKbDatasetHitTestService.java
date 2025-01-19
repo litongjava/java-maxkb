@@ -52,6 +52,7 @@ public class MaxKbDatasetHitTestService {
       modelName = OpenAiModels.text_embedding_3_large;
     }
 
+    
     String sql = SqlTemplates.get("kb.hit_test_by_dataset_id_with_max_kb_embedding_cache");
     Long vectorId = Aop.get(MaxKbEmbeddingService.class).getVectorId(query_text, modelName);
     List<Row> records = Db.find(sql, vectorId, datasetId, similarity, top_number);

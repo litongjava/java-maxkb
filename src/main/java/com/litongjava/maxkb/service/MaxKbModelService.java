@@ -86,7 +86,7 @@ public class MaxKbModelService {
   public ResultVo save(Long userId, ModelVo modelVo) {
     String name = modelVo.getName();
     log.info("name:{}", name);
-    if (Db.exists(TableNames.max_kb_model, "name", name)) {
+    if (modelVo.getId()==null && Db.exists(TableNames.max_kb_model, "name", name)) {
       return ResultVo.fail(400, "模型名称【" + name + "】已存在");
     }
 
