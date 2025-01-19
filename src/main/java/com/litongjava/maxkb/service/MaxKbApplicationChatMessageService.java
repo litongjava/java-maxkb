@@ -119,7 +119,7 @@ public class MaxKbApplicationChatMessageService {
     List<ChatMessage> messages = new ArrayList<>();
     messages.add(systemMessage);
     messages.add(userMessage);
-    openAiChatRequestVo.setMessages(messages);
+    openAiChatRequestVo.fromMessages(messages);
     openAiChatRequestVo.setModel(systemPrompt);
 
     //获取模型

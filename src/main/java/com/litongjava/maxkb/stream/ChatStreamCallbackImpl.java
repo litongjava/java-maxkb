@@ -15,9 +15,9 @@ import com.litongjava.maxkb.vo.MaxKbChatRecordDetail;
 import com.litongjava.maxkb.vo.MaxKbChatStep;
 import com.litongjava.maxkb.vo.MaxKbSearchStep;
 import com.litongjava.maxkb.vo.MaxKbStreamChatVo;
-import com.litongjava.openai.chat.ChatResponseVo;
+import com.litongjava.openai.chat.ChatResponseDelta;
 import com.litongjava.openai.chat.Choice;
-import com.litongjava.openai.chat.Delta;
+import com.litongjava.openai.chat.OpenAiChatResponseVo;
 import com.litongjava.tio.core.ChannelContext;
 import com.litongjava.tio.core.Tio;
 import com.litongjava.tio.http.common.sse.SsePacket;
@@ -137,10 +137,10 @@ public class ChatStreamCallbackImpl implements Callback {
   private void processResponseChunk(Long chatId, Long messageId, ChannelContext channelContext, StringBuffer completionContent, String line) {
     String data = line.substring(6);
     if (data.endsWith("}")) {
-      ChatResponseVo chatResponse = FastJson2Utils.parse(data, ChatResponseVo.class);
+      OpenAiChatResponseVo chatResponse = FastJson2Utils.parse(data, OpenAiChatResponseVo.class);
       List<Choice> choices = chatResponse.getChoices();
       if (choices.size() > 0) {
-        Delta delta = choices.get(0).getDelta();
+        ChatResponseDelta delta = choices.get(0).getDelta();
         String part = delta.getContent();
         if (part != null && part.length() > 0) {
           completionContent.append(part);

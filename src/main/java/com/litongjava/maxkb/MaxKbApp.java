@@ -9,7 +9,7 @@ public class MaxKbApp {
   public static void main(String[] args) {
     long start = System.currentTimeMillis();
     HotSwapResolver.addSystemClassPrefix("com.litongjava.maxkb.vo.");
-//    TioApplicationWrapper.run(MaxKbApp.class, args);
+    //    TioApplicationWrapper.run(MaxKbApp.class, args);
     TioApplication.run(MaxKbApp.class, args);
     long end = System.currentTimeMillis();
     System.out.println((end - start) + "ms");

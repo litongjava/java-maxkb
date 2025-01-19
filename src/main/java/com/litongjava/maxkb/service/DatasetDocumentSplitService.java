@@ -29,7 +29,7 @@ import com.litongjava.maxkb.utils.ExecutorServiceUtils;
 import com.litongjava.maxkb.vo.UploadResultVo;
 import com.litongjava.model.result.ResultVo;
 import com.litongjava.openai.chat.ChatResponseUsage;
-import com.litongjava.openai.chat.ChatResponseVo;
+import com.litongjava.openai.chat.OpenAiChatResponseVo;
 import com.litongjava.openai.client.OpenAiClient;
 import com.litongjava.openai.constants.OpenAiModels;
 import com.litongjava.table.services.ApiTable;
@@ -245,7 +245,7 @@ public class DatasetDocumentSplitService {
 
     // 调用OpenAI API将图像转换为文本
     long start = System.currentTimeMillis();
-    ChatResponseVo chatResponseVo = null;
+    OpenAiChatResponseVo chatResponseVo = null;
     String imageToTextPrompt = Engine.use().getTemplate("image_to_text_prompt.txt").renderToString();
     try {
       chatResponseVo = OpenAiClient.chatWithImage(apiKey, imageToTextPrompt, imageBytes, suffix);

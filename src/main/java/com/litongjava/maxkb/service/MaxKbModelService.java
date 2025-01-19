@@ -126,7 +126,7 @@ public class MaxKbModelService {
           OpenAiChatRequestVo openAiChatRequestVo = new OpenAiChatRequestVo();
           openAiChatRequestVo.setStream(false);
           openAiChatRequestVo.setModel(OpenAiModels.gpt_4o_mini);
-          openAiChatRequestVo.setMessages(messages);
+          openAiChatRequestVo.fromMessages(messages);
 
           String bodyString = JsonUtils.toJson(openAiChatRequestVo);
           // send request
