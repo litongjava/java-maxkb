@@ -161,3 +161,4 @@ images/
 markdowns/
 app-prod.properties
 app-test.properties
+.deploy.toml

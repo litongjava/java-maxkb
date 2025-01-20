@@ -1,0 +1,12 @@
+[prod.upload-run]
+url = "http://192.168.1.2:10405/deploy/file/upload-run/"
+p = "xxx"
+b = ".build.txt"
+file = "target/java-maxkb-1.0.0.zip"
+d = "unzip/java-maxkb"
+c1 = "mkdir -p /data/apps/java-maxkb && mkdir -p backup/java-maxkb"
+c2 = "[ -d /data/apps/java-maxkb ] && cp -r /data/apps/java-maxkb backup/java-maxkb/$(date +%Y%m%d_%H%M%S)"
+c3 = "cp -r unzip/java-maxkb/* /data/apps/java-maxkb/"
+c4 = "if [ $(docker ps -qa -f name=java-maxkb) ]; then docker stop java-maxkb && docker rm -f java-maxkb; fi"
+c5 = "cd /data/apps/java-maxkb/java-maxkb-1.0.0 && docker run -dit --name java-maxkb --restart=always --net=host -v $(pwd):/app -w /app -e TZ=Asia/Shanghai -e LANG=C.UTF-8 litongjava/jdk:8u391-chromium java -Xverify:none -cp ./config:./lib/*:./static com.litongjava.maxkb.MaxKbApp --app.env=prod"
+c = "docker ps | grep java-maxkb"
