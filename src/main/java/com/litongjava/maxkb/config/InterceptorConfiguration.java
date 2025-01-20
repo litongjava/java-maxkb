@@ -25,6 +25,8 @@ public class InterceptorConfiguration {
 
     model.addAllowUrls("/api/application/chat_message/*", "/api/profile", "/api/application/authentication");
 
+    model.addAllowUrls("/api/v1/search");
+
     HttpInteceptorConfigure configure = new HttpInteceptorConfigure();
     configure.add(model);
 

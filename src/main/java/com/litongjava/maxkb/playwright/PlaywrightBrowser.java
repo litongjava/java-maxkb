@@ -12,7 +12,7 @@ public enum PlaywrightBrowser {
   public static BrowserContextPool contextPool;
   static {
     // 初始化上下文池，假设池大小为10，可根据需要调整
-    contextPool = new BrowserContextPool(3);
+    contextPool = new BrowserContextPool(Runtime.getRuntime().availableProcessors() * 2);
   }
 
   public static void init() {
@@ -89,4 +89,3 @@ public enum PlaywrightBrowser {
     contextPool.release(context);
   }
 }
-
