@@ -21,8 +21,7 @@ public class AiFilterService {
     String prompt = PromptEngine.renderToString(fileName, kv);
     //log.info("WebSearchSelectPrompt:{}", prompt);
 
-    OpenAiChatResponseVo generate = Aop.get(GeminiService.class).generate(prompt);
-    String selectResultContent = generate.getChoices().get(0).getMessage().getContent();
+    String selectResultContent = Aop.get(GeminiService.class).generate(prompt);
     List<String> outputs = TagUtils.extractOutput(selectResultContent);
     String titleAndLinks = outputs.get(0);
     if ("not_found".equals(titleAndLinks)) {
