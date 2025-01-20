@@ -15,7 +15,9 @@ import okhttp3.Callback;
 public class GeminiService {
   public String generate(String prompt) {
     String apiKey = EnvUtils.get("GEMINI_API_KEY");
-    log.info("api key:{}", apiKey);
+    if (EnvUtils.isDev()) {
+      log.info("api key:{}", apiKey);
+    }
     return GeminiClient.chatWithModel(apiKey, GoogleGeminiModels.GEMINI_2_0_FLASH_EXP, "user", prompt);
     //return OpenAiClient.chatWithModel(OpenAiConstants.GEMINI_OPENAI_API_BASE, apiKey, GoogleGeminiModels.GEMINI_2_0_FLASH_EXP, "user", prompt);
   }

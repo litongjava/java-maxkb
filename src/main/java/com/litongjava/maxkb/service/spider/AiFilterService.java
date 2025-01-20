@@ -6,7 +6,6 @@ import java.util.List;
 import com.jfinal.kit.Kv;
 import com.litongjava.jfinal.aop.Aop;
 import com.litongjava.maxkb.service.api.GeminiService;
-import com.litongjava.openai.chat.OpenAiChatResponseVo;
 import com.litongjava.searxng.WebPageConteont;
 import com.litongjava.template.PromptEngine;
 import com.litongjava.tio.utils.json.JsonUtils;
