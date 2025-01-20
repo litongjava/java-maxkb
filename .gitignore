@@ -160,3 +160,4 @@ pages/
 images/
 markdowns/
 app-prod.properties
+app-test.properties

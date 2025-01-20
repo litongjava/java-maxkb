@@ -147,6 +147,13 @@
       <version>1.27.0</version> <!-- 请检查最新版本 -->
     </dependency>
 
+    <dependency>
+      <groupId>com.google.guava</groupId>
+      <artifactId>guava</artifactId>
+      <version>31.1-jre</version>
+    </dependency>
+
+
   </dependencies>
   <profiles>
     <!-- development -->

@@ -2,6 +2,7 @@ package com.litongjava.maxkb.playwright;
 
 import java.util.concurrent.TimeUnit;
 
+import com.litongjava.tio.utils.environment.EnvUtils;
 import com.microsoft.playwright.BrowserContext;
 import com.microsoft.playwright.Page;
 
@@ -12,7 +13,11 @@ public enum PlaywrightBrowser {
   public static BrowserContextPool contextPool;
   static {
     // 初始化上下文池，假设池大小为10，可根据需要调整
-    contextPool = new BrowserContextPool(Runtime.getRuntime().availableProcessors() * 2);
+    if(EnvUtils.isDev()) {
+      contextPool = new BrowserContextPool(2);
+    }else {
+      contextPool = new BrowserContextPool(Runtime.getRuntime().availableProcessors() * 2);
+    }
   }
 
   public static void init() {
