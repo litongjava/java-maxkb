@@ -16,7 +16,6 @@ public class SearxngSearchHandler {
 
   public HttpResponse search(HttpRequest request) {
     log.info("request line:{}", request.requestLine.toString());
-
     // 从请求中获取各参数
     String format = "json";
     String q = request.getString("q");

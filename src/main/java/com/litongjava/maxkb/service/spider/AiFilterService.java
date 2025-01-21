@@ -14,7 +14,6 @@ import com.litongjava.tio.utils.tag.TagUtils;
 // @Slf4j
 public class AiFilterService {
   public List<WebPageConteont> filter(List<WebPageConteont> pages, String question, Integer limit) {
-    //3.选择
     Kv kv = Kv.by("limit", limit).set("quesiton", question).set("search_result", JsonUtils.toJson(pages));
     String fileName = "WebSearchSelectPrompt.txt";
     String prompt = PromptEngine.renderToString(fileName, kv);
