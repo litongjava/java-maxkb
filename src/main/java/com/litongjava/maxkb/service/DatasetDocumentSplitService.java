@@ -176,10 +176,10 @@ public class DatasetDocumentSplitService {
 
     // 更新或保存缓存记录
     if (exists) {
-      Db.update(TableNames.max_kb_document_markdown_cache, Row.by("id", md5).set("target", target));
+      Db.update(TableNames.max_kb_document_markdown_cache, Row.by("id", md5).set("target", target).set("content", combinedMarkdown));
       log.info("Cache updated for document MD5: {}", md5);
     } else {
-      Db.save(TableNames.max_kb_document_markdown_cache, Row.by("id", md5).set("target", target));
+      Db.save(TableNames.max_kb_document_markdown_cache, Row.by("id", md5).set("target", target).set("content", combinedMarkdown));
       log.info("Cache saved for new document MD5: {}", md5);
     }
 
@@ -258,8 +258,8 @@ public class DatasetDocumentSplitService {
     }
 
     content = chatResponseVo.getChoices().get(0).getMessage().getContent();
-    if (content.startsWith("```")) {
-      content = content.substring(3, content.length() - 3);
+    if (content.startsWith("```markdown")) {
+      content = content.substring(11, content.length() - 3);
     }
 
     ChatResponseUsage usage = chatResponseVo.getUsage();
