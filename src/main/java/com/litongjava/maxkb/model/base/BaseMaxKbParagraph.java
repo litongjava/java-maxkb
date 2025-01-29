@@ -18,6 +18,24 @@ public abstract class BaseMaxKbParagraph<M extends BaseMaxKbParagraph<M>> extend
 		return getLong("id");
 	}
 	
+	public M setSourceId(java.lang.Long sourceId) {
+		set("source_id", sourceId);
+		return (M)this;
+	}
+	
+	public java.lang.Long getSourceId() {
+		return getLong("source_id");
+	}
+	
+	public M setSourceType(java.lang.String sourceType) {
+		set("source_type", sourceType);
+		return (M)this;
+	}
+	
+	public java.lang.String getSourceType() {
+		return getStr("source_type");
+	}
+	
 	public M setTitle(java.lang.String title) {
 		set("title", title);
 		return (M)this;
@@ -169,24 +187,6 @@ public abstract class BaseMaxKbParagraph<M extends BaseMaxKbParagraph<M>> extend
 	
 	public java.lang.Long getTenantId() {
 		return getLong("tenant_id");
-	}
-	
-	public M setSourceId(java.lang.Long sourceId) {
-		set("source_id", sourceId);
-		return (M)this;
-	}
-	
-	public java.lang.Long getSourceId() {
-		return getLong("source_id");
-	}
-	
-	public M setSourceType(java.lang.String sourceType) {
-		set("source_type", sourceType);
-		return (M)this;
-	}
-	
-	public java.lang.String getSourceType() {
-		return getStr("source_type");
 	}
 	
 }

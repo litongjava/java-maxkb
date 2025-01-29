@@ -45,7 +45,7 @@ public class JavaDbGenerator {
         //
         "max_kb_problem", "max_kb_problem_paragraph_mapping",
         //
-        "max_kb_embedding_cache", "max_kb_document_markdown_cache", "max_kb_document_markdown_page_cache",
+        "max_kb_embedding_cache", "max_kb_document_markdown_cache", "max_kb_document_markdown_page_cache", "max_kb_paragraph_summary_cache",
         //
         "max_kb_application_public_access_client"
 

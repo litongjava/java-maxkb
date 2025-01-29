@@ -16,6 +16,8 @@ import com.litongjava.db.activerecord.Row;
 import com.litongjava.jfinal.aop.Aop;
 import com.litongjava.maxkb.constant.TableNames;
 import com.litongjava.maxkb.model.MaxKbSentence;
+import com.litongjava.maxkb.service.kb.MaxKbEmbeddingService;
+import com.litongjava.maxkb.service.kb.MaxKbSentenceService;
 import com.litongjava.maxkb.utils.ExecutorServiceUtils;
 import com.litongjava.maxkb.vo.DocumentBatchVo;
 import com.litongjava.maxkb.vo.Paragraph;
@@ -36,6 +38,7 @@ import lombok.extern.slf4j.Slf4j;
 public class DatasetDocumentVectorService {
 
   MaxKbEmbeddingService maxKbEmbeddingService = Aop.get(MaxKbEmbeddingService.class);
+  MaxKbSentenceService maxKbSentenceService = Aop.get(MaxKbSentenceService.class);
 
   public ResultVo batch(Long userId, Long dataset_id, List<DocumentBatchVo> list) {
 
@@ -58,7 +61,6 @@ public class DatasetDocumentVectorService {
     String sqlDocumentId = String.format("SELECT id FROM %s WHERE user_id = ? AND file_id = ?", TableNames.max_kb_document);
 
     List<Kv> kvs = new ArrayList<>();
-    CompletionService<Row> completionService = new ExecutorCompletionService<>(ExecutorServiceUtils.getExecutorService());
 
     for (DocumentBatchVo documentBatchVo : list) {
       Long fileId = documentBatchVo.getId();
@@ -105,71 +107,20 @@ public class DatasetDocumentVectorService {
       }
 
       List<Row> paragraphRecords = new ArrayList<>();
-      extraParagraph(dataset_id, fileId, documentId, paragraphs, type, paragraphRecords);
-
       Long documentIdFinal = documentId;
-      boolean transactionSuccess = Db.tx(() -> {
-        Db.delete(TableNames.max_kb_paragraph, Row.by("document_id", documentIdFinal));
-        Db.batchSave(TableNames.max_kb_paragraph, paragraphRecords, 2000);
-        return true;
-      });
+      boolean transactionSuccess = saveToParagraph(dataset_id, fileId, documentId, paragraphs, type, paragraphRecords);
 
       if (!transactionSuccess) {
         return ResultVo.fail("Transaction failed while saving paragraphs for document ID: " + documentIdFinal);
       }
 
-      List<MaxKbSentence> sentences = new ArrayList<>();
-      for (Row paragraph : paragraphRecords) {
-        String paragraphContent = paragraph.getStr("content");
+      transactionSuccess = Aop.get(MaxKbSentenceService.class).summaryToSentenceAndSave(dataset_id, modelName, paragraphRecords, documentIdFinal);
 
-        //继续拆分片段 为句子 
-        Document document = new Document(paragraphContent);
-        // 使用较大的块大小（150）和相同的重叠（50）
-        DocumentSplitter splitter = DocumentSplitters.recursive(150, 50, new OpenAiTokenizer());
-        List<TextSegment> segments = splitter.split(document);
-        for (TextSegment segment : segments) {
-          String sentenceContent = segment.text();
-
-          MaxKbSentence maxKbSentence = new MaxKbSentence();
-          maxKbSentence.setId(SnowflakeIdUtils.id()).setType(1).setHitNum(0)
-              //
-              .setMd5(Md5Utils.getMD5(sentenceContent)).setContent(sentenceContent)
-              //
-              .setDatasetId(dataset_id).setDocumentId(documentIdFinal).setParagraphId(paragraph.getLong("id"));
-
-          sentences.add(maxKbSentence);
-        }
-
+      if (!transactionSuccess) {
+        return ResultVo.fail("Transaction failed while summary paragraph for document ID: " + documentIdFinal);
       }
 
-      List<Future<Row>> futures = new ArrayList<>(sentences.size());
-      for (MaxKbSentence sentence : sentences) {
-        futures.add(completionService.submit(() -> {
-          PGobject vector = maxKbEmbeddingService.getVector(sentence.getContent(), modelName);
-          Row record = sentence.toRecord();
-          record.set("embedding", vector);
-          return record;
-        }));
-      }
-
-      List<Row> sentenceRows = new ArrayList<>();
-      for (int i = 0; i < sentences.size(); i++) {
-        try {
-          Future<Row> future = completionService.take();
-          Row record = future.get();
-          if (record != null) {
-            sentenceRows.add(record);
-          }
-        } catch (Exception e) {
-          log.error(e.getMessage(), e);
-        }
-      }
-
-      transactionSuccess = Db.tx(() -> {
-        Db.deleteById(TableNames.max_kb_sentence, "document_id", documentIdFinal);
-        Db.batchSave(TableNames.max_kb_sentence, sentenceRows, 2000);
-        return true;
-      });
+      transactionSuccess = maxKbSentenceService.splitToSentenceAndSave(dataset_id, modelName, paragraphRecords, documentIdFinal);
 
       if (!transactionSuccess) {
         return ResultVo.fail("Transaction failed while saving senttents for document ID: " + documentIdFinal);
@@ -180,9 +131,11 @@ public class DatasetDocumentVectorService {
     return ResultVo.ok(kvs);
   }
 
-  private void extraParagraph(Long dataset_id, Long fileId, Long documentId, List<Paragraph> paragraphs, String type, List<Row> batchRecord) {
+  private boolean saveToParagraph(Long dataset_id, Long fileId, Long documentId, List<Paragraph> paragraphs,
+      //
+      String type, List<Row> batchRecord) {
+    final long documentIdFinal = documentId;
     if (paragraphs != null) {
-      final long documentIdFinal = documentId;
       for (Paragraph p : paragraphs) {
 
         String title = p.getTitle();
@@ -209,5 +162,10 @@ public class DatasetDocumentVectorService {
 
       }
     }
+    return Db.tx(() -> {
+      Db.delete(TableNames.max_kb_paragraph, Row.by("document_id", documentIdFinal));
+      Db.batchSave(TableNames.max_kb_paragraph, batchRecord, 2000);
+      return true;
+    });
   }
 }

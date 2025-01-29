@@ -15,6 +15,10 @@ public class MaxKbParagraph extends BaseMaxKbParagraph<MaxKbParagraph> {
   public static final String primaryKey = "id";
   //java.lang.Long 
   public static final String id = "id";
+  //java.lang.Long 
+  public static final String sourceId = "source_id";
+  //java.lang.String 
+  public static final String sourceType = "source_type";
   //java.lang.String 
   public static final String title = "title";
   //java.lang.String 
@@ -49,10 +53,6 @@ public class MaxKbParagraph extends BaseMaxKbParagraph<MaxKbParagraph> {
   public static final String deleted = "deleted";
   //java.lang.Long 
   public static final String tenantId = "tenant_id";
-  //java.lang.Long 
-  public static final String sourceId = "source_id";
-  //java.lang.String 
-  public static final String sourceType = "source_type";
 
   @Override
   protected String _getPrimaryKey() {

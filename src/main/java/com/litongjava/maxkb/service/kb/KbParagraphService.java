@@ -1,4 +1,4 @@
-package com.litongjava.maxkb.service;
+package com.litongjava.maxkb.service.kb;
 
 import java.sql.SQLException;
 import java.util.List;

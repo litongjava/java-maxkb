@@ -4,6 +4,7 @@ import org.junit.Test;
 
 import com.litongjava.jfinal.aop.Aop;
 import com.litongjava.maxkb.config.DbConfig;
+import com.litongjava.maxkb.service.kb.MaxKbParagraphSearchService;
 import com.litongjava.maxkb.vo.MaxKbSearchStep;
 import com.litongjava.tio.boot.testing.TioBootTest;
 import com.litongjava.tio.utils.json.JsonUtils;

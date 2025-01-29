@@ -4,6 +4,7 @@ import org.junit.Test;
 
 import com.litongjava.jfinal.aop.Aop;
 import com.litongjava.maxkb.config.DbConfig;
+import com.litongjava.maxkb.service.kb.MaxKbApplicationChatMessageService;
 import com.litongjava.maxkb.vo.MaxKbChatRequestVo;
 import com.litongjava.model.result.ResultVo;
 import com.litongjava.tio.boot.testing.TioBootTest;

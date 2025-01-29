@@ -1,4 +1,4 @@
-package com.litongjava.maxkb.service;
+package com.litongjava.maxkb.service.kb;
 
 import java.util.List;
 
@@ -9,6 +9,7 @@ import com.litongjava.jfinal.aop.Aop;
 import com.litongjava.maxkb.constant.AppConstant;
 import com.litongjava.maxkb.model.MaxKbApplicationAccessToken;
 import com.litongjava.maxkb.model.MaxKbApplicationPublicAccessClient;
+import com.litongjava.maxkb.service.AuthService;
 import com.litongjava.model.result.ResultVo;
 import com.litongjava.tio.utils.json.JsonUtils;
 import com.litongjava.tio.utils.jwt.JwtUtils;

@@ -1,4 +1,4 @@
-package com.litongjava.maxkb.service;
+package com.litongjava.maxkb.service.kb;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,6 +13,7 @@ import com.litongjava.maxkb.constant.TableNames;
 import com.litongjava.maxkb.model.MaxKbApplicationChat;
 import com.litongjava.maxkb.model.MaxKbApplicationChatRecord;
 import com.litongjava.maxkb.model.MaxKbApplicationTempSetting;
+import com.litongjava.maxkb.service.ChatStreamCallCan;
 import com.litongjava.maxkb.stream.ChatStreamCallbackImpl;
 import com.litongjava.maxkb.utils.TokenCounter;
 import com.litongjava.maxkb.vo.CredentialVo;

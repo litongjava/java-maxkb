@@ -4,6 +4,7 @@ import org.junit.Test;
 
 import com.litongjava.jfinal.aop.Aop;
 import com.litongjava.maxkb.config.DbConfig;
+import com.litongjava.maxkb.service.kb.KbParagraphService;
 import com.litongjava.tio.utils.environment.EnvUtils;
 
 public class KbParagraphServiceTest {

@@ -1,4 +1,4 @@
-package com.litongjava.maxkb.service;
+package com.litongjava.maxkb.service.kb;
 
 import java.io.IOException;
 import java.util.ArrayList;

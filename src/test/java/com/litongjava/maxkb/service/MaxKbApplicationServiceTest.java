@@ -5,6 +5,7 @@ import org.junit.Test;
 import com.litongjava.db.TableInput;
 import com.litongjava.jfinal.aop.Aop;
 import com.litongjava.maxkb.config.DbConfig;
+import com.litongjava.maxkb.service.kb.MaxKbApplicationService;
 import com.litongjava.model.result.ResultVo;
 import com.litongjava.tio.boot.testing.TioBootTest;
 import com.litongjava.tio.utils.environment.EnvUtils;

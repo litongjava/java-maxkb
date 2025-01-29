@@ -7,7 +7,7 @@ import com.litongjava.annotation.Post;
 import com.litongjava.annotation.Put;
 import com.litongjava.annotation.RequestPath;
 import com.litongjava.jfinal.aop.Aop;
-import com.litongjava.maxkb.service.MaxKbModelService;
+import com.litongjava.maxkb.service.kb.MaxKbModelService;
 import com.litongjava.maxkb.vo.ModelVo;
 import com.litongjava.model.result.ResultVo;
 import com.litongjava.tio.boot.http.TioRequestContext;

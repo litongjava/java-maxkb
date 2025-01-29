@@ -1,4 +1,4 @@
-package com.litongjava.maxkb.service;
+package com.litongjava.maxkb.service.kb;
 
 import com.litongjava.db.activerecord.Db;
 import com.litongjava.ehcache.EhCacheKit;

@@ -2,7 +2,7 @@ package com.litongjava.maxkb.controller;
 
 import com.litongjava.annotation.RequestPath;
 import com.litongjava.jfinal.aop.Aop;
-import com.litongjava.maxkb.service.MaxKbApplicationChatService;
+import com.litongjava.maxkb.service.kb.MaxKbApplicationChatService;
 import com.litongjava.maxkb.vo.MaxKbApplicationVo;
 import com.litongjava.model.result.ResultVo;
 import com.litongjava.tio.http.common.HttpRequest;

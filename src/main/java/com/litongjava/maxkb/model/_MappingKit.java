@@ -31,6 +31,7 @@ public class _MappingKit {
 		arp.addMapping("max_kb_file", "id", MaxKbFile.class);
 		arp.addMapping("max_kb_model", "id", MaxKbModel.class);
 		arp.addMapping("max_kb_paragraph", "id", MaxKbParagraph.class);
+		arp.addMapping("max_kb_paragraph_summary_cache", "id", MaxKbParagraphSummaryCache.class);
 		arp.addMapping("max_kb_problem", "id", MaxKbProblem.class);
 		arp.addMapping("max_kb_problem_paragraph_mapping", "id", MaxKbProblemParagraphMapping.class);
 		arp.addMapping("max_kb_sentence", "id", MaxKbSentence.class);

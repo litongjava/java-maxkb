@@ -3,7 +3,7 @@ package com.litongjava.maxkb.controller;
 import com.litongjava.annotation.Post;
 import com.litongjava.annotation.RequestPath;
 import com.litongjava.jfinal.aop.Aop;
-import com.litongjava.maxkb.service.MaxKbApplicationChatMessageService;
+import com.litongjava.maxkb.service.kb.MaxKbApplicationChatMessageService;
 import com.litongjava.maxkb.vo.MaxKbChatRequestVo;
 import com.litongjava.model.result.ResultVo;
 import com.litongjava.tio.boot.http.TioRequestContext;

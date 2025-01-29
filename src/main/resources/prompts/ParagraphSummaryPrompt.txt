@@ -1,0 +1,2 @@
+Summarize the following text in a concise, structured manner, ensuring that it covers the core themes and key information, suitable for use in vector similarity calculations:
+Summary of 
