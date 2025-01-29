@@ -31,8 +31,38 @@ public class MaxKbParagraphSearchService {
         .setParagraph_list(results);
     return maxKbSearchStep;
   }
+  
+  private List<ParagraphSearchResultVo> search0(Long[] datasetIdArray, Float similarity, Integer top_n, String quesiton) {
+    Long vectorId = Aop.get(MaxKbEmbeddingService.class).getVectorId(quesiton, OpenAiModels.text_embedding_3_large);
+    String sql = SqlTemplates.get("kb.search_sentense_related_paragraph__with_dataset_ids");
 
-  public List<ParagraphSearchResultVo> search0(Long[] datasetIdArray, Float similarity, Integer top_n,
+    List<Row> records = Db.find(sql, vectorId, datasetIdArray, similarity, top_n);
+
+    log.info("search_paragraph:{},{},{},{},{}", vectorId, Arrays.toString(datasetIdArray), similarity, top_n, records.size());
+    List<ParagraphSearchResultVo> results = new ArrayList<>();
+    for (Row record : records) {
+      ParagraphSearchResultVo vo = record.toBean(ParagraphSearchResultVo.class);
+      results.add(vo);
+    }
+    return results;
+  }
+
+  public MaxKbSearchStep searchV1(Long[] datasetIdArray, Float similarity, Integer top_n, String quesiton) {
+    MaxKbSearchStep maxKbSearchStep = new MaxKbSearchStep();
+    long start = System.currentTimeMillis();
+    List<ParagraphSearchResultVo> results = searchV10(datasetIdArray, similarity, top_n, quesiton);
+    long end = System.currentTimeMillis();
+    maxKbSearchStep.setStep_type("step_type")
+        //
+        .setModel_name("text_embedding_3_large").setProblem_text("problem_text")
+        //
+        .setCost(0).setRun_time(((double) (end - start)) / 1000)
+        //
+        .setParagraph_list(results);
+    return maxKbSearchStep;
+  }
+
+  public List<ParagraphSearchResultVo> searchV10(Long[] datasetIdArray, Float similarity, Integer top_n,
       //
       String quesiton) {
     Long vectorId = Aop.get(MaxKbEmbeddingService.class).getVectorId(quesiton, OpenAiModels.text_embedding_3_large);

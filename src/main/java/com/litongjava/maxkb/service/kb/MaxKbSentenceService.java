@@ -32,63 +32,6 @@ public class MaxKbSentenceService {
   CompletionService<Row> completionServiceRow = new ExecutorCompletionService<>(ExecutorServiceUtils.getExecutorService());
   MaxKbParagraphSummaryService maxKbParagraphSummaryService = Aop.get(MaxKbParagraphSummaryService.class);
 
-  public boolean splitToSentenceAndSave(Long dataset_id, String modelName, List<Row> paragraphRecords, Long documentIdFinal) {
-    boolean transactionSuccess;
-    List<MaxKbSentence> sentences = new ArrayList<>();
-    for (Row paragraph : paragraphRecords) {
-      String paragraphContent = paragraph.getStr("content");
-
-      //继续拆分片段 为句子 
-      Document document = new Document(paragraphContent);
-      // 使用较大的块大小（150）和相同的重叠（50）
-      DocumentSplitter splitter = DocumentSplitters.recursive(150, 50, new OpenAiTokenizer());
-      List<TextSegment> segments = splitter.split(document);
-      for (TextSegment segment : segments) {
-        String sentenceContent = segment.text();
-
-        MaxKbSentence maxKbSentence = new MaxKbSentence();
-        maxKbSentence.setId(SnowflakeIdUtils.id()).setType(1).setHitNum(0)
-            //
-            .setMd5(Md5Utils.getMD5(sentenceContent)).setContent(sentenceContent)
-            //
-            .setDatasetId(dataset_id).setDocumentId(documentIdFinal).setParagraphId(paragraph.getLong("id"));
-
-        sentences.add(maxKbSentence);
-      }
-
-    }
-
-    List<Future<Row>> futures = new ArrayList<>(sentences.size());
-    for (MaxKbSentence sentence : sentences) {
-      futures.add(completionServiceRow.submit(() -> {
-        PGobject vector = maxKbEmbeddingService.getVector(sentence.getContent(), modelName);
-        Row record = sentence.toRecord();
-        record.set("embedding", vector);
-        return record;
-      }));
-    }
-
-    List<Row> sentenceRows = new ArrayList<>();
-    for (int i = 0; i < sentences.size(); i++) {
-      try {
-        Future<Row> future = completionServiceRow.take();
-        Row record = future.get();
-        if (record != null) {
-          sentenceRows.add(record);
-        }
-      } catch (Exception e) {
-        log.error(e.getMessage(), e);
-      }
-    }
-
-    transactionSuccess = Db.tx(() -> {
-      Db.deleteById(TableNames.max_kb_sentence, "document_id", documentIdFinal);
-      Db.batchSave(TableNames.max_kb_sentence, sentenceRows, 2000);
-      return true;
-    });
-    return transactionSuccess;
-  }
-
   public boolean summaryToSentenceAndSave(Long dataset_id, String modelName, List<Row> paragraphRecords, Long documentIdFinal) {
     boolean transactionSuccess;
 
@@ -164,4 +107,60 @@ public class MaxKbSentenceService {
     return transactionSuccess;
   }
 
+  public boolean splitToSentenceAndSave(Long dataset_id, String modelName, List<Row> paragraphRecords, Long documentIdFinal) {
+    boolean transactionSuccess;
+    List<MaxKbSentence> sentences = new ArrayList<>();
+    for (Row paragraph : paragraphRecords) {
+      String paragraphContent = paragraph.getStr("content");
+
+      //继续拆分片段 为句子 
+      Document document = new Document(paragraphContent);
+      // 使用较大的块大小（150）和相同的重叠（50）
+      DocumentSplitter splitter = DocumentSplitters.recursive(150, 50, new OpenAiTokenizer());
+      List<TextSegment> segments = splitter.split(document);
+      for (TextSegment segment : segments) {
+        String sentenceContent = segment.text();
+
+        MaxKbSentence maxKbSentence = new MaxKbSentence();
+        maxKbSentence.setId(SnowflakeIdUtils.id()).setType(1).setHitNum(0)
+            //
+            .setMd5(Md5Utils.getMD5(sentenceContent)).setContent(sentenceContent)
+            //
+            .setDatasetId(dataset_id).setDocumentId(documentIdFinal).setParagraphId(paragraph.getLong("id"));
+
+        sentences.add(maxKbSentence);
+      }
+
+    }
+
+    List<Future<Row>> futures = new ArrayList<>(sentences.size());
+    for (MaxKbSentence sentence : sentences) {
+      futures.add(completionServiceRow.submit(() -> {
+        PGobject vector = maxKbEmbeddingService.getVector(sentence.getContent(), modelName);
+        Row record = sentence.toRecord();
+        record.set("embedding", vector);
+        return record;
+      }));
+    }
+
+    List<Row> sentenceRows = new ArrayList<>();
+    for (int i = 0; i < sentences.size(); i++) {
+      try {
+        Future<Row> future = completionServiceRow.take();
+        Row record = future.get();
+        if (record != null) {
+          sentenceRows.add(record);
+        }
+      } catch (Exception e) {
+        log.error(e.getMessage(), e);
+      }
+    }
+
+    transactionSuccess = Db.tx(() -> {
+      Db.deleteById(TableNames.max_kb_sentence, "document_id", documentIdFinal);
+      Db.batchSave(TableNames.max_kb_sentence, sentenceRows, 2000);
+      return true;
+    });
+    return transactionSuccess;
+  }
 }

@@ -14,10 +14,10 @@ public class MaxKbParagraphSearchServiceTest {
   @Test
   public void test() {
     TioBootTest.runWith(DbConfig.class);
-    Long[] datasetIdArray = { 446225135519784960L };
+    Long[] datasetIdArray = { 474194391515324416L };
     Float similarity = 0.2f;
-    Integer top_n = 3;
-    String question = "office hour";
+    Integer top_n = 20;
+    String question = "总结一下文档内容";
     MaxKbSearchStep search = Aop.get(MaxKbParagraphSearchService.class).search(datasetIdArray, similarity, top_n, question);
     System.out.println(JsonUtils.toJson(search.getParagraph_list()));
   }

@@ -2,11 +2,6 @@ package com.litongjava.maxkb.service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CompletionService;
-import java.util.concurrent.ExecutorCompletionService;
-import java.util.concurrent.Future;
-
-import org.postgresql.util.PGobject;
 
 import com.jfinal.kit.Kv;
 import com.litongjava.db.TableInput;
@@ -15,10 +10,8 @@ import com.litongjava.db.activerecord.Db;
 import com.litongjava.db.activerecord.Row;
 import com.litongjava.jfinal.aop.Aop;
 import com.litongjava.maxkb.constant.TableNames;
-import com.litongjava.maxkb.model.MaxKbSentence;
 import com.litongjava.maxkb.service.kb.MaxKbEmbeddingService;
 import com.litongjava.maxkb.service.kb.MaxKbSentenceService;
-import com.litongjava.maxkb.utils.ExecutorServiceUtils;
 import com.litongjava.maxkb.vo.DocumentBatchVo;
 import com.litongjava.maxkb.vo.Paragraph;
 import com.litongjava.model.result.ResultVo;
@@ -27,11 +20,6 @@ import com.litongjava.tio.utils.crypto.Md5Utils;
 import com.litongjava.tio.utils.hutool.FilenameUtils;
 import com.litongjava.tio.utils.snowflake.SnowflakeIdUtils;
 
-import dev.langchain4j.data.document.Document;
-import dev.langchain4j.data.document.DocumentSplitter;
-import dev.langchain4j.data.document.splitter.DocumentSplitters;
-import dev.langchain4j.data.segment.TextSegment;
-import dev.langchain4j.model.openai.OpenAiTokenizer;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
