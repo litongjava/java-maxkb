@@ -11,6 +11,7 @@ public interface TableNames {
   String max_kb_application_dataset_mapping = "max_kb_application_dataset_mapping";
   String max_kb_document = "max_kb_document";
   String max_kb_paragraph = "max_kb_paragraph";
+  String max_kb_sentence = "max_kb_sentence";
   String max_kb_document_markdown_cache = "max_kb_document_markdown_cache";
   String max_kb_document_markdown_page_cache = "max_kb_document_markdown_page_cache";
   String max_kb_embedding_cache = "max_kb_embedding_cache";

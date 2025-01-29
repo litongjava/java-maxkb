@@ -33,6 +33,7 @@ public class _MappingKit {
 		arp.addMapping("max_kb_paragraph", "id", MaxKbParagraph.class);
 		arp.addMapping("max_kb_problem", "id", MaxKbProblem.class);
 		arp.addMapping("max_kb_problem_paragraph_mapping", "id", MaxKbProblemParagraphMapping.class);
+		arp.addMapping("max_kb_sentence", "id", MaxKbSentence.class);
 		arp.addMapping("max_kb_task", "id", MaxKbTask.class);
 		arp.addMapping("max_kb_user", "id", MaxKbUser.class);
 		arp.addMapping("max_kb_user_token", "id", MaxKbUserToken.class);

@@ -76,8 +76,8 @@ public class DatasetDocumentSplitService {
     String markdown = toMarkdown(apiKey, data, suffix);
 
     Document document = new Document(markdown);
-    // 使用较小的块大小（150）和相同的重叠（50）以实现更细粒度的分割
-    DocumentSplitter splitter = DocumentSplitters.recursive(150, 100, new OpenAiTokenizer());
+    // 使用较大的块大小（1000）和相同的重叠（400）
+    DocumentSplitter splitter = DocumentSplitters.recursive(1000, 400, new OpenAiTokenizer());
     List<TextSegment> segments = splitter.split(document);
 
     // 创建包含文件名和ID的KV对象
