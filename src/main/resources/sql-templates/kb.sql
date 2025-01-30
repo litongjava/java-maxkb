@@ -149,7 +149,7 @@ ORDER BY
   sub.similarity DESC
 LIMIT ?;
 --# kb.search_sentense_related_paragraph__with_dataset_ids
-SELECT
+SELECT DISTINCT
   sub.id,
   sub.content,
   sub.title,

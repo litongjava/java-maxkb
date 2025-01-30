@@ -95,18 +95,12 @@ public class MaxKbApplicationChatMessageService {
   private void chatWichApplication(ChannelContext channelContext, String quesiton, MaxKbApplicationVo applicationVo, Long chatId, long messageId, MaxKbSearchStep maxKbSearchStep) {
     List<ParagraphSearchResultVo> records = maxKbSearchStep.getParagraph_list();
     log.info("records size:{}", records.size());
-    StringBuffer data = new StringBuffer();
-    data.append("<data>");
-    for (ParagraphSearchResultVo paragraphSearchResultVo : records) {
-      String content = paragraphSearchResultVo.getContent();
-      data.append(content);
-    }
-    data.append("</data>");
+    String xmlData = MaxKbChatDataXMLGenerator.generateXML(records);
 
     MaxKbModelSetting model_setting = applicationVo.getModel_setting();
 
     String prompt = model_setting.getPrompt();
-    String userPrompt = prompt.replace("{data}", data.toString()).replace("{question}", quesiton);
+    String userPrompt = prompt.replace("{data}", xmlData).replace("{question}", quesiton);
 
     StringBuffer messageText = new StringBuffer();
     String systemPrompt = model_setting.getSystem();
