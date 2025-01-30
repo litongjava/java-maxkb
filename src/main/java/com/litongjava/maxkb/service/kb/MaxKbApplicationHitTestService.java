@@ -1,7 +1,7 @@
 package com.litongjava.maxkb.service.kb;
 
+import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import com.jfinal.kit.Kv;
 import com.litongjava.db.TableInput;
@@ -61,23 +61,11 @@ public class MaxKbApplicationHitTestService {
     if (datasetIds.size() < 1) {
       return ResultVo.fail("not found database of application id:", applicationId);
     }
-    String ids = datasetIds.stream().map(id -> "?").collect(Collectors.joining(", "));
-
-    sql = SqlTemplates.get("kb.hit_test_by_dataset_ids_with_max_kb_embedding_cache");
-    sql.replace("#(in_list)", ids);
-
-    int paramSize = 3 + datasetIds.size();
-    Object[] params = new Object[paramSize];
     Long vectorId = Aop.get(MaxKbEmbeddingService.class).getVectorId(query_text, modelName);
 
-    params[0] = vectorId;
-    for (int i = 0; i < datasetIds.size(); i++) {
-      params[i + 1] = datasetIds.get(0);
-    }
-    params[paramSize - 2] = similarity;
-    params[paramSize - 1] = top_number;
-    log.info("sql:{},params:{}", sql, params);
-    List<Row> records = Db.find(sql, params);
+    sql = SqlTemplates.get("kb.search_sentense_related_paragraph__with_dataset_ids");
+    Long[] array = datasetIds.toArray(new Long[0]);
+    List<Row> records = Db.find(sql, vectorId, array, similarity, top_number);
     List<Kv> kvs = RowUtils.recordsToKv(records, false);
     return ResultVo.ok(kvs);
   }
@@ -116,23 +104,29 @@ public class MaxKbApplicationHitTestService {
     if (datasetIds.size() < 1) {
       return ResultVo.fail("not found database of application id:", applicationId);
     }
-    String ids = datasetIds.stream().map(id -> "?").collect(Collectors.joining(", "));
-
-    sql = SqlTemplates.get("kb.hit_test_by_dataset_ids_with_max_kb_embedding_cache");
-    sql = sql.replace("#(in_list)", ids);
-
-    int paramSize = 3 + datasetIds.size();
-    Object[] params = new Object[paramSize];
     Long vectorId = Aop.get(MaxKbEmbeddingService.class).getVectorId(query_text, modelName);
+    //String ids = datasetIds.stream().map(id -> "?").collect(Collectors.joining(", "));
 
-    params[0] = vectorId;
-    for (int i = 0; i < datasetIds.size(); i++) {
-      params[i + 1] = datasetIds.get(0);
-    }
-    params[paramSize - 2] = similarity;
-    params[paramSize - 1] = top_number;
-    log.info("sql:{},params:{}", sql, params);
-    List<Row> records = Db.find(sql, params);
+    //    sql = SqlTemplates.get("kb.hit_test_by_dataset_ids_with_max_kb_embedding_cache");
+    //    sql = sql.replace("#(in_list)", ids);
+    //
+    //    int paramSize = 3 + datasetIds.size();
+    //    Object[] params = new Object[paramSize];
+    //
+    //    params[0] = vectorId;
+    //    for (int i = 0; i < datasetIds.size(); i++) {
+    //      params[i + 1] = datasetIds.get(0);
+    //    }
+    //    params[paramSize - 2] = similarity;
+    //    params[paramSize - 1] = top_number;
+    //    log.info("sql:{},params:{}", sql, params);
+    //    List<Row> records = Db.find(sql, params);
+
+    sql = SqlTemplates.get("kb.search_sentense_related_paragraph__with_dataset_ids");
+    Long[] array = datasetIds.toArray(new Long[0]);
+    List<Row> records = Db.find(sql, vectorId, array, similarity, top_number);
+
+    log.info("search_paragraph:{},{},{},{},{}", vectorId, Arrays.toString(array), similarity, top_number, records.size());
 
     List<Kv> kvs = RowUtils.recordsToKv(records, false);
     return ResultVo.ok(kvs);

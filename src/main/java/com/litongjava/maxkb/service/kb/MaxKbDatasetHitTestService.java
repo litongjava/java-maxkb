@@ -1,5 +1,6 @@
 package com.litongjava.maxkb.service.kb;
 
+import java.util.Arrays;
 import java.util.List;
 
 import com.jfinal.kit.Kv;
@@ -15,6 +16,9 @@ import com.litongjava.openai.constants.OpenAiModels;
 import com.litongjava.table.services.ApiTable;
 import com.litongjava.template.SqlTemplates;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 public class MaxKbDatasetHitTestService {
 
   public ResultVo hitTest(Long userId, Long datasetId, String query_text, Double similarity, Integer top_number, String search_mode) {
@@ -52,15 +56,14 @@ public class MaxKbDatasetHitTestService {
       modelName = OpenAiModels.text_embedding_3_large;
     }
 
-    
     String sql = SqlTemplates.get("kb.hit_test_by_dataset_id_with_max_kb_embedding_cache");
     Long vectorId = Aop.get(MaxKbEmbeddingService.class).getVectorId(query_text, modelName);
     List<Row> records = Db.find(sql, vectorId, datasetId, similarity, top_number);
-    
+
     List<Kv> kvs = RowUtils.recordsToKv(records, false);
     return ResultVo.ok(kvs);
   }
-  
+
   private ResultVo embeddingSearch(Long userId, Long datasetId, String query_text, Double similarity, Integer top_number) {
     // 获取数据集信息
     TableInput tableInput = new TableInput();
@@ -87,9 +90,16 @@ public class MaxKbDatasetHitTestService {
       modelName = OpenAiModels.text_embedding_3_large;
     }
 
-    String sql = SqlTemplates.get("kb.hit_test_by_dataset_id_with_max_kb_embedding_cache");
     Long vectorId = Aop.get(MaxKbEmbeddingService.class).getVectorId(query_text, modelName);
-    List<Row> records = Db.find(sql, vectorId, datasetId, similarity, top_number);
+
+    //String sql = SqlTemplates.get("kb.hit_test_by_dataset_id_with_max_kb_embedding_cache");
+    //List<Row> records = Db.find(sql, vectorId, datasetId, similarity, top_number);
+
+    String sql = SqlTemplates.get("kb.search_sentense_related_paragraph__with_dataset_ids");
+    Long[] datasetIdArray = { datasetId };
+    List<Row> records = Db.find(sql, vectorId, datasetIdArray, similarity, top_number);
+    log.info("search_paragraph:{},{},{},{},{}", vectorId, Arrays.toString(datasetIdArray), similarity, top_number, records.size());
+
     List<Kv> kvs = RowUtils.recordsToKv(records, false);
     return ResultVo.ok(kvs);
   }
