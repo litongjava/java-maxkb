@@ -32,6 +32,7 @@ import com.litongjava.openai.chat.ChatResponseUsage;
 import com.litongjava.openai.chat.OpenAiChatResponseVo;
 import com.litongjava.openai.client.OpenAiClient;
 import com.litongjava.openai.constants.OpenAiModels;
+import com.litongjava.openai.token.OpenAiTokenizer;
 import com.litongjava.table.services.ApiTable;
 import com.litongjava.tio.utils.crypto.Md5Utils;
 import com.litongjava.tio.utils.environment.EnvUtils;
@@ -41,7 +42,6 @@ import dev.langchain4j.data.document.Document;
 import dev.langchain4j.data.document.DocumentSplitter;
 import dev.langchain4j.data.document.splitter.DocumentSplitters;
 import dev.langchain4j.data.segment.TextSegment;
-import dev.langchain4j.model.openai.OpenAiTokenizer;
 import lombok.extern.slf4j.Slf4j;
 
 /**

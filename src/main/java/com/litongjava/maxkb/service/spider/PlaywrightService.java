@@ -10,7 +10,7 @@ import com.google.common.util.concurrent.Striped;
 import com.litongjava.db.activerecord.Db;
 import com.litongjava.db.activerecord.Row;
 import com.litongjava.maxkb.playwright.PlaywrightBrowser;
-import com.litongjava.searxng.WebPageConteont;
+import com.litongjava.model.web.WebPageContent;
 import com.litongjava.tio.utils.hutool.FilenameUtils;
 import com.litongjava.tio.utils.hutool.StrUtil;
 import com.litongjava.tio.utils.snowflake.SnowflakeIdUtils;
@@ -23,7 +23,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class PlaywrightService {
 
-  public List<WebPageConteont> spiderAsync(List<WebPageConteont> pages) {
+  public List<WebPageContent> spiderAsync(List<WebPageContent> pages) {
     List<Future<String>> futures = new ArrayList<>();
 
     for (int i = 0; i < pages.size(); i++) {

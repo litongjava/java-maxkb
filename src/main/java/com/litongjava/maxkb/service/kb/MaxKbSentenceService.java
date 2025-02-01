@@ -14,6 +14,7 @@ import com.litongjava.jfinal.aop.Aop;
 import com.litongjava.maxkb.constant.TableNames;
 import com.litongjava.maxkb.model.MaxKbSentence;
 import com.litongjava.maxkb.utils.ExecutorServiceUtils;
+import com.litongjava.openai.token.OpenAiTokenizer;
 import com.litongjava.tio.utils.crypto.Md5Utils;
 import com.litongjava.tio.utils.snowflake.SnowflakeIdUtils;
 
@@ -21,7 +22,6 @@ import dev.langchain4j.data.document.Document;
 import dev.langchain4j.data.document.DocumentSplitter;
 import dev.langchain4j.data.document.splitter.DocumentSplitters;
 import dev.langchain4j.data.segment.TextSegment;
-import dev.langchain4j.model.openai.OpenAiTokenizer;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j

@@ -2,7 +2,7 @@
 set JAVA_HOME=D:\java\jdk1.8.0_121
 
 [win.build]
-mvn clean package -DskipTests -Passembly -Dassembly=full
+mvn clean package -DskipTests -Passembly -Dassembly=thin
 
 [linux.env]
 export JAVA_HOME=/usr/java/jdk1.8.0_121
