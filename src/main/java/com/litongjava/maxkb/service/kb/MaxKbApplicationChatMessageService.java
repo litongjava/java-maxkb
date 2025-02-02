@@ -144,7 +144,7 @@ public class MaxKbApplicationChatMessageService {
     } else {
       api_key = EnvUtils.get("OPENAI_API_KEY");
       api_base = OpenAiConstants.api_perfix_url;
-      modelName = OpenAiModels.gpt_4o_mini;
+      modelName = OpenAiModels.GPT_4O_MINI;
     }
 
     openAiChatRequestVo.setModel(modelName);

@@ -13,7 +13,7 @@ public class RumiClient {
     String serverUrl = "http://java-api.rumibot.com";
     String apiKey = "";
 
-    EmbeddingRequestVo reqVo = new EmbeddingRequestVo(content, OpenAiModels.text_embedding_3_large);
+    EmbeddingRequestVo reqVo = new EmbeddingRequestVo(content, OpenAiModels.TEXT_EMBEDDING_3_LARGE);
 
     EmbeddingResponseVo embeddings = OpenAiClient.embeddings(serverUrl, apiKey, reqVo);
 

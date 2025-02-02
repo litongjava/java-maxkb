@@ -49,11 +49,11 @@ public class MaxKbDatasetHitTestService {
     if (embeddingModeId != null) {
       modelName = Db.queryStr(String.format("SELECT model_name FROM %s WHERE id = ?", TableNames.max_kb_model), embeddingModeId);
       if (modelName == null) {
-        modelName = OpenAiModels.text_embedding_3_large;
+        modelName = OpenAiModels.TEXT_EMBEDDING_3_LARGE;
       }
 
     } else {
-      modelName = OpenAiModels.text_embedding_3_large;
+      modelName = OpenAiModels.TEXT_EMBEDDING_3_LARGE;
     }
 
     String sql = SqlTemplates.get("kb.hit_test_by_dataset_id_with_max_kb_embedding_cache");
@@ -83,11 +83,11 @@ public class MaxKbDatasetHitTestService {
     if (embeddingModeId != null) {
       modelName = Db.queryStr(String.format("SELECT model_name FROM %s WHERE id = ?", TableNames.max_kb_model), embeddingModeId);
       if (modelName == null) {
-        modelName = OpenAiModels.text_embedding_3_large;
+        modelName = OpenAiModels.TEXT_EMBEDDING_3_LARGE;
       }
 
     } else {
-      modelName = OpenAiModels.text_embedding_3_large;
+      modelName = OpenAiModels.TEXT_EMBEDDING_3_LARGE;
     }
 
     Long vectorId = Aop.get(MaxKbEmbeddingService.class).getVectorId(query_text, modelName);

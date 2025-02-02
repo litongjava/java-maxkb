@@ -96,7 +96,7 @@ public class MaxKbModelService {
     if (ModelProvider.model_openai_provider.getName().equals(provider)) {
       if (ModelType.EMBEDDING.getName().equals(model_type)) {
         EmbeddingRequestVo embeddingRequestVo = new EmbeddingRequestVo();
-        embeddingRequestVo.input("Hi").model(OpenAiModels.text_embedding_3_small);
+        embeddingRequestVo.input("Hi").model(OpenAiModels.TEXT_EMBEDDING_3_SMALL);
 
         String api_base = modelVo.getCredential().getApi_base();
         String api_key = modelVo.getCredential().getApi_key();
@@ -125,7 +125,7 @@ public class MaxKbModelService {
 
           OpenAiChatRequestVo openAiChatRequestVo = new OpenAiChatRequestVo();
           openAiChatRequestVo.setStream(false);
-          openAiChatRequestVo.setModel(OpenAiModels.gpt_4o_mini);
+          openAiChatRequestVo.setModel(OpenAiModels.GPT_4O_MINI);
           openAiChatRequestVo.fromMessages(messages);
 
           String bodyString = JsonUtils.toJson(openAiChatRequestVo);
