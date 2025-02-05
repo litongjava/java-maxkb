@@ -6,7 +6,7 @@
 
 ## 开发文档
 
-[!开发文档](https://www.tio-boot.com/zh/58_knowlege_base/01.html)
+[!开发文档](https://www.tio-boot.com/zh/63_knowlege_base/01.html)
 
 ## 项目简介
 
@@ -14,85 +14,85 @@
 
 ## 功能特性
 
-1. **数据库设计** [查看 01.html](https://www.tio-boot.com/zh/58_knowlege_base/01.html)  
+1. **数据库设计** [查看 01.html](https://www.tio-boot.com/zh/63_knowlege_base/01.html)  
    设计并实现项目所需的数据表结构与数据库方案，为后续的数据操作打下坚实基础。
 
-2. **用户登录** [查看 02.html](https://www.tio-boot.com/zh/58_knowlege_base/02.html)  
+2. **用户登录** [查看 02.html](https://www.tio-boot.com/zh/63_knowlege_base/02.html)  
    实现了安全可靠的用户认证系统，保护用户数据并限制未经授权的访问。
 
-3. **模型管理** [查看 03.html](https://www.tio-boot.com/zh/58_knowlege_base/03.html)  
+3. **模型管理** [查看 03.html](https://www.tio-boot.com/zh/63_knowlege_base/03.html)  
    支持针对不同平台的模型（如 OpenAI、Google Gemini、Claude）进行管理与配置。
 
-4. **知识库管理** [查看 04.html](https://www.tio-boot.com/zh/58_knowlege_base/04.html)  
+4. **知识库管理** [查看 04.html](https://www.tio-boot.com/zh/63_knowlege_base/04.html)  
    提供创建、更新及删除知识库的功能，方便用户维护与管理文档内容。
 
-5. **文档拆分** [查看 05.html](https://www.tio-boot.com/zh/58_knowlege_base/05.html)  
+5. **文档拆分** [查看 05.html](https://www.tio-boot.com/zh/63_knowlege_base/05.html)  
    可将文档拆分为多个片段，便于后续向量化和检索操作。
 
-6. **片段向量** [查看 06.html](https://www.tio-boot.com/zh/58_knowlege_base/06.html)  
+6. **片段向量** [查看 06.html](https://www.tio-boot.com/zh/63_knowlege_base/06.html)  
    将文本片段进行向量化处理，以便进行语义相似度计算及高效检索。
 
-7. **命中率测试** [查看 07.html](https://www.tio-boot.com/zh/58_knowlege_base/07.html)  
+7. **命中率测试** [查看 07.html](https://www.tio-boot.com/zh/63_knowlege_base/07.html)  
    通过语义相似度和 Top-N 算法，检索并返回与用户问题最相关的文档片段，用于评估检索的准确性。
 
-8. **文档管理** [查看 08.html](https://www.tio-boot.com/zh/58_knowlege_base/08.html)  
+8. **文档管理** [查看 08.html](https://www.tio-boot.com/zh/63_knowlege_base/08.html)  
    提供上传和管理文档的功能，上传后可自动拆分为片段便于进一步处理。
 
-9. **片段管理** [查看 09.html](https://www.tio-boot.com/zh/58_knowlege_base/09.html)  
+9. **片段管理** [查看 09.html](https://www.tio-boot.com/zh/63_knowlege_base/09.html)  
    允许对已拆分的片段进行增、删、改、查等操作，确保内容更新灵活可控。
 
-10. **问题管理** [查看 10.html](https://www.tio-boot.com/zh/58_knowlege_base/10.html)  
+10. **问题管理** [查看 10.html](https://www.tio-boot.com/zh/63_knowlege_base/10.html)  
     为片段指定相关问题，以提升检索时的准确性与关联度。
 
-11. **应用管理** [查看 11.html](https://www.tio-boot.com/zh/58_knowlege_base/11.html)  
+11. **应用管理** [查看 11.html](https://www.tio-boot.com/zh/63_knowlege_base/11.html)  
     提供创建和配置应用（智能体）的功能，并可关联指定模型和知识库。
 
-12. **向量检索** [查看 12.html](https://www.tio-boot.com/zh/58_knowlege_base/12.html)  
+12. **向量检索** [查看 12.html](https://www.tio-boot.com/zh/63_knowlege_base/12.html)  
     基于语义相似度，在知识库中高效检索与用户问题最匹配的片段。
 
-13. **推理问答调试** [查看 13.html](https://www.tio-boot.com/zh/58_knowlege_base/13.html)  
+13. **推理问答调试** [查看 13.html](https://www.tio-boot.com/zh/63_knowlege_base/13.html)  
     提供检索与问答性能的评估工具，帮助开发者进行系统优化与调试。
 
-14. **对话问答** [查看 14.html](https://www.tio-boot.com/zh/58_knowlege_base/14.html)  
+14. **对话问答** [查看 14.html](https://www.tio-boot.com/zh/63_knowlege_base/14.html)  
     为用户提供友好的人机交互界面，结合检索到的片段与用户问题实时生成回答。
 
-15. **统计分析** [查看 15.html](https://www.tio-boot.com/zh/58_knowlege_base/15.html)  
+15. **统计分析** [查看 15.html](https://www.tio-boot.com/zh/63_knowlege_base/15.html)  
     对用户的提问与系统回答进行数据化分析，并以可视化图表的形式呈现系统使用情况。
 
-16. **用户管理** [查看 16.html](https://www.tio-boot.com/zh/58_knowlege_base/16.html)  
+16. **用户管理** [查看 16.html](https://www.tio-boot.com/zh/63_knowlege_base/16.html)  
     提供多用户管理功能，包括用户的增删改查及权限控制。
 
-17. **API 管理** [查看 17.html](https://www.tio-boot.com/zh/58_knowlege_base/17.html)  
+17. **API 管理** [查看 17.html](https://www.tio-boot.com/zh/63_knowlege_base/17.html)  
     对外提供标准化 API，便于外部系统集成和调用本系统的功能。
 
-18. **存储文件到 S3** [查看 18.html](https://www.tio-boot.com/zh/58_knowlege_base/18.html)  
+18. **存储文件到 S3** [查看 18.html](https://www.tio-boot.com/zh/63_knowlege_base/18.html)  
     将用户上传的文件存储至 S3 等对象存储平台，提升文件管理的灵活性与可扩展性。
 
-19. **文档解析优化** [查看 19.html](https://www.tio-boot.com/zh/58_knowlege_base/19.html)  
+19. **文档解析优化** [查看 19.html](https://www.tio-boot.com/zh/63_knowlege_base/19.html)  
     介绍与对比常见的文档解析方案，并提供提升文档解析速度和准确性的优化建议。
 
-20. **片段汇总** [查看 20.html](https://www.tio-boot.com/zh/58_knowlege_base/20.html)  
+20. **片段汇总** [查看 20.html](https://www.tio-boot.com/zh/63_knowlege_base/20.html)  
     对片段内容进行汇总，以提升总结类问题的查询与回答效率。
 
-21. **文档多分块与检索** [查看 21.html](https://www.tio-boot.com/zh/58_knowlege_base/21.html)  
+21. **文档多分块与检索** [查看 21.html](https://www.tio-boot.com/zh/63_knowlege_base/21.html)  
     将片段进一步拆分为句子并进行向量检索，提升检索的准确度与灵活度。
 
-22. **多文档支持** [查看 22.html](https://www.tio-boot.com/zh/58_knowlege_base/22.html)  
+22. **多文档支持** [查看 22.html](https://www.tio-boot.com/zh/63_knowlege_base/22.html)  
     兼容多种文档格式，包括 `.doc`, `.docx`, `.xls`, `.xlsx`, `.ppt`, `.pptx` 等。
 
-23. **对话日志** [查看 23.html](https://www.tio-boot.com/zh/58_knowlege_base/23.html)  
+23. **对话日志** [查看 23.html](https://www.tio-boot.com/zh/63_knowlege_base/23.html)  
     记录并展示对话日志，用于后续分析和问题回溯。
 
-24. **检索性能优化** [查看 24.html](https://www.tio-boot.com/zh/58_knowlege_base/24.html)  
+24. **检索性能优化** [查看 24.html](https://www.tio-boot.com/zh/63_knowlege_base/24.html)  
     提供整库扫描和分区检索等多种方式，进一步提高检索速度和效率。
 
-25. **Milvus** [查看 25.html](https://www.tio-boot.com/zh/58_knowlege_base/25.html)  
+25. **Milvus** [查看 25.html](https://www.tio-boot.com/zh/63_knowlege_base/25.html)  
     将向量数据库切换至 Milvus，以在大规模向量检索场景中获得更佳的性能与可扩展性。
 
-26. **文档解析方案和费用对比** [查看 26.html](https://www.tio-boot.com/zh/58_knowlege_base/26.html)  
+26. **文档解析方案和费用对比** [查看 26.html](https://www.tio-boot.com/zh/63_knowlege_base/26.html)  
     对比不同文档解析方案在成本、速度、稳定性等方面的差异，为用户提供更加经济高效的选择。
 
-27. **爬取网页数据** [查看 27.html](https://www.tio-boot.com/zh/58_knowlege_base/27.html)  
+27. **爬取网页数据** [查看 27.html](https://www.tio-boot.com/zh/63_knowlege_base/27.html)  
     支持从网页中抓取所需内容，后续处理流程与本地文档一致：分段、向量化、存储与检索。
 
 ## 项目地址
