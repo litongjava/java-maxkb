@@ -66,7 +66,7 @@ public class MaxKbApplicationHitTestService {
     sql = SqlTemplates.get("kb.search_sentense_related_paragraph__with_dataset_ids");
     Long[] array = datasetIds.toArray(new Long[0]);
     List<Row> records = Db.find(sql, vectorId, array, similarity, top_number);
-    List<Kv> kvs = RowUtils.recordsToKv(records, false);
+    List<Kv> kvs = RowUtils.toKv(records, false);
     return ResultVo.ok(kvs);
   }
 
@@ -128,7 +128,7 @@ public class MaxKbApplicationHitTestService {
 
     log.info("search_paragraph:{},{},{},{},{}", vectorId, Arrays.toString(array), similarity, top_number, records.size());
 
-    List<Kv> kvs = RowUtils.recordsToKv(records, false);
+    List<Kv> kvs = RowUtils.toKv(records, false);
     return ResultVo.ok(kvs);
   }
 

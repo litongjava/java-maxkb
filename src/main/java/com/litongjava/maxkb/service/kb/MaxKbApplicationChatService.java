@@ -4,7 +4,7 @@ import org.postgresql.util.PGobject;
 
 import com.litongjava.db.activerecord.Db;
 import com.litongjava.db.activerecord.Row;
-import com.litongjava.kit.JsonFieldUtils;
+import com.litongjava.kit.PgObjectUtils;
 import com.litongjava.maxkb.model.MaxKbApplicationChat;
 import com.litongjava.maxkb.model.MaxKbApplicationTempSetting;
 import com.litongjava.maxkb.vo.MaxKbApplicationVo;
@@ -15,7 +15,7 @@ public class MaxKbApplicationChatService {
 
   public ResultVo open(String bodyString, MaxKbApplicationVo vo) {
     Long id = vo.getId();
-    PGobject jsonb = JsonFieldUtils.jsonb(bodyString);
+    PGobject jsonb = PgObjectUtils.jsonb(bodyString);
     Row record = Row.by("id", id).set("setting", jsonb);
     if (Db.exists(MaxKbApplicationTempSetting.tableName, "id", id)) {
       Db.update(MaxKbApplicationTempSetting.tableName, record);

@@ -7,7 +7,7 @@ import org.postgresql.util.PGobject;
 
 import com.litongjava.db.activerecord.Db;
 import com.litongjava.db.activerecord.Row;
-import com.litongjava.kit.JsonFieldUtils;
+import com.litongjava.kit.PgObjectUtils;
 import com.litongjava.maxkb.constant.SSEConstant;
 import com.litongjava.maxkb.constant.TableNames;
 import com.litongjava.maxkb.service.ChatStreamCallCan;
@@ -82,7 +82,7 @@ public class ChatStreamCallbackImpl implements Callback {
 
       MaxKbChatRecordDetail detail = new MaxKbChatRecordDetail(chatStep, searchStep);
       String json = JsonUtils.toJson(detail);
-      PGobject pgobject = JsonFieldUtils.json(json);
+      PGobject pgobject = PgObjectUtils.json(json);
       Row record = Row.by("id", messageId).set("run_time", runTime).set("answer_text", completionContent.toString())
           //
           .set("answer_tokens", answer_tokens).set("message_tokens", chatStep.getMessage_tokens())

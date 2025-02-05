@@ -75,7 +75,7 @@ public class MaxKbSentenceService {
       Future<Row> future = completionServiceRow.submit(() -> {
         // Generate vector for the summary content
         PGobject vector = maxKbEmbeddingService.getVector(sentence.getContent(), modelName);
-        Row record = sentence.toRecord();
+        Row record = sentence.toRow();
         record.set("embedding", vector);
         return record;
       });
@@ -137,7 +137,7 @@ public class MaxKbSentenceService {
     for (MaxKbSentence sentence : sentences) {
       futures.add(completionServiceRow.submit(() -> {
         PGobject vector = maxKbEmbeddingService.getVector(sentence.getContent(), modelName);
-        Row record = sentence.toRecord();
+        Row record = sentence.toRow();
         record.set("embedding", vector);
         return record;
       }));

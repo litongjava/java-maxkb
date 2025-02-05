@@ -25,7 +25,7 @@ public class MaxKbDocumentService {
     Page<Row> page = tableResult.getData();
     int totalRow = page.getTotalRow();
     List<Row> list = page.getList();
-    List<Kv> kvs = RowUtils.recordsToKv(list, false);
+    List<Kv> kvs = RowUtils.toKv(list, false);
     ResultPage<Kv> resultPage = new ResultPage<>(pageNo, pageSize, totalRow, kvs);
     return ResultVo.ok(resultPage);
   }
@@ -38,7 +38,7 @@ public class MaxKbDocumentService {
     tableInput.set("dataset_id", datasetId);
     TableResult<List<Row>> tableResult = ApiTable.list(TableNames.max_kb_document, tableInput);
     List<Row> records = tableResult.getData();
-    List<Kv> kvs = RowUtils.recordsToKv(records, false);
+    List<Kv> kvs = RowUtils.toKv(records, false);
     return ResultVo.ok(kvs);
   }
 

@@ -60,7 +60,7 @@ public class MaxKbDatasetHitTestService {
     Long vectorId = Aop.get(MaxKbEmbeddingService.class).getVectorId(query_text, modelName);
     List<Row> records = Db.find(sql, vectorId, datasetId, similarity, top_number);
 
-    List<Kv> kvs = RowUtils.recordsToKv(records, false);
+    List<Kv> kvs = RowUtils.toKv(records, false);
     return ResultVo.ok(kvs);
   }
 
@@ -100,7 +100,7 @@ public class MaxKbDatasetHitTestService {
     List<Row> records = Db.find(sql, vectorId, datasetIdArray, similarity, top_number);
     log.info("search_paragraph:{},{},{},{},{}", vectorId, Arrays.toString(datasetIdArray), similarity, top_number, records.size());
 
-    List<Kv> kvs = RowUtils.recordsToKv(records, false);
+    List<Kv> kvs = RowUtils.toKv(records, false);
     return ResultVo.ok(kvs);
   }
 

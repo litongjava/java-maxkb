@@ -12,7 +12,7 @@ import com.litongjava.tio.utils.json.JsonUtils;
 import com.litongjava.tio.utils.tag.TagUtils;
 
 // @Slf4j
-public class AiFilterService {
+public class AiRankerService {
   public List<WebPageContent> filter(List<WebPageContent> pages, String question, Integer limit) {
     Kv kv = Kv.by("limit", limit).set("quesiton", question).set("search_result", JsonUtils.toJson(pages));
     String fileName = "WebSearchSelectPrompt.txt";

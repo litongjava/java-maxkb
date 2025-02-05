@@ -9,7 +9,7 @@ import com.litongjava.db.TableResult;
 import com.litongjava.db.activerecord.Db;
 import com.litongjava.db.activerecord.Row;
 import com.litongjava.jfinal.aop.Aop;
-import com.litongjava.kit.JsonFieldUtils;
+import com.litongjava.kit.PgObjectUtils;
 import com.litongjava.maxkb.constant.TableNames;
 import com.litongjava.maxkb.dao.MaxKbApplicationDao;
 import com.litongjava.maxkb.model.MaxKbApplication;
@@ -92,9 +92,9 @@ public class MaxKbApplicationService {
     List<Row> records = page.getList();
     List<Kv> kvs = new ArrayList<>();
     for (Row record : records) {
-      JsonFieldUtils.toBean(record, "model_setting", MaxKbModelSetting.class);
-      JsonFieldUtils.toBean(record, "model_params_setting", MaxKbModelParamsSetting.class);
-      JsonFieldUtils.toBean(record, "dataset_setting", MaxKbDatasetSettingVo.class);
+      PgObjectUtils.toBean(record, "model_setting", MaxKbModelSetting.class);
+      PgObjectUtils.toBean(record, "model_params_setting", MaxKbModelParamsSetting.class);
+      PgObjectUtils.toBean(record, "dataset_setting", MaxKbDatasetSettingVo.class);
       kvs.add(record.toKv());
     }
     Kv kv = Kv.by("current", pageNo).set("size", pageSize).set("total", page.getTotalRow()).set("records", kvs);
@@ -112,9 +112,9 @@ public class MaxKbApplicationService {
     List<Row> records = Db.find(TableNames.max_kb_application, quereyRecord);
     List<Kv> kvs = new ArrayList<>();
     for (Row record : records) {
-      JsonFieldUtils.toBean(record, "model_params_setting", MaxKbModelParamsSetting.class);
-      JsonFieldUtils.toBean(record, "model_setting", MaxKbModelSetting.class);
-      JsonFieldUtils.toBean(record, "dataset_setting", MaxKbDatasetSettingVo.class);
+      PgObjectUtils.toBean(record, "model_params_setting", MaxKbModelParamsSetting.class);
+      PgObjectUtils.toBean(record, "model_setting", MaxKbModelSetting.class);
+      PgObjectUtils.toBean(record, "dataset_setting", MaxKbDatasetSettingVo.class);
       Kv kv = record.toKv();
       kvs.add(kv);
     }
@@ -132,12 +132,12 @@ public class MaxKbApplicationService {
     }
 
     Row record = Db.findFirst(MaxKbApplication.tableName, quereyRecord);
-    JsonFieldUtils.toBean(record, "model_params_setting", MaxKbModelParamsSetting.class);
-    JsonFieldUtils.toBean(record, "dataset_setting", MaxKbDatasetSettingVo.class);
+    PgObjectUtils.toBean(record, "model_params_setting", MaxKbModelParamsSetting.class);
+    PgObjectUtils.toBean(record, "dataset_setting", MaxKbDatasetSettingVo.class);
 
     Object object = record.get("model_setting");
     if (object != null) {
-      JsonFieldUtils.toBean(record, "model_setting", MaxKbModelSetting.class);
+      PgObjectUtils.toBean(record, "model_setting", MaxKbModelSetting.class);
     } else {
       MaxKbModelSetting maxKbModelSetting = new MaxKbModelSetting();
       maxKbModelSetting.setSystem("你是 xxx 小助手").setPrompt("已知信息：{data}\n用户问题：{question}\n回答要求：\n - 请使用中文回答用户问题")

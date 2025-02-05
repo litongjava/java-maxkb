@@ -4,7 +4,7 @@ import org.junit.Test;
 import org.postgresql.util.PGobject;
 
 import com.litongjava.db.activerecord.Db;
-import com.litongjava.kit.JsonFieldUtils;
+import com.litongjava.kit.PgObjectUtils;
 import com.litongjava.maxkb.config.DbConfig;
 import com.litongjava.maxkb.vo.MaxKbApplicationVo;
 import com.litongjava.tio.boot.testing.TioBootTest;
@@ -18,7 +18,7 @@ public class MaxKbApplicationTempSettingTest {
     Long application_id = 446258395820601344L;
     PGobject pgObject = Db.queryPGobjectById(MaxKbApplicationTempSetting.tableName, "setting", application_id);
     System.out.println(pgObject.getValue());
-    MaxKbApplicationVo bean = JsonFieldUtils.toBean(pgObject, MaxKbApplicationVo.class);
+    MaxKbApplicationVo bean = PgObjectUtils.toBean(pgObject, MaxKbApplicationVo.class);
     System.out.println(JsonUtils.toJson(bean));
   }
 

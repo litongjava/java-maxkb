@@ -55,7 +55,7 @@ public class UserService {
     Page<Row> page = tableResult.getData();
     int totalRow = page.getTotalRow();
     List<Row> list = page.getList();
-    List<Kv> kvs = RowUtils.recordsToKv(list, false);
+    List<Kv> kvs = RowUtils.toKv(list, false);
     ResultPage<Kv> resultPage = new ResultPage<>(pageNo, pageSize, totalRow, kvs);
     return ResultVo.ok(resultPage);
   }

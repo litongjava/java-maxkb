@@ -37,7 +37,7 @@ public class MaxKbParagraphServcie {
     Page<Row> page = tableResult.getData();
     int totalRow = page.getTotalRow();
     List<Row> records = page.getList();
-    List<Kv> kvs = RowUtils.recordsToKv(records, false);
+    List<Kv> kvs = RowUtils.toKv(records, false);
     ResultPage<Kv> resultPage = new ResultPage<>(pageNo, pageSize, totalRow, kvs);
     return ResultVo.ok(resultPage);
   }
@@ -45,7 +45,7 @@ public class MaxKbParagraphServcie {
   public ResultVo listProblemByParagraphId(Long datasetId, Long documentId, Long paragraphId) {
     String sql = "select p.id,p.content,p.dataset_id from max_kb_problem p JOIN max_kb_problem_paragraph_mapping mapping on mapping.problem_id=p.id where mapping.paragraph_id=?";
     List<Row> records = Db.find(sql, paragraphId);
-    List<Kv> kvs = RowUtils.recordsToKv(records, false);
+    List<Kv> kvs = RowUtils.toKv(records, false);
     return ResultVo.ok(kvs);
   }
 

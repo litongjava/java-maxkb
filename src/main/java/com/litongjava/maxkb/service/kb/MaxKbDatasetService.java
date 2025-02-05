@@ -90,7 +90,7 @@ public class MaxKbDatasetService {
 
     String columns = "id,name,\"desc\",type,meta,user_id,embedding_mode_id,create_time,update_time";
     List<Row> records = Db.find(MaxKbDataset.tableName, columns, queryRecord);
-    List<Kv> kvs = RowUtils.recordsToKv(records, false);
+    List<Kv> kvs = RowUtils.toKv(records, false);
     return ResultVo.ok(kvs);
   }
 

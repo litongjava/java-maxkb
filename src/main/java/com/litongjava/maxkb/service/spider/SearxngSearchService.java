@@ -27,7 +27,7 @@ public class SearxngSearchService {
       if (limit == null) {
         pages = Aop.get(PlaywrightService.class).spiderAsync(pages);
       } else {
-        pages = Aop.get(AiFilterService.class).filter(pages, param.getQ(), limit);
+        pages = Aop.get(AiRankerService.class).filter(pages, param.getQ(), limit);
         pages = Aop.get(PlaywrightService.class).spiderAsync(pages);
       }
     }

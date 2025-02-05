@@ -38,7 +38,7 @@ public class MaxKbProblemService {
     TableResult<Page<Row>> page = ApiTable.page(TableNames.max_kb_problem, tableInput);
     int totalRow = page.getData().getTotalRow();
     List<Row> list = page.getData().getList();
-    List<Kv> kvs = RowUtils.recordsToKv(list, false);
+    List<Kv> kvs = RowUtils.toKv(list, false);
     ResultPage<Kv> resultPage = new ResultPage<>(pageNo, pageSize, totalRow, kvs);
     return ResultVo.ok(resultPage);
   }
@@ -61,7 +61,7 @@ public class MaxKbProblemService {
     TableResult<List<Row>> tableResult = ApiTable.list(TableNames.max_kb_problem_paragraph_mapping, tableInput);
     List<Row> records = tableResult.getData();
     if (records != null) {
-      datas = RowUtils.recordsToKv(records, false);
+      datas = RowUtils.toKv(records, false);
     }
     return ResultVo.ok(datas);
   }
