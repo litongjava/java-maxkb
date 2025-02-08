@@ -4,6 +4,11 @@
 
 [!演示视频](https://www.bilibili.com/video/BV1yJU8YHEgg/?vd_source=69e3cff470444b21e8c322dddec00def)
 
+## 前端和后端代码
+
+[前端代码github](https://github.com/litongjava/MaxKB/tree/main/ui)
+[后端代码gitee](https://github.com/litongjava/java-maxkb)
+
 ## 开发文档
 
 [!开发文档](https://www.tio-boot.com/zh/63_knowlege_base/01.html)

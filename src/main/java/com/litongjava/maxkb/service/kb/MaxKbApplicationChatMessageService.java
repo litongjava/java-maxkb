@@ -136,14 +136,14 @@ public class MaxKbApplicationChatMessageService {
         }
         if (api_base == null || api_key == null) {
           api_key = EnvUtils.get("OPENAI_API_KEY");
-          api_base = OpenAiConstants.api_perfix_url;
+          api_base = OpenAiConstants.API_PERFIX_URL;
         }
 
         modelName = modelRecord.getStr("model_name");
       }
     } else {
       api_key = EnvUtils.get("OPENAI_API_KEY");
-      api_base = OpenAiConstants.api_perfix_url;
+      api_base = OpenAiConstants.API_PERFIX_URL;
       modelName = OpenAiModels.GPT_4O_MINI;
     }
 
