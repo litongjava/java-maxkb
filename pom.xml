@@ -1,4 +1,6 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.litongjava</groupId>
   <artifactId>java-maxkb</artifactId>
@@ -11,7 +13,6 @@
     <graalvm.version>23.1.1</graalvm.version>
     <lombok-version>1.18.30</lombok-version>
     <langchain4j.version>0.34.0</langchain4j.version>
-
     <final.name>java-maxkb</final.name>
     <main.class>com.litongjava.maxkb.MaxKbApp</main.class>
   </properties>
@@ -23,7 +24,6 @@
       <artifactId>tio-boot-admin</artifactId>
       <version>1.0.0</version>
     </dependency>
-
 
     <dependency>
       <groupId>com.alibaba</groupId>
@@ -49,7 +49,7 @@
       <version>4.12</version>
       <scope>test</scope>
     </dependency>
-    
+
     <dependency>
       <groupId>org.postgresql</groupId>
       <artifactId>postgresql</artifactId>
@@ -69,7 +69,6 @@
       <version>2.6.11</version>
     </dependency>
 
-
     <dependency>
       <groupId>com.alibaba.fastjson2</groupId>
       <artifactId>fastjson2</artifactId>
@@ -87,7 +86,6 @@
       <artifactId>langchain4j</artifactId>
       <version>${langchain4j.version}</version>
     </dependency>
-
 
     <dependency>
       <groupId>com.microsoft.playwright</groupId>
