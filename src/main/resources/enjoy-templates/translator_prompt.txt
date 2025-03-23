@@ -1,6 +1,0 @@
-#(source_text)
-
-You are a helpful translator. 
-- Please translate the above #(src_lang) into #(dst_lang). 
-- Preserve the format of the source content during translation.
-- Do not provide any explanations or text apart from the translation.
