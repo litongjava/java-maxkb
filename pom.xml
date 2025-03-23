@@ -18,5 +18,6 @@
 
   <modules>
     <module>maxkb-web</module>
+    <module>maxkb-business</module>
   </modules>
 </project>
