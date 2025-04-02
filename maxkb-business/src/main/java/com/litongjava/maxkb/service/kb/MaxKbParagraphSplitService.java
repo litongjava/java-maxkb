@@ -13,6 +13,7 @@ import com.litongjava.maxkb.constant.MaxKbTableNames;
 import com.litongjava.maxkb.vo.ParagraphBatchVo;
 import com.litongjava.maxkb.vo.Paragraph;
 import com.litongjava.model.result.ResultVo;
+import com.litongjava.openai.constants.OpenAiModels;
 import com.litongjava.table.services.ApiTable;
 import com.litongjava.tio.utils.crypto.Md5Utils;
 import com.litongjava.tio.utils.hutool.FilenameUtils;
@@ -41,9 +42,23 @@ public class MaxKbParagraphSplitService {
       return ResultVo.fail("Dataset not found.");
     }
 
+    String embeddingModelName = null;
     Long embedding_mode_id = dataset.getLong("embedding_mode_id");
-    String sqlModelName = String.format("SELECT model_name FROM %s WHERE id = ?", MaxKbTableNames.max_kb_model);
-    String modelName = Db.queryStr(sqlModelName, embedding_mode_id);
+    if (embedding_mode_id != null) {
+      String sqlModelName = String.format("SELECT model_name FROM %s WHERE id = ?", MaxKbTableNames.max_kb_model);
+      embeddingModelName = Db.queryStr(sqlModelName, embedding_mode_id);
+    } else {
+      embeddingModelName = OpenAiModels.TEXT_EMBEDDING_3_LARGE;
+    }
+    
+    String llmModelName = null;
+    Long llm_mode_id = dataset.getLong("llm_mode_id");
+    if (llm_mode_id != null) {
+      String sqlModelName = String.format("SELECT model_name FROM %s WHERE id = ?", MaxKbTableNames.max_kb_model);
+      llmModelName = Db.queryStr(sqlModelName, llm_mode_id);
+    } else {
+      llmModelName = OpenAiModels.GPT_4O_MINI;
+    }
     String sqlDocumentId = String.format("SELECT id FROM %s WHERE user_id = ? AND file_id = ?", MaxKbTableNames.max_kb_document);
 
     List<Kv> kvs = new ArrayList<>();
@@ -52,6 +67,9 @@ public class MaxKbParagraphSplitService {
       Long fileId = documentBatchVo.getId();
       String filename = documentBatchVo.getName();
       Long documentId = Db.queryLong(sqlDocumentId, userId, fileId);
+      if (documentId == null) {
+        documentId = fileId;
+      }
 
       List<Paragraph> paragraphs = documentBatchVo.getParagraphs();
       int char_length = 0;
@@ -100,13 +118,13 @@ public class MaxKbParagraphSplitService {
         return ResultVo.fail("Transaction failed while saving paragraphs for document ID: " + documentIdFinal);
       }
 
-      transactionSuccess = Aop.get(MaxKbSentenceService.class).summaryToSentenceAndSave(dataset_id, modelName, paragraphRecords, documentIdFinal);
+      transactionSuccess = Aop.get(MaxKbSentenceService.class).summaryToSentenceAndSave(dataset_id, embeddingModelName, paragraphRecords, documentIdFinal);
 
       if (!transactionSuccess) {
         return ResultVo.fail("Transaction failed while summary paragraph for document ID: " + documentIdFinal);
       }
 
-      transactionSuccess = maxKbSentenceService.splitToSentenceAndSave(dataset_id, modelName, paragraphRecords, documentIdFinal);
+      transactionSuccess = maxKbSentenceService.splitToSentenceAndSave(dataset_id, embeddingModelName, paragraphRecords, documentIdFinal);
 
       if (!transactionSuccess) {
         return ResultVo.fail("Transaction failed while saving senttents for document ID: " + documentIdFinal);
@@ -127,6 +145,7 @@ public class MaxKbParagraphSplitService {
         String title = p.getTitle();
         String content = p.getContent();
 
+        String md5 = Md5Utils.getMD5(content);
         Row row = Row.by("id", SnowflakeIdUtils.id())
             //
             .set("source_id", fileId)
@@ -137,7 +156,7 @@ public class MaxKbParagraphSplitService {
             //
             .set("content", content)
             //
-            .set("md5", Md5Utils.getMD5(content))
+            .set("md5", md5)
             //
             .set("status", "1")
             //

@@ -8,8 +8,12 @@ import lombok.experimental.Accessors;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-@Accessors(chain=true)
+@Accessors(chain = true)
 public class Paragraph {
   private String title;
   private String content;
+
+  public Paragraph(String content) {
+    this.content = content;
+  }
 }

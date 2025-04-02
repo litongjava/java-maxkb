@@ -26,6 +26,7 @@ public class MaxKbParagraphSummaryService {
 
     prompt += "\r\n\r\n" + paragraphContent;
     Lock lock = locks.get(md5);
+    lock.lock();
     try {
       summaryContent = Db.queryStr(selectContentSql, md5);
       if (summaryContent != null) {
