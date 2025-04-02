@@ -45,7 +45,7 @@ import dev.langchain4j.data.segment.TextSegment;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * DatasetDocumentSplitService
+ * MaxKbDocumentSplitService
  *
  * 该服务用于将上传的PDF文档拆分为多个Markdown段落，利用OpenAI API将图像转换为文本。
  * 支持多线程并发处理，提高处理效率。
@@ -54,7 +54,7 @@ import lombok.extern.slf4j.Slf4j;
  * @date 
  */
 @Slf4j
-public class MaxKbDatasetDocumentSplitService {
+public class MaxKbDocumentSplitService {
 
   private static final int MAX_HEIGHT = 2200;
   private final Object lock = new Object();
