@@ -4,7 +4,7 @@ import com.jfinal.kit.Kv;
 import com.litongjava.db.TableInput;
 import com.litongjava.db.TableResult;
 import com.litongjava.db.activerecord.Row;
-import com.litongjava.maxkb.constant.TableNames;
+import com.litongjava.maxkb.constant.MaxKbTableNames;
 import com.litongjava.maxkb.vo.KbDatasetModel;
 import com.litongjava.table.services.ApiTable;
 
@@ -18,12 +18,12 @@ public class MaxKbDatasetDao {
     //
     .set("embedding_mode_id", model.getEmbedding_mode_id());
 
-    return ApiTable.saveOrUpdate(TableNames.max_kb_dataset, record);
+    return ApiTable.saveOrUpdate(MaxKbTableNames.max_kb_dataset, record);
   }
 
   public TableResult<Row> get(Long userId, Long id) {
     TableInput tableInput = new TableInput();
     tableInput.set("id",id).set("user_id",userId);
-    return ApiTable.get(TableNames.max_kb_dataset, tableInput);
+    return ApiTable.get(MaxKbTableNames.max_kb_dataset, tableInput);
   }
 }

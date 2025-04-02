@@ -12,7 +12,7 @@ import com.litongjava.db.activerecord.Db;
 import com.litongjava.db.activerecord.Row;
 import com.litongjava.jfinal.aop.Aop;
 import com.litongjava.kit.RowUtils;
-import com.litongjava.maxkb.constant.TableNames;
+import com.litongjava.maxkb.constant.MaxKbTableNames;
 import com.litongjava.maxkb.vo.Paragraph;
 import com.litongjava.maxkb.vo.ResultPage;
 import com.litongjava.model.page.Page;
@@ -33,7 +33,7 @@ public class MaxKbParagraphServcie {
     tableInput.set("dataset_id", datasetId).set("document_id", documentId);
     tableInput.setPageNo(pageNo).setPageSize(pageSize);
 
-    TableResult<Page<Row>> tableResult = ApiTable.page(TableNames.max_kb_paragraph, tableInput);
+    TableResult<Page<Row>> tableResult = ApiTable.page(MaxKbTableNames.max_kb_paragraph, tableInput);
     Page<Row> page = tableResult.getData();
     int totalRow = page.getTotalRow();
     List<Row> records = page.getList();
@@ -62,8 +62,8 @@ public class MaxKbParagraphServcie {
     }
 
     Db.tx(() -> {
-      Db.batchSave(TableNames.max_kb_problem, problemRecords, 2000);
-      Db.batchSave(TableNames.max_kb_problem_paragraph_mapping, mappings, 2000);
+      Db.batchSave(MaxKbTableNames.max_kb_problem, problemRecords, 2000);
+      Db.batchSave(MaxKbTableNames.max_kb_problem_paragraph_mapping, mappings, 2000);
       return true;
     });
     return null;
@@ -78,8 +78,8 @@ public class MaxKbParagraphServcie {
         .set("paragraph_id", paragraphId).set("problem_id", problemId);
     ;
     Db.tx(() -> {
-      Db.save(TableNames.max_kb_problem, problem);
-      Db.save(TableNames.max_kb_problem_paragraph_mapping, mapping);
+      Db.save(MaxKbTableNames.max_kb_problem, problem);
+      Db.save(MaxKbTableNames.max_kb_problem_paragraph_mapping, mapping);
       return true;
     });
     return null;
@@ -92,7 +92,7 @@ public class MaxKbParagraphServcie {
       tableInput.set("user_id", userId);
     }
 
-    TableResult<Row> result = ApiTable.get(TableNames.max_kb_dataset, tableInput);
+    TableResult<Row> result = ApiTable.get(MaxKbTableNames.max_kb_dataset, tableInput);
 
     Row dataset = result.getData();
     if (dataset == null) {
@@ -100,7 +100,7 @@ public class MaxKbParagraphServcie {
     }
 
     Long embedding_mode_id = dataset.getLong("embedding_mode_id");
-    String sqlModelName = String.format("SELECT model_name FROM %s WHERE id = ?", TableNames.max_kb_model);
+    String sqlModelName = String.format("SELECT model_name FROM %s WHERE id = ?", MaxKbTableNames.max_kb_model);
     String modelName = Db.queryStr(sqlModelName, embedding_mode_id);
 
     MaxKbEmbeddingService maxKbEmbeddingService = Aop.get(MaxKbEmbeddingService.class);
@@ -128,7 +128,7 @@ public class MaxKbParagraphServcie {
         //
         .set("embedding", vector);
 
-    Db.save(TableNames.max_kb_paragraph, record);
+    Db.save(MaxKbTableNames.max_kb_paragraph, record);
 
     return ResultVo.ok();
   }

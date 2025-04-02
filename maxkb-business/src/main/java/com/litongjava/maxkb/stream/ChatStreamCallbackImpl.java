@@ -9,7 +9,7 @@ import com.litongjava.db.activerecord.Db;
 import com.litongjava.db.activerecord.Row;
 import com.litongjava.kit.PgObjectUtils;
 import com.litongjava.maxkb.constant.SSEConstant;
-import com.litongjava.maxkb.constant.TableNames;
+import com.litongjava.maxkb.constant.MaxKbTableNames;
 import com.litongjava.maxkb.service.ChatStreamCallCan;
 import com.litongjava.maxkb.utils.TokenCounter;
 import com.litongjava.maxkb.vo.MaxKbChatRecordDetail;
@@ -88,7 +88,7 @@ public class ChatStreamCallbackImpl implements Callback {
           .set("answer_tokens", answer_tokens).set("message_tokens", chatStep.getMessage_tokens())
           //
           .set("details", pgobject);
-      Db.update(TableNames.max_kb_application_chat_record, record);
+      Db.update(MaxKbTableNames.max_kb_application_chat_record, record);
 
     } catch (Exception e) {
       String message = "chatgpt response an unsuccessful message:" + e.getMessage();

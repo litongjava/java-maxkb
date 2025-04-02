@@ -10,7 +10,7 @@ import com.litongjava.db.activerecord.Db;
 import com.litongjava.db.activerecord.Row;
 import com.litongjava.jfinal.aop.Aop;
 import com.litongjava.kit.RowUtils;
-import com.litongjava.maxkb.constant.TableNames;
+import com.litongjava.maxkb.constant.MaxKbTableNames;
 import com.litongjava.maxkb.dao.MaxKbDatasetDao;
 import com.litongjava.maxkb.model.MaxKbDataset;
 import com.litongjava.maxkb.vo.KbDatasetModel;
@@ -22,9 +22,9 @@ import com.litongjava.table.services.ApiTable;
 
 public class MaxKbDatasetService {
 
-  private String application_mapping_count_sql = String.format("select count(1) from %s where dataset_id=?", TableNames.max_kb_application_dataset_mapping);
-  private String document_count_sql = String.format("select count(1) from %s where dataset_id=?", TableNames.max_kb_document);
-  private String sum_char_length_sql = String.format("select sum(char_length) from %s where dataset_id=?", TableNames.max_kb_document);
+  private String application_mapping_count_sql = String.format("select count(1) from %s where dataset_id=?", MaxKbTableNames.max_kb_application_dataset_mapping);
+  private String document_count_sql = String.format("select count(1) from %s where dataset_id=?", MaxKbTableNames.max_kb_document);
+  private String sum_char_length_sql = String.format("select sum(char_length) from %s where dataset_id=?", MaxKbTableNames.max_kb_document);
 
   public ResultVo page(Long userId, Integer pageNo, Integer pageSize, String name) {
     TableInput tableInput = new TableInput();
@@ -39,7 +39,7 @@ public class MaxKbDatasetService {
       tableInput.set("name", name).set("name_op", Operators.CT);
     }
 
-    TableResult<Page<Row>> tableResult = ApiTable.page(TableNames.max_kb_dataset, tableInput);
+    TableResult<Page<Row>> tableResult = ApiTable.page(MaxKbTableNames.max_kb_dataset, tableInput);
     Page<Row> page = tableResult.getData();
     int totalRow = page.getTotalRow();
     List<Row> list = page.getList();
@@ -75,7 +75,7 @@ public class MaxKbDatasetService {
     } else {
       tableInput.set("id", id).set("user_id", userId);
     }
-    TableResult<Row> result = ApiTable.get(TableNames.max_kb_dataset, tableInput);
+    TableResult<Row> result = ApiTable.get(MaxKbTableNames.max_kb_dataset, tableInput);
     Kv kv = result.getData().toKv();
     return resultVo.setData(kv);
   }
@@ -102,10 +102,10 @@ public class MaxKbDatasetService {
       tableInput = TableInput.by("id", id).set("user_id", userId);
     }
 
-    TableResult<Boolean> result = ApiTable.delete(TableNames.max_kb_dataset, tableInput);
+    TableResult<Boolean> result = ApiTable.delete(MaxKbTableNames.max_kb_dataset, tableInput);
     Row deleteRecord = Row.by("dataset_id", id);
-    Db.delete(TableNames.max_kb_document, deleteRecord);
-    Db.delete(TableNames.max_kb_paragraph, deleteRecord);
+    Db.delete(MaxKbTableNames.max_kb_document, deleteRecord);
+    Db.delete(MaxKbTableNames.max_kb_paragraph, deleteRecord);
     return new ResultVo(result.getData());
   }
 

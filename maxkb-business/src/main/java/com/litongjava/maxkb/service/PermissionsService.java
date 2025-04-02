@@ -5,7 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import com.litongjava.db.activerecord.Db;
-import com.litongjava.maxkb.constant.TableNames;
+import com.litongjava.maxkb.constant.MaxKbTableNames;
 
 public class PermissionsService {
 
@@ -42,9 +42,9 @@ public class PermissionsService {
 
   private List<String> getAdminPermissions() {
     //dataset ids
-    List<Long> datasetIds = Db.query(String.format("select id from %s", TableNames.max_kb_dataset));
+    List<Long> datasetIds = Db.query(String.format("select id from %s", MaxKbTableNames.max_kb_dataset));
     //appliction id
-    List<Long> applicationIds = Db.query(String.format("select id from %s", TableNames.max_kb_application));
+    List<Long> applicationIds = Db.query(String.format("select id from %s", MaxKbTableNames.max_kb_application));
 
     List<String> permissions = new ArrayList<>();
     permissions.addAll(defaultAdminPermissions);

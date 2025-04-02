@@ -8,7 +8,7 @@ import com.litongjava.db.TableResult;
 import com.litongjava.db.activerecord.Db;
 import com.litongjava.db.activerecord.Row;
 import com.litongjava.kit.RowUtils;
-import com.litongjava.maxkb.constant.TableNames;
+import com.litongjava.maxkb.constant.MaxKbTableNames;
 import com.litongjava.maxkb.vo.ResultPage;
 import com.litongjava.model.page.Page;
 import com.litongjava.model.result.ResultVo;
@@ -22,7 +22,7 @@ public class MaxKbDocumentService {
       tableInput.set("user_id", userId);
     }
     tableInput.set("dataset_id", datasetId).setPageNo(pageNo).setPageSize(pageSize);
-    TableResult<Page<Row>> tableResult = ApiTable.page(TableNames.max_kb_document, tableInput);
+    TableResult<Page<Row>> tableResult = ApiTable.page(MaxKbTableNames.max_kb_document, tableInput);
     Page<Row> page = tableResult.getData();
     int totalRow = page.getTotalRow();
     List<Row> list = page.getList();
@@ -37,7 +37,7 @@ public class MaxKbDocumentService {
       tableInput.set("user_id", userId);
     }
     tableInput.set("dataset_id", datasetId);
-    TableResult<List<Row>> tableResult = ApiTable.list(TableNames.max_kb_document, tableInput);
+    TableResult<List<Row>> tableResult = ApiTable.list(MaxKbTableNames.max_kb_document, tableInput);
     List<Row> records = tableResult.getData();
     List<Kv> kvs = RowUtils.toKv(records, false);
     return ResultVo.ok(kvs);
@@ -51,15 +51,15 @@ public class MaxKbDocumentService {
       tableInput.set("user_id", userId).set("dataset_id", datasetId);
     }
 
-    Row data = ApiTable.get(TableNames.max_kb_document, tableInput).getData();
+    Row data = ApiTable.get(MaxKbTableNames.max_kb_document, tableInput).getData();
     return ResultVo.ok(data.toKv());
   }
 
   public ResultVo delete(Long userId, Long datasetId, Long documentId) {
     Row record = Row.by("id", documentId).set("user_id", userId).set("dataset_id", datasetId);
-    Db.delete(TableNames.max_kb_document, record);
+    Db.delete(MaxKbTableNames.max_kb_document, record);
     record = Row.by("document_id", documentId).set("dataset_id", datasetId);
-    Db.delete(TableNames.max_kb_paragraph, record);
+    Db.delete(MaxKbTableNames.max_kb_paragraph, record);
     return ResultVo.ok();
   }
 

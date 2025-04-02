@@ -10,7 +10,7 @@ import com.litongjava.db.activerecord.Db;
 import com.litongjava.db.activerecord.Row;
 import com.litongjava.jfinal.aop.Aop;
 import com.litongjava.kit.PgObjectUtils;
-import com.litongjava.maxkb.constant.TableNames;
+import com.litongjava.maxkb.constant.MaxKbTableNames;
 import com.litongjava.maxkb.dao.MaxKbApplicationDao;
 import com.litongjava.maxkb.model.MaxKbApplication;
 import com.litongjava.maxkb.model.MaxKbApplicationDatasetMapping;
@@ -86,7 +86,7 @@ public class MaxKbApplicationService {
     Integer pageNo = tableInput.getPageNo();
     Integer pageSize = tableInput.getPageSize();
     log.info("page:{},{}", pageNo, pageSize);
-    tableInput.setFrom(TableNames.max_kb_application);
+    tableInput.setFrom(MaxKbTableNames.max_kb_application);
     TableResult<Page<Row>> result = ApiTable.page(tableInput);
     Page<Row> page = result.getData();
     List<Row> records = page.getList();
@@ -109,7 +109,7 @@ public class MaxKbApplicationService {
       quereyRecord.set("user_id", userId);
     }
 
-    List<Row> records = Db.find(TableNames.max_kb_application, quereyRecord);
+    List<Row> records = Db.find(MaxKbTableNames.max_kb_application, quereyRecord);
     List<Kv> kvs = new ArrayList<>();
     for (Row record : records) {
       PgObjectUtils.toBean(record, "model_params_setting", MaxKbModelParamsSetting.class);

@@ -10,7 +10,7 @@ import com.litongjava.db.activerecord.Db;
 import com.litongjava.db.activerecord.Row;
 import com.litongjava.jfinal.aop.Aop;
 import com.litongjava.kit.RowUtils;
-import com.litongjava.maxkb.constant.TableNames;
+import com.litongjava.maxkb.constant.MaxKbTableNames;
 import com.litongjava.model.result.ResultVo;
 import com.litongjava.openai.constants.OpenAiModels;
 import com.litongjava.table.services.ApiTable;
@@ -40,14 +40,14 @@ public class MaxKbApplicationHitTestService {
       tableInput.set("user_id", userId);
     }
 
-    TableResult<Row> datasetResult = ApiTable.get(TableNames.max_kb_dataset, tableInput);
+    TableResult<Row> datasetResult = ApiTable.get(MaxKbTableNames.max_kb_dataset, tableInput);
 
     Row dataset = datasetResult.getData();
     // 获取模型名称
     Long embeddingModeId = dataset.getLong("embedding_mode_id");
     String modelName = null;
     if (embeddingModeId != null) {
-      modelName = Db.queryStr(String.format("SELECT model_name FROM %s WHERE id = ?", TableNames.max_kb_model), embeddingModeId);
+      modelName = Db.queryStr(String.format("SELECT model_name FROM %s WHERE id = ?", MaxKbTableNames.max_kb_model), embeddingModeId);
       if (modelName == null) {
         modelName = OpenAiModels.TEXT_EMBEDDING_3_LARGE;
       }
@@ -80,7 +80,7 @@ public class MaxKbApplicationHitTestService {
       tableInput.set("user_id", userId);
     }
 
-    TableResult<Row> datasetResult = ApiTable.get(TableNames.max_kb_dataset, tableInput);
+    TableResult<Row> datasetResult = ApiTable.get(MaxKbTableNames.max_kb_dataset, tableInput);
 
     Row dataset = datasetResult.getData();
     // 获取模型名称
@@ -89,7 +89,7 @@ public class MaxKbApplicationHitTestService {
     if (dataset != null) {
       embeddingModeId = dataset.getLong("embedding_mode_id");
       if (embeddingModeId != null) {
-        modelName = Db.queryStr(String.format("SELECT model_name FROM %s WHERE id = ?", TableNames.max_kb_model), embeddingModeId);
+        modelName = Db.queryStr(String.format("SELECT model_name FROM %s WHERE id = ?", MaxKbTableNames.max_kb_model), embeddingModeId);
       }
       if (modelName == null) {
         modelName = OpenAiModels.TEXT_EMBEDDING_3_LARGE;

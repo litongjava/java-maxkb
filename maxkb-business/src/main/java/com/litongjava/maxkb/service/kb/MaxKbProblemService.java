@@ -9,7 +9,7 @@ import com.litongjava.db.TableResult;
 import com.litongjava.db.activerecord.Db;
 import com.litongjava.db.activerecord.Row;
 import com.litongjava.kit.RowUtils;
-import com.litongjava.maxkb.constant.TableNames;
+import com.litongjava.maxkb.constant.MaxKbTableNames;
 import com.litongjava.maxkb.vo.MaxKbParagraphId;
 import com.litongjava.maxkb.vo.ProbrolemCreateBatch;
 import com.litongjava.maxkb.vo.ResultPage;
@@ -29,13 +29,13 @@ public class MaxKbProblemService {
       records.add(Row.by("id", id).set("content", string).set("dataset_id", datasetId).set("hit_num", 0));
       ids.add(id);
     }
-    Db.batchSave(TableNames.max_kb_problem, records, 2000);
+    Db.batchSave(MaxKbTableNames.max_kb_problem, records, 2000);
     return ResultVo.ok(ids);
   }
 
   public ResultVo page(Long datasetId, Integer pageNo, Integer pageSize) {
     TableInput tableInput = TableInput.create().setPageNo(pageNo).setPageSize(pageSize);
-    TableResult<Page<Row>> page = ApiTable.page(TableNames.max_kb_problem, tableInput);
+    TableResult<Page<Row>> page = ApiTable.page(MaxKbTableNames.max_kb_problem, tableInput);
     int totalRow = page.getData().getTotalRow();
     List<Row> list = page.getData().getList();
     List<Kv> kvs = RowUtils.toKv(list, false);
@@ -44,21 +44,21 @@ public class MaxKbProblemService {
   }
 
   public ResultVo delete(Long datasetId, List<Long> ids) {
-    ApiTable.deleteByIds(TableNames.max_kb_problem, ids);
-    ApiTable.deleteByIds(TableNames.max_kb_problem_paragraph_mapping, "problem_id", ids);
+    ApiTable.deleteByIds(MaxKbTableNames.max_kb_problem, ids);
+    ApiTable.deleteByIds(MaxKbTableNames.max_kb_problem_paragraph_mapping, "problem_id", ids);
     return ResultVo.ok();
   }
 
   public ResultVo delete(Long datasetId, Long problemId) {
-    ApiTable.delById(TableNames.max_kb_problem, problemId);
-    ApiTable.delById(TableNames.max_kb_problem_paragraph_mapping, "problem_id", problemId);
+    ApiTable.delById(MaxKbTableNames.max_kb_problem, problemId);
+    ApiTable.delById(MaxKbTableNames.max_kb_problem_paragraph_mapping, "problem_id", problemId);
     return ResultVo.ok();
   }
 
   public ResultVo listParagraphByProblemId(Long datasetId, Long probleamId) {
     List<Kv> datas = new ArrayList<>();
     TableInput tableInput = TableInput.by("dataset_id", datasetId).set("problem_id", probleamId).columns("paragraph_id as id");
-    TableResult<List<Row>> tableResult = ApiTable.list(TableNames.max_kb_problem_paragraph_mapping, tableInput);
+    TableResult<List<Row>> tableResult = ApiTable.list(MaxKbTableNames.max_kb_problem_paragraph_mapping, tableInput);
     List<Row> records = tableResult.getData();
     if (records != null) {
       datas = RowUtils.toKv(records, false);
@@ -73,7 +73,7 @@ public class MaxKbProblemService {
         .set("paragraph_id", paragraphId)
         //
         .set("problem_id", problemId);
-    boolean save = Db.save(TableNames.max_kb_problem_paragraph_mapping, record);
+    boolean save = Db.save(MaxKbTableNames.max_kb_problem_paragraph_mapping, record);
     if (save) {
       return ResultVo.ok();
     } else {
@@ -88,7 +88,7 @@ public class MaxKbProblemService {
         .set("paragraph_id", paragraphId)
         //
         .set("problem_id", problemId);
-    boolean ok = Db.delete(TableNames.max_kb_problem_paragraph_mapping, record);
+    boolean ok = Db.delete(MaxKbTableNames.max_kb_problem_paragraph_mapping, record);
     if (ok) {
       return ResultVo.ok();
     } else {
@@ -118,7 +118,7 @@ public class MaxKbProblemService {
 
     }
 
-    Db.batchSave(TableNames.max_kb_problem_paragraph_mapping, mappings, 2000);
+    Db.batchSave(MaxKbTableNames.max_kb_problem_paragraph_mapping, mappings, 2000);
     return ResultVo.ok();
   }
 

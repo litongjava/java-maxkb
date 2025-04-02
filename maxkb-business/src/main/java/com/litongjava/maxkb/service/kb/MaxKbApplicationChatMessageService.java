@@ -9,7 +9,7 @@ import com.litongjava.db.activerecord.Db;
 import com.litongjava.db.activerecord.Row;
 import com.litongjava.jfinal.aop.Aop;
 import com.litongjava.kit.PgObjectUtils;
-import com.litongjava.maxkb.constant.TableNames;
+import com.litongjava.maxkb.constant.MaxKbTableNames;
 import com.litongjava.maxkb.model.MaxKbApplicationChat;
 import com.litongjava.maxkb.model.MaxKbApplicationChatRecord;
 import com.litongjava.maxkb.model.MaxKbApplicationTempSetting;
@@ -124,7 +124,7 @@ public class MaxKbApplicationChatMessageService {
     String modelName = null;
 
     if (model_id != null) {
-      Row modelRecord = Db.findById(TableNames.max_kb_model, model_id);
+      Row modelRecord = Db.findById(MaxKbTableNames.max_kb_model, model_id);
       CredentialVo crdentianlVo = null;
       if (modelRecord != null) {
         Object credential = modelRecord.getColumns().remove("credential");

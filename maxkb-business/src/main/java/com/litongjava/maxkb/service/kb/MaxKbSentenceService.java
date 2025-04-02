@@ -11,7 +11,7 @@ import org.postgresql.util.PGobject;
 import com.litongjava.db.activerecord.Db;
 import com.litongjava.db.activerecord.Row;
 import com.litongjava.jfinal.aop.Aop;
-import com.litongjava.maxkb.constant.TableNames;
+import com.litongjava.maxkb.constant.MaxKbTableNames;
 import com.litongjava.maxkb.model.MaxKbSentence;
 import com.litongjava.maxkb.utils.ExecutorServiceUtils;
 import com.litongjava.openai.token.OpenAiTokenizer;
@@ -98,9 +98,9 @@ public class MaxKbSentenceService {
     // Step 5: Save all sentence records with embeddings to the database within a transaction
     transactionSuccess = Db.tx(() -> {
       // Delete existing sentences for the document to avoid duplicates
-      Db.deleteById(TableNames.max_kb_sentence, "document_id", documentIdFinal);
+      Db.deleteById(MaxKbTableNames.max_kb_sentence, "document_id", documentIdFinal);
       // Batch save the new sentences with embeddings
-      Db.batchSave(TableNames.max_kb_sentence, sentenceRows, 2000);
+      Db.batchSave(MaxKbTableNames.max_kb_sentence, sentenceRows, 2000);
       return true;
     });
 
@@ -157,8 +157,8 @@ public class MaxKbSentenceService {
     }
 
     transactionSuccess = Db.tx(() -> {
-      Db.deleteById(TableNames.max_kb_sentence, "document_id", documentIdFinal);
-      Db.batchSave(TableNames.max_kb_sentence, sentenceRows, 2000);
+      Db.deleteById(MaxKbTableNames.max_kb_sentence, "document_id", documentIdFinal);
+      Db.batchSave(MaxKbTableNames.max_kb_sentence, sentenceRows, 2000);
       return true;
     });
     return transactionSuccess;

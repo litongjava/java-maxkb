@@ -1,6 +1,6 @@
 package com.litongjava.maxkb.constant;
 
-public interface TableNames {
+public interface MaxKbTableNames {
   String max_kb_user = "max_kb_user";
   String system_setting = "system_setting";
   String max_kb_model = "max_kb_model";

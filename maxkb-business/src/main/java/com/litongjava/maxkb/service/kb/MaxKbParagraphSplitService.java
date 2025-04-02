@@ -9,7 +9,7 @@ import com.litongjava.db.TableResult;
 import com.litongjava.db.activerecord.Db;
 import com.litongjava.db.activerecord.Row;
 import com.litongjava.jfinal.aop.Aop;
-import com.litongjava.maxkb.constant.TableNames;
+import com.litongjava.maxkb.constant.MaxKbTableNames;
 import com.litongjava.maxkb.vo.ParagraphBatchVo;
 import com.litongjava.maxkb.vo.Paragraph;
 import com.litongjava.model.result.ResultVo;
@@ -34,7 +34,7 @@ public class MaxKbParagraphSplitService {
       tableInput.set("user_id", userId);
     }
 
-    TableResult<Row> result = ApiTable.get(TableNames.max_kb_dataset, tableInput);
+    TableResult<Row> result = ApiTable.get(MaxKbTableNames.max_kb_dataset, tableInput);
 
     Row dataset = result.getData();
     if (dataset == null) {
@@ -42,9 +42,9 @@ public class MaxKbParagraphSplitService {
     }
 
     Long embedding_mode_id = dataset.getLong("embedding_mode_id");
-    String sqlModelName = String.format("SELECT model_name FROM %s WHERE id = ?", TableNames.max_kb_model);
+    String sqlModelName = String.format("SELECT model_name FROM %s WHERE id = ?", MaxKbTableNames.max_kb_model);
     String modelName = Db.queryStr(sqlModelName, embedding_mode_id);
-    String sqlDocumentId = String.format("SELECT id FROM %s WHERE user_id = ? AND file_id = ?", TableNames.max_kb_document);
+    String sqlDocumentId = String.format("SELECT id FROM %s WHERE user_id = ? AND file_id = ?", MaxKbTableNames.max_kb_document);
 
     List<Kv> kvs = new ArrayList<>();
 
@@ -78,11 +78,11 @@ public class MaxKbParagraphSplitService {
             .set("type", type).set("dataset_id", dataset_id).set("paragraph_count", size)
             //
             .set("hit_handling_method", "optimization").set("directly_return_similarity", 0.9);
-        Db.save(TableNames.max_kb_document, record);
+        Db.save(MaxKbTableNames.max_kb_document, record);
         Kv kv = record.toKv();
         kvs.add(kv);
       } else {
-        Row existingRecord = Db.findById(TableNames.max_kb_document, documentId);
+        Row existingRecord = Db.findById(MaxKbTableNames.max_kb_document, documentId);
         if (existingRecord != null) {
           Kv kv = existingRecord.toKv();
           kvs.add(kv);
@@ -149,8 +149,8 @@ public class MaxKbParagraphSplitService {
       }
     }
     return Db.tx(() -> {
-      Db.delete(TableNames.max_kb_paragraph, Row.by("document_id", documentIdFinal));
-      Db.batchSave(TableNames.max_kb_paragraph, batchRecord, 2000);
+      Db.delete(MaxKbTableNames.max_kb_paragraph, Row.by("document_id", documentIdFinal));
+      Db.batchSave(MaxKbTableNames.max_kb_paragraph, batchRecord, 2000);
       return true;
     });
   }

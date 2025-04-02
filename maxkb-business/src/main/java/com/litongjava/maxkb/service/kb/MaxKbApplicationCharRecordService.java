@@ -10,7 +10,7 @@ import org.postgresql.util.PGobject;
 import com.jfinal.kit.Kv;
 import com.litongjava.db.activerecord.Db;
 import com.litongjava.db.activerecord.Row;
-import com.litongjava.maxkb.constant.TableNames;
+import com.litongjava.maxkb.constant.MaxKbTableNames;
 import com.litongjava.maxkb.vo.MaxKbChatRecordDetail;
 import com.litongjava.maxkb.vo.ParagraphSearchResultVo;
 import com.litongjava.model.result.ResultVo;
@@ -21,7 +21,7 @@ public class MaxKbApplicationCharRecordService {
 
   public ResultVo get(Long userId, Long applicationId, Long chatId, Long recordId) {
     Row queryRecord = Row.by("id", recordId).set("chat_id", chatId);
-    Row record = Db.findFirst(TableNames.max_kb_application_chat_record, queryRecord);
+    Row record = Db.findFirst(MaxKbTableNames.max_kb_application_chat_record, queryRecord);
     if (record != null) {
       Object object = record.get("details");
       record.remove("details");

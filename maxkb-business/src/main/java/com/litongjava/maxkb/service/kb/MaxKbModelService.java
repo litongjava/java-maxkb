@@ -10,7 +10,7 @@ import com.jfinal.kit.Kv;
 import com.litongjava.db.activerecord.Db;
 import com.litongjava.db.activerecord.Row;
 import com.litongjava.jfinal.aop.Aop;
-import com.litongjava.maxkb.constant.TableNames;
+import com.litongjava.maxkb.constant.MaxKbTableNames;
 import com.litongjava.maxkb.dao.ModelDao;
 import com.litongjava.maxkb.enumeration.ModelProvider;
 import com.litongjava.maxkb.enumeration.ModelType;
@@ -42,7 +42,7 @@ public class MaxKbModelService {
     String sql = null;
     if (name == null) {
       sql = "select id,provider,name,model_type,model_name,status,meta,permission_type,user_id from %s";
-      sql = String.format(sql, TableNames.max_kb_model);
+      sql = String.format(sql, MaxKbTableNames.max_kb_model);
       List<Row> list = Db.findWithJsonField(sql, jsonFields);
       List<Kv> kvs = new ArrayList<>();
       for (Row r : list) {
@@ -65,7 +65,7 @@ public class MaxKbModelService {
     }
 
     sql = "select id,provider,name,model_type,model_name,status,meta,permission_type,user_id from %s where name=?";
-    sql = String.format(sql, TableNames.max_kb_model);
+    sql = String.format(sql, MaxKbTableNames.max_kb_model);
 
     List<Kv> kvs = new ArrayList<>();
     List<Row> list = Db.findWithJsonField(sql, jsonFields, name);
@@ -86,7 +86,7 @@ public class MaxKbModelService {
   public ResultVo save(Long userId, ModelVo modelVo) {
     String name = modelVo.getName();
     log.info("name:{}", name);
-    if (modelVo.getId()==null && Db.exists(TableNames.max_kb_model, "name", name)) {
+    if (modelVo.getId()==null && Db.exists(MaxKbTableNames.max_kb_model, "name", name)) {
       return ResultVo.fail(400, "模型名称【" + name + "】已存在");
     }
 
@@ -158,7 +158,7 @@ public class MaxKbModelService {
   }
 
   public ResultVo get(Long id) {
-    Row record = Db.findById(TableNames.max_kb_model, id);
+    Row record = Db.findById(MaxKbTableNames.max_kb_model, id);
     Object credential = record.getColumns().remove("credential");
     Kv kv = record.toKv();
     if (credential instanceof String) {

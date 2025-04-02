@@ -4,18 +4,18 @@ import java.util.Map;
 
 import com.litongjava.db.activerecord.Db;
 import com.litongjava.db.activerecord.Row;
-import com.litongjava.maxkb.constant.TableNames;
+import com.litongjava.maxkb.constant.MaxKbTableNames;
 import com.litongjava.maxkb.vo.ModelVo;
 import com.litongjava.tio.utils.snowflake.SnowflakeIdUtils;
 
 public class ModelDao {
 
   public void save(Map<String, Object> map) {
-    Db.save(TableNames.max_kb_model, Row.fromMap(map));
+    Db.save(MaxKbTableNames.max_kb_model, Row.fromMap(map));
   }
 
   public boolean deleteById(Long id) {
-    return Db.deleteById(TableNames.max_kb_model, id);
+    return Db.deleteById(MaxKbTableNames.max_kb_model, id);
   }
 
   public boolean saveOrUpdate(Long userId, ModelVo modelVo) {
@@ -34,10 +34,10 @@ public class ModelDao {
     Long id = modelVo.getId();
     if (id != null) {
       record.set("id", id);
-      return Db.update(TableNames.max_kb_model, "id", record, new String[] { "credential" });
+      return Db.update(MaxKbTableNames.max_kb_model, "id", record, new String[] { "credential" });
     } else {
       record.set("id", SnowflakeIdUtils.id());
-      return Db.save(TableNames.max_kb_model, record, new String[] { "credential" });
+      return Db.save(MaxKbTableNames.max_kb_model, record, new String[] { "credential" });
     }
   }
 

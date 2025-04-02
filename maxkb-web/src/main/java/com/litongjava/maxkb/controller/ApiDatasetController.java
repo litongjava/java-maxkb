@@ -8,15 +8,15 @@ import com.litongjava.annotation.Post;
 import com.litongjava.annotation.Put;
 import com.litongjava.annotation.RequestPath;
 import com.litongjava.jfinal.aop.Aop;
-import com.litongjava.maxkb.service.DatasetDocumentVectorService;
 import com.litongjava.maxkb.service.kb.MaxKbDatasetHitTestService;
 import com.litongjava.maxkb.service.kb.MaxKbDatasetService;
 import com.litongjava.maxkb.service.kb.MaxKbDocumentService;
 import com.litongjava.maxkb.service.kb.MaxKbParagraphServcie;
+import com.litongjava.maxkb.service.kb.MaxKbParagraphSplitService;
 import com.litongjava.maxkb.service.kb.MaxKbProblemService;
-import com.litongjava.maxkb.vo.DocumentBatchVo;
 import com.litongjava.maxkb.vo.KbDatasetModel;
 import com.litongjava.maxkb.vo.Paragraph;
+import com.litongjava.maxkb.vo.ParagraphBatchVo;
 import com.litongjava.maxkb.vo.ProbrolemCreateBatch;
 import com.litongjava.model.result.ResultVo;
 import com.litongjava.tio.boot.http.TioRequestContext;
@@ -72,8 +72,8 @@ public class ApiDatasetController {
   public ResultVo batch(Long id, HttpRequest request) {
     String bodyString = request.getBodyString();
     Long userId = TioRequestContext.getUserIdLong();
-    List<DocumentBatchVo> list = JsonUtils.parseArray(bodyString, DocumentBatchVo.class);
-    return Aop.get(DatasetDocumentVectorService.class).batch(userId, id, list);
+    List<ParagraphBatchVo> list = JsonUtils.parseArray(bodyString, ParagraphBatchVo.class);
+    return Aop.get(MaxKbParagraphSplitService.class).batch(userId, id, list);
   }
 
   @Get("/{id}/document/{pageNo}/{pageSize}")
