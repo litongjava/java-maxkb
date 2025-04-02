@@ -11,7 +11,7 @@ import lombok.experimental.Accessors;
 @NoArgsConstructor
 @AllArgsConstructor
 @Accessors(chain = true)
-public class DocumentBatchVo {
+public class ParagraphBatchVo {
   private Long id;
   private String name;
   private List<Paragraph> paragraphs;

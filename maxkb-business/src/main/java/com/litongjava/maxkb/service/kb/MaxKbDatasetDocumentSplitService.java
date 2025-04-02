@@ -1,4 +1,4 @@
-package com.litongjava.maxkb.service;
+package com.litongjava.maxkb.service.kb;
 
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
@@ -54,7 +54,7 @@ import lombok.extern.slf4j.Slf4j;
  * @date 
  */
 @Slf4j
-public class DatasetDocumentSplitService {
+public class MaxKbDatasetDocumentSplitService {
 
   private static final int MAX_HEIGHT = 2200;
   private final Object lock = new Object();

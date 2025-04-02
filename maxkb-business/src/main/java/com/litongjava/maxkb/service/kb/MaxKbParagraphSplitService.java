@@ -1,4 +1,4 @@
-package com.litongjava.maxkb.service;
+package com.litongjava.maxkb.service.kb;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,9 +10,7 @@ import com.litongjava.db.activerecord.Db;
 import com.litongjava.db.activerecord.Row;
 import com.litongjava.jfinal.aop.Aop;
 import com.litongjava.maxkb.constant.TableNames;
-import com.litongjava.maxkb.service.kb.MaxKbEmbeddingService;
-import com.litongjava.maxkb.service.kb.MaxKbSentenceService;
-import com.litongjava.maxkb.vo.DocumentBatchVo;
+import com.litongjava.maxkb.vo.ParagraphBatchVo;
 import com.litongjava.maxkb.vo.Paragraph;
 import com.litongjava.model.result.ResultVo;
 import com.litongjava.table.services.ApiTable;
@@ -28,7 +26,7 @@ public class MaxKbParagraphSplitService {
   MaxKbEmbeddingService maxKbEmbeddingService = Aop.get(MaxKbEmbeddingService.class);
   MaxKbSentenceService maxKbSentenceService = Aop.get(MaxKbSentenceService.class);
 
-  public ResultVo batch(Long userId, Long dataset_id, List<DocumentBatchVo> list) {
+  public ResultVo batch(Long userId, Long dataset_id, List<ParagraphBatchVo> list) {
 
     TableInput tableInput = new TableInput();
     tableInput.set("id", dataset_id);
@@ -50,7 +48,7 @@ public class MaxKbParagraphSplitService {
 
     List<Kv> kvs = new ArrayList<>();
 
-    for (DocumentBatchVo documentBatchVo : list) {
+    for (ParagraphBatchVo documentBatchVo : list) {
       Long fileId = documentBatchVo.getId();
       String filename = documentBatchVo.getName();
       Long documentId = Db.queryLong(sqlDocumentId, userId, fileId);
