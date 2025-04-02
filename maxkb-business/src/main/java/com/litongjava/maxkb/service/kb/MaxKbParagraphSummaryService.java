@@ -14,7 +14,7 @@ import com.litongjava.tio.utils.snowflake.SnowflakeIdUtils;
 public class MaxKbParagraphSummaryService {
 
   private static final Striped<Lock> locks = Striped.lock(1024);
-  String prompt = PromptEngine.renderToString("ParagraphSummaryPrompt.txt");
+  private static final String prompt = PromptEngine.renderToString("ParagraphSummaryPrompt.txt");
   String selectContentSql = "select content from max_kb_paragraph_summary_cache where md5=?";
 
   public String summary(String paragraphContent) {
@@ -24,7 +24,7 @@ public class MaxKbParagraphSummaryService {
       return summaryContent;
     }
 
-    prompt += "\r\n\r\n" + paragraphContent;
+    String newPrompt = prompt + "\r\n\r\n" + paragraphContent;
     Lock lock = locks.get(md5);
     lock.lock();
     try {
@@ -36,12 +36,12 @@ public class MaxKbParagraphSummaryService {
       OpenAiChatResponseVo chat = null;
       long start = System.currentTimeMillis();
       try {
-        chat = OpenAiClient.chat(prompt);
+        chat = OpenAiClient.chat(newPrompt);
       } catch (Exception e) {
         try {
-          chat = OpenAiClient.chat(prompt);
+          chat = OpenAiClient.chat(newPrompt);
         } catch (Exception e1) {
-          chat = OpenAiClient.chat(prompt);
+          chat = OpenAiClient.chat(newPrompt);
         }
       }
       long end = System.currentTimeMillis();
