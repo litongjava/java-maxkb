@@ -16,6 +16,9 @@ public class ParagraphSearchResultVo {
   private String dataset_name;
   private Long document_id;
   private String document_name;
+  private String document_type;
+  private String document_url;
+  
   private Boolean active;
   private Integer hit_num;
   private String status;

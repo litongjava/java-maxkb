@@ -165,6 +165,8 @@ SELECT DISTINCT
 FROM (
   SELECT
     d.name AS document_name,
+    d.type AS document_type,
+    d.url AS document_url,
     ds.name AS dataset_name,
     s.id,
     s.content,
