@@ -23,7 +23,7 @@ import com.litongjava.tio.utils.snowflake.SnowflakeIdUtils;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class DatasetDocumentVectorService {
+public class MaxKbParagraphSplitService {
 
   MaxKbEmbeddingService maxKbEmbeddingService = Aop.get(MaxKbEmbeddingService.class);
   MaxKbSentenceService maxKbSentenceService = Aop.get(MaxKbSentenceService.class);

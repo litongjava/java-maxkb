@@ -15,6 +15,7 @@ import com.litongjava.model.result.ResultVo;
 import com.litongjava.table.services.ApiTable;
 
 public class MaxKbDocumentService {
+  
   public ResultVo page(Long userId, Long datasetId, Integer pageNo, Integer pageSize) {
     TableInput tableInput = new TableInput();
     if (userId != 1) {
