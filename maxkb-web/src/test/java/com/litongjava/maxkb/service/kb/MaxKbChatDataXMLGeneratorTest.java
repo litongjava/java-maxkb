@@ -12,7 +12,7 @@ public class MaxKbChatDataXMLGeneratorTest {
   @Test
   public void test() {
     List<ParagraphSearchResultVo> records = getRecords(); // 假设此方法获取记录
-    String xmlData = MaxKbChatDataXMLGenerator.generateXML(records);
+    String xmlData = MaxKbParagraphXMLGenerator.generateXML(records);
     System.out.println(xmlData);
   }
 

@@ -95,7 +95,7 @@ public class MaxKbApplicationChatMessageService {
   private void chatWichApplication(ChannelContext channelContext, String quesiton, MaxKbApplicationVo applicationVo, Long chatId, long messageId, MaxKbSearchStep maxKbSearchStep) {
     List<ParagraphSearchResultVo> records = maxKbSearchStep.getParagraph_list();
     log.info("records size:{}", records.size());
-    String xmlData = MaxKbChatDataXMLGenerator.generateXML(records);
+    String xmlData = MaxKbParagraphXMLGenerator.generateXML(records);
 
     MaxKbModelSetting model_setting = applicationVo.getModel_setting();
 

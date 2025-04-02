@@ -6,7 +6,7 @@ import java.util.stream.Collectors;
 
 import com.litongjava.maxkb.vo.ParagraphSearchResultVo;
 
-public class MaxKbChatDataXMLGenerator {
+public class MaxKbParagraphXMLGenerator {
 
   public static String generateXML(List<ParagraphSearchResultVo> records) {
     StringBuilder data = new StringBuilder();
@@ -25,7 +25,7 @@ public class MaxKbChatDataXMLGenerator {
 
       String documentNames = list.get(0).getDocument_name();
 
-      String contents = list.stream().map(ParagraphSearchResultVo::getContent).map(MaxKbChatDataXMLGenerator::escapeXml).collect(Collectors.joining("\r\n"));
+      String contents = list.stream().map(ParagraphSearchResultVo::getContent).map(MaxKbParagraphXMLGenerator::escapeXml).collect(Collectors.joining("\r\n"));
 
       data.append("<document_name>").append(documentNames).append("</document_name>");
       data.append("<contents>").append(contents).append("</contents>");

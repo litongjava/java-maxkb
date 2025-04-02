@@ -24,7 +24,7 @@ public class MaxKbParagraphRetrieveService {
     long end = System.currentTimeMillis();
     maxKbSearchStep.setStep_type("step_type")
         //
-        .setModel_name("text_embedding_3_large").setProblem_text("problem_text")
+        .setModel_name(OpenAiModels.TEXT_EMBEDDING_3_LARGE).setProblem_text("problem_text")
         //
         .setCost(0).setRun_time(((double) (end - start)) / 1000)
         //
