@@ -90,6 +90,24 @@ public abstract class BaseMaxKbDocument<M extends BaseMaxKbDocument<M>> extends 
 		return getStr("type");
 	}
 	
+	 public M setUrl(java.lang.String type) {
+	    set("url", type);
+	    return (M)this;
+	  }
+	  
+	  public java.lang.String geturl() {
+	    return getStr("url");
+	  }
+	
+	 public M setContent(java.lang.String type) {
+	    set("content", type);
+	    return (M)this;
+	  }
+	  
+	  public java.lang.String getCotnent() {
+	    return getStr("content");
+	  }
+	
 	public M setMeta(java.lang.String meta) {
 		set("meta", meta);
 		return (M)this;

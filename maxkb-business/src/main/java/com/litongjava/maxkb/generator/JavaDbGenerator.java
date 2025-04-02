@@ -11,6 +11,10 @@ public class JavaDbGenerator {
   public static String modelPackageName = "com.litongjava.maxkb.model";
 
   public static void main(String[] args) {
+    gen();
+  }
+
+  public static void gen() {
     EnvUtils.load();
     DataSource dataSource = getDataSource();
 
