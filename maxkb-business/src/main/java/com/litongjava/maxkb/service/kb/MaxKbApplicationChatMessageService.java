@@ -43,7 +43,7 @@ import okhttp3.Callback;
 @Slf4j
 public class MaxKbApplicationChatMessageService {
 
-  MaxKbParagraphSearchService maxKbParagraphSearchService = Aop.get(MaxKbParagraphSearchService.class);
+  MaxKbParagraphRetrieveService maxKbParagraphSearchService = Aop.get(MaxKbParagraphRetrieveService.class);
 
   public ResultVo ask(ChannelContext channelContext, Long chatId, MaxKbChatRequestVo vo) {
     String quesiton = vo.getMessage();

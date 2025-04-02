@@ -15,7 +15,7 @@ import com.litongjava.template.SqlTemplates;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class MaxKbParagraphSearchService {
+public class MaxKbParagraphRetrieveService {
 
   public MaxKbSearchStep search(Long[] datasetIdArray, Float similarity, Integer top_n, String quesiton) {
     MaxKbSearchStep maxKbSearchStep = new MaxKbSearchStep();
