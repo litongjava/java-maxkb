@@ -11,7 +11,7 @@ import lombok.experimental.Accessors;
 @NoArgsConstructor
 @AllArgsConstructor
 @Accessors(chain=true)
-public class MaxKbSearchStep {
+public class MaxKbRetrieveResult {
   private Integer cost;
   private Double run_time;
   private String step_type;

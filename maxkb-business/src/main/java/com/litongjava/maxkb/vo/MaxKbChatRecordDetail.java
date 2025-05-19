@@ -9,5 +9,5 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class MaxKbChatRecordDetail {
   private MaxKbChatStep chat_step;
-  private MaxKbSearchStep search_step;
+  private MaxKbRetrieveResult search_step;
 }

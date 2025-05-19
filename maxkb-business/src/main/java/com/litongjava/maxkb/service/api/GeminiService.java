@@ -4,7 +4,7 @@ import com.litongjava.gemini.GeminiClient;
 import com.litongjava.gemini.GoogleGeminiModels;
 import com.litongjava.openai.chat.OpenAiChatRequestVo;
 import com.litongjava.openai.client.OpenAiClient;
-import com.litongjava.openai.constants.OpenAiConstants;
+import com.litongjava.openai.consts.OpenAiConstants;
 import com.litongjava.tio.utils.environment.EnvUtils;
 
 import lombok.extern.slf4j.Slf4j;

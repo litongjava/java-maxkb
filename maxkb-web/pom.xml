@@ -3,7 +3,7 @@
   <parent>
     <groupId>com.litongjava</groupId>
     <artifactId>java-maxkb</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
   </parent>
   <artifactId>maxkb-web</artifactId>
   <properties>
@@ -14,7 +14,7 @@
     <dependency>
       <groupId>com.litongjava</groupId>
       <artifactId>maxkb-business</artifactId>
-      <version>1.0.0</version>
+      <version>1.0.1</version>
     </dependency>
     <dependency>
       <groupId>org.projectlombok</groupId>

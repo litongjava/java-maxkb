@@ -7,9 +7,9 @@ import java.util.List;
 import com.litongjava.db.activerecord.Db;
 import com.litongjava.db.activerecord.Row;
 import com.litongjava.jfinal.aop.Aop;
-import com.litongjava.maxkb.vo.MaxKbSearchStep;
+import com.litongjava.maxkb.vo.MaxKbRetrieveResult;
 import com.litongjava.maxkb.vo.ParagraphSearchResultVo;
-import com.litongjava.openai.constants.OpenAiModels;
+import com.litongjava.openai.consts.OpenAiModels;
 import com.litongjava.template.SqlTemplates;
 
 import lombok.extern.slf4j.Slf4j;
@@ -17,8 +17,8 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class MaxKbParagraphRetrieveService {
 
-  public MaxKbSearchStep search(Long[] datasetIdArray, Float similarity, Integer top_n, String quesiton) {
-    MaxKbSearchStep maxKbSearchStep = new MaxKbSearchStep();
+  public MaxKbRetrieveResult search(Long[] datasetIdArray, Float similarity, Integer top_n, String quesiton) {
+    MaxKbRetrieveResult maxKbSearchStep = new MaxKbRetrieveResult();
     long start = System.currentTimeMillis();
     List<ParagraphSearchResultVo> results = search0(datasetIdArray, similarity, top_n, quesiton);
     long end = System.currentTimeMillis();
@@ -47,8 +47,8 @@ public class MaxKbParagraphRetrieveService {
     return results;
   }
 
-  public MaxKbSearchStep searchV1(Long[] datasetIdArray, Float similarity, Integer top_n, String quesiton) {
-    MaxKbSearchStep maxKbSearchStep = new MaxKbSearchStep();
+  public MaxKbRetrieveResult searchV1(Long[] datasetIdArray, Float similarity, Integer top_n, String quesiton) {
+    MaxKbRetrieveResult maxKbSearchStep = new MaxKbRetrieveResult();
     long start = System.currentTimeMillis();
     List<ParagraphSearchResultVo> results = searchV10(datasetIdArray, similarity, top_n, quesiton);
     long end = System.currentTimeMillis();

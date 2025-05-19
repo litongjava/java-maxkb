@@ -14,7 +14,7 @@ import com.litongjava.maxkb.service.ChatStreamCallCan;
 import com.litongjava.maxkb.utils.TokenCounter;
 import com.litongjava.maxkb.vo.MaxKbChatRecordDetail;
 import com.litongjava.maxkb.vo.MaxKbChatStep;
-import com.litongjava.maxkb.vo.MaxKbSearchStep;
+import com.litongjava.maxkb.vo.MaxKbRetrieveResult;
 import com.litongjava.maxkb.vo.MaxKbStreamChatVo;
 import com.litongjava.openai.chat.ChatResponseDelta;
 import com.litongjava.openai.chat.Choice;
@@ -38,11 +38,11 @@ public class ChatStreamCallbackImpl implements Callback {
   private final Long chatId;
   private final Long messageId;
   private final long start;
-  private final MaxKbSearchStep searchStep;
+  private final MaxKbRetrieveResult searchStep;
   private final MaxKbChatStep chatStep;
   private final ChannelContext channelContext;
 
-  public ChatStreamCallbackImpl(Long chatId, Long messageId, long start, MaxKbSearchStep searchStep, MaxKbChatStep chatStep,
+  public ChatStreamCallbackImpl(Long chatId, Long messageId, long start, MaxKbRetrieveResult searchStep, MaxKbChatStep chatStep,
       //
       ChannelContext channelContext) {
     this.chatId = chatId;

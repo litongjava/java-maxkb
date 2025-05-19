@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.postgresql.util.PGobject;
 
+import com.litongjava.chat.ChatMessage;
 import com.litongjava.db.activerecord.Db;
 import com.litongjava.db.activerecord.Row;
 import com.litongjava.jfinal.aop.Aop;
@@ -22,14 +23,13 @@ import com.litongjava.maxkb.vo.MaxKbChatRequestVo;
 import com.litongjava.maxkb.vo.MaxKbChatStep;
 import com.litongjava.maxkb.vo.MaxKbDatasetSettingVo;
 import com.litongjava.maxkb.vo.MaxKbModelSetting;
-import com.litongjava.maxkb.vo.MaxKbSearchStep;
+import com.litongjava.maxkb.vo.MaxKbRetrieveResult;
 import com.litongjava.maxkb.vo.ParagraphSearchResultVo;
 import com.litongjava.model.result.ResultVo;
-import com.litongjava.openai.chat.ChatMessage;
 import com.litongjava.openai.chat.OpenAiChatRequestVo;
 import com.litongjava.openai.client.OpenAiClient;
-import com.litongjava.openai.constants.OpenAiConstants;
-import com.litongjava.openai.constants.OpenAiModels;
+import com.litongjava.openai.consts.OpenAiConstants;
+import com.litongjava.openai.consts.OpenAiModels;
 import com.litongjava.tio.core.ChannelContext;
 import com.litongjava.tio.utils.environment.EnvUtils;
 import com.litongjava.tio.utils.hutool.StrUtil;
@@ -86,13 +86,13 @@ public class MaxKbApplicationChatMessageService {
 
     Long[] datasetIdArray = dataset_id_list.toArray(new Long[0]);
 
-    MaxKbSearchStep maxKbSearchStep = maxKbParagraphSearchService.search(datasetIdArray, similarity, top_n, quesiton);
+    MaxKbRetrieveResult maxKbSearchStep = maxKbParagraphSearchService.search(datasetIdArray, similarity, top_n, quesiton);
     chatWichApplication(channelContext, quesiton, applicationVo, chatId, messageId, maxKbSearchStep);
 
     return ResultVo.ok("");
   }
 
-  private void chatWichApplication(ChannelContext channelContext, String quesiton, MaxKbApplicationVo applicationVo, Long chatId, long messageId, MaxKbSearchStep maxKbSearchStep) {
+  private void chatWichApplication(ChannelContext channelContext, String quesiton, MaxKbApplicationVo applicationVo, Long chatId, long messageId, MaxKbRetrieveResult maxKbSearchStep) {
     List<ParagraphSearchResultVo> records = maxKbSearchStep.getParagraph_list();
     log.info("records size:{}", records.size());
     String xmlData = MaxKbParagraphXMLGenerator.generateXML(records);

@@ -18,6 +18,7 @@ public class ParagraphSearchResultVo {
   private String document_name;
   private String document_type;
   private String document_url;
+  private Long paragraph_id;
   
   private Boolean active;
   private Integer hit_num;

@@ -12,7 +12,7 @@ import com.litongjava.jfinal.aop.Aop;
 import com.litongjava.kit.RowUtils;
 import com.litongjava.maxkb.constant.MaxKbTableNames;
 import com.litongjava.model.result.ResultVo;
-import com.litongjava.openai.constants.OpenAiModels;
+import com.litongjava.openai.consts.OpenAiModels;
 import com.litongjava.table.services.ApiTable;
 import com.litongjava.template.SqlTemplates;
 

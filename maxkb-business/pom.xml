@@ -3,19 +3,27 @@
   <parent>
     <groupId>com.litongjava</groupId>
     <artifactId>java-maxkb</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
   </parent>
   <packaging>jar</packaging>
   <name>java-maxkb</name>
   <description>java-maxkb-business</description>
   <url>https://github.com/litongjava/java-maxkb</url>
   <artifactId>maxkb-business</artifactId>
+  <properties>
+  <java-openai.version>1.1.9</java-openai.version>
+  </properties>
 
   <dependencies>
+  <dependency>
+      <groupId>com.litongjava</groupId>
+      <artifactId>java-openai</artifactId>
+      <version>${java-openai.version}</version>
+    </dependency>
     <dependency>
       <groupId>com.litongjava</groupId>
       <artifactId>tio-boot-admin</artifactId>
-      <version>1.0.0</version>
+      <version>1.0.1</version>
     </dependency>
 
     <dependency>

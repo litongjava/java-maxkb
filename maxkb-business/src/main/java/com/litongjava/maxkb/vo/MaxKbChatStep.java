@@ -2,7 +2,7 @@ package com.litongjava.maxkb.vo;
 
 import java.util.List;
 
-import com.litongjava.openai.chat.ChatMessage;
+import com.litongjava.chat.ChatMessage;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -12,7 +12,7 @@ import lombok.experimental.Accessors;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Accessors(chain=true)
+@Accessors(chain = true)
 public class MaxKbChatStep {
   private Integer cost;
   private Long model_id;
