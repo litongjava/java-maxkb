@@ -77,7 +77,8 @@
     <dependency>
       <groupId>com.microsoft.playwright</groupId>
       <artifactId>playwright</artifactId>
-      <version>1.27.0</version> <!-- 请检查最新版本 -->
+      <version>1.27.0</version>
+      <scope>provided</scope>
     </dependency>
 
     <dependency>

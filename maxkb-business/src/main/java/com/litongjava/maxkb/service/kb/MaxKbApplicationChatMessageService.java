@@ -86,7 +86,7 @@ public class MaxKbApplicationChatMessageService {
 
     Long[] datasetIdArray = dataset_id_list.toArray(new Long[0]);
 
-    MaxKbRetrieveResult maxKbSearchStep = maxKbParagraphSearchService.search(datasetIdArray, similarity, top_n, quesiton);
+    MaxKbRetrieveResult maxKbSearchStep = maxKbParagraphSearchService.retrieve(datasetIdArray, similarity, top_n, quesiton);
     chatWichApplication(channelContext, quesiton, applicationVo, chatId, messageId, maxKbSearchStep);
 
     return ResultVo.ok("");

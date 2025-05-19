@@ -7,7 +7,6 @@ import org.postgresql.util.PGobject;
 import com.litongjava.db.activerecord.Db;
 import com.litongjava.db.activerecord.Row;
 import com.litongjava.db.utils.PgVectorUtils;
-import com.litongjava.jfinal.aop.Aop;
 import com.litongjava.maxkb.constant.MaxKbTableNames;
 import com.litongjava.openai.client.OpenAiClient;
 import com.litongjava.openai.consts.OpenAiModels;
@@ -17,7 +16,14 @@ import com.litongjava.tio.utils.snowflake.SnowflakeIdUtils;
 public class KbEmbeddingService {
   private final Object vectorLock = new Object();
   private final Object writeLock = new Object();
+  
+  public Long getVectorId(String text) {
+    return getVectorId(text, OpenAiModels.TEXT_EMBEDDING_3_LARGE);
+  }
 
+  public PGobject getVector(String text) {
+    return getVector(text, OpenAiModels.TEXT_EMBEDDING_3_LARGE);
+  }
   public PGobject getVector(String text, String model) {
     String v = null;
     String md5 = Md5Utils.getMD5(text);
@@ -50,9 +56,6 @@ public class KbEmbeddingService {
     return pGobject;
   }
 
-  public Long getVectorId(String text) {
-    return getVectorId(text, OpenAiModels.TEXT_EMBEDDING_3_LARGE);
-  }
 
   public Long getVectorId(String text, String model) {
     String md5 = Md5Utils.getMD5(text);

@@ -18,7 +18,7 @@ public class MaxKbParagraphSearchServiceTest {
     Float similarity = 0.2f;
     Integer top_n = 20;
     String question = "总结一下文档内容";
-    MaxKbRetrieveResult search = Aop.get(MaxKbParagraphRetrieveService.class).search(datasetIdArray, similarity, top_n, question);
+    MaxKbRetrieveResult search = Aop.get(MaxKbParagraphRetrieveService.class).retrieve(datasetIdArray, similarity, top_n, question);
     System.out.println(JsonUtils.toJson(search.getParagraph_list()));
   }
 

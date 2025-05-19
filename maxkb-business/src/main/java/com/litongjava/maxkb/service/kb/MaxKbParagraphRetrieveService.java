@@ -17,7 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class MaxKbParagraphRetrieveService {
 
-  public MaxKbRetrieveResult search(Long[] datasetIdArray, Float similarity, Integer top_n, String quesiton) {
+  public MaxKbRetrieveResult retrieve(Long[] datasetIdArray, Float similarity, Integer top_n, String quesiton) {
     MaxKbRetrieveResult maxKbSearchStep = new MaxKbRetrieveResult();
     long start = System.currentTimeMillis();
     List<ParagraphSearchResultVo> results = search0(datasetIdArray, similarity, top_n, quesiton);
