@@ -10,6 +10,12 @@ import com.litongjava.openai.consts.OpenAiModels;
 
 public class KbRetrieveService {
 
+  public List<String> retrieveText(KbRetrieveInput input) {
+    Long vectorId = Aop.get(KbEmbeddingService.class).getVectorId(input.getInput(), OpenAiModels.TEXT_EMBEDDING_3_LARGE);
+    String sql = generateRetrieveSql(input.getTable(), input.getColumns());
+    return Db.queryListString(sql, vectorId, input.getSimilarity(), input.getTop_n());
+  }
+
   public List<Row> retrieve(KbRetrieveInput input) {
     Long vectorId = Aop.get(KbEmbeddingService.class).getVectorId(input.getInput(), OpenAiModels.TEXT_EMBEDDING_3_LARGE);
     String sql = generateRetrieveSql(input.getTable(), input.getColumns());
