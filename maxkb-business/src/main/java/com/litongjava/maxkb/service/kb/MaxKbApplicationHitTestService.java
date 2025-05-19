@@ -61,7 +61,7 @@ public class MaxKbApplicationHitTestService {
     if (datasetIds.size() < 1) {
       return ResultVo.fail("not found database of application id:", applicationId);
     }
-    Long vectorId = Aop.get(MaxKbEmbeddingService.class).getVectorId(query_text, modelName);
+    Long vectorId = Aop.get(KbEmbeddingService.class).getVectorId(query_text, modelName);
 
     sql = SqlTemplates.get("kb.search_sentense_related_paragraph__with_dataset_ids");
     Long[] array = datasetIds.toArray(new Long[0]);
@@ -104,7 +104,7 @@ public class MaxKbApplicationHitTestService {
     if (datasetIds.size() < 1) {
       return ResultVo.fail("not found database of application id:", applicationId);
     }
-    Long vectorId = Aop.get(MaxKbEmbeddingService.class).getVectorId(query_text, modelName);
+    Long vectorId = Aop.get(KbEmbeddingService.class).getVectorId(query_text, modelName);
     //String ids = datasetIds.stream().map(id -> "?").collect(Collectors.joining(", "));
 
     //    sql = SqlTemplates.get("kb.hit_test_by_dataset_ids_with_max_kb_embedding_cache");

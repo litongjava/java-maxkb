@@ -103,7 +103,7 @@ public class MaxKbParagraphServcie {
     String sqlModelName = String.format("SELECT model_name FROM %s WHERE id = ?", MaxKbTableNames.max_kb_model);
     String modelName = Db.queryStr(sqlModelName, embedding_mode_id);
 
-    MaxKbEmbeddingService maxKbEmbeddingService = Aop.get(MaxKbEmbeddingService.class);
+    KbEmbeddingService maxKbEmbeddingService = Aop.get(KbEmbeddingService.class);
 
     String title = p.getTitle();
     String content = p.getContent();

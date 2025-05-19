@@ -26,7 +26,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class MaxKbSentenceService {
-  MaxKbEmbeddingService maxKbEmbeddingService = Aop.get(MaxKbEmbeddingService.class);
+  KbEmbeddingService maxKbEmbeddingService = Aop.get(KbEmbeddingService.class);
   CompletionService<MaxKbSentence> completionServiceSentence = new ExecutorCompletionService<>(ExecutorServiceUtils.getExecutorService());
 
   CompletionService<Row> completionServiceRow = new ExecutorCompletionService<>(ExecutorServiceUtils.getExecutorService());

@@ -12,7 +12,7 @@ import com.litongjava.openai.client.OpenAiClient;
 import com.litongjava.tio.utils.crypto.Md5Utils;
 import com.litongjava.tio.utils.snowflake.SnowflakeIdUtils;
 
-public class MaxKbEmbeddingService {
+public class KbEmbeddingService {
   private final Object vectorLock = new Object();
   private final Object writeLock = new Object();
 

@@ -11,11 +11,11 @@
   <url>https://github.com/litongjava/java-maxkb</url>
   <artifactId>maxkb-business</artifactId>
   <properties>
-  <java-openai.version>1.1.9</java-openai.version>
+    <java-openai.version>1.1.9</java-openai.version>
   </properties>
 
   <dependencies>
-  <dependency>
+    <dependency>
       <groupId>com.litongjava</groupId>
       <artifactId>java-openai</artifactId>
       <version>${java-openai.version}</version>

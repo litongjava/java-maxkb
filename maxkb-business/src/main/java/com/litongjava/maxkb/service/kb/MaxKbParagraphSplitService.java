@@ -24,7 +24,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class MaxKbParagraphSplitService {
 
-  MaxKbEmbeddingService maxKbEmbeddingService = Aop.get(MaxKbEmbeddingService.class);
+  KbEmbeddingService maxKbEmbeddingService = Aop.get(KbEmbeddingService.class);
   MaxKbSentenceService maxKbSentenceService = Aop.get(MaxKbSentenceService.class);
 
   public ResultVo batch(Long userId, Long dataset_id, List<ParagraphBatchVo> list) {

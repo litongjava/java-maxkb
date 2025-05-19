@@ -33,7 +33,7 @@ public class MaxKbParagraphRetrieveService {
   }
   
   private List<ParagraphSearchResultVo> search0(Long[] datasetIdArray, Float similarity, Integer top_n, String quesiton) {
-    Long vectorId = Aop.get(MaxKbEmbeddingService.class).getVectorId(quesiton, OpenAiModels.TEXT_EMBEDDING_3_LARGE);
+    Long vectorId = Aop.get(KbEmbeddingService.class).getVectorId(quesiton, OpenAiModels.TEXT_EMBEDDING_3_LARGE);
     String sql = SqlTemplates.get("kb.search_sentense_related_paragraph__with_dataset_ids");
 
     List<Row> records = Db.find(sql, vectorId, datasetIdArray, similarity, top_n);
@@ -65,7 +65,7 @@ public class MaxKbParagraphRetrieveService {
   public List<ParagraphSearchResultVo> searchV10(Long[] datasetIdArray, Float similarity, Integer top_n,
       //
       String quesiton) {
-    Long vectorId = Aop.get(MaxKbEmbeddingService.class).getVectorId(quesiton, OpenAiModels.TEXT_EMBEDDING_3_LARGE);
+    Long vectorId = Aop.get(KbEmbeddingService.class).getVectorId(quesiton, OpenAiModels.TEXT_EMBEDDING_3_LARGE);
     String sql = SqlTemplates.get("kb.search_paragraph_with_dataset_ids");
 
     List<Row> records = Db.find(sql, vectorId, datasetIdArray, similarity, top_n);
