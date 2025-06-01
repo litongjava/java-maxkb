@@ -21,7 +21,6 @@ import com.litongjava.tio.utils.snowflake.SnowflakeIdUtils;
 
 import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 public class MaxKbParagraphSplitService {
 
   KbEmbeddingService maxKbEmbeddingService = Aop.get(KbEmbeddingService.class);
@@ -145,7 +144,7 @@ public class MaxKbParagraphSplitService {
         String title = p.getTitle();
         String content = p.getContent();
 
-        String md5 = Md5Utils.getMD5(content);
+        String md5 = Md5Utils.md5Hex(content);
         Row row = Row.by("id", SnowflakeIdUtils.id())
             //
             .set("source_id", fileId)

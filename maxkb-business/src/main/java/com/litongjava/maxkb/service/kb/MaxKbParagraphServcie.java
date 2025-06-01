@@ -118,7 +118,7 @@ public class MaxKbParagraphServcie {
         //
         .set("content", content)
         //
-        .set("md5", Md5Utils.getMD5(content))
+        .set("md5", Md5Utils.md5Hex(content))
         //
         .set("status", "1")
         //

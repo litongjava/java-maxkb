@@ -47,7 +47,7 @@ public class MaxKbSentenceService {
         // Create MaxKbSentence object with the summary
         MaxKbSentence maxKbSentence = new MaxKbSentence();
         maxKbSentence.setId(SnowflakeIdUtils.id()).setType(2) // Assuming type 2 indicates a summary
-            .setHitNum(0).setMd5(Md5Utils.getMD5(sentenceContent)).setContent(sentenceContent)
+            .setHitNum(0).setMd5(Md5Utils.md5Hex(sentenceContent)).setContent(sentenceContent)
             //
             .setDatasetId(dataset_id).setDocumentId(documentIdFinal).setParagraphId(paragraph.getLong("id"));
 
@@ -124,7 +124,7 @@ public class MaxKbSentenceService {
         MaxKbSentence maxKbSentence = new MaxKbSentence();
         maxKbSentence.setId(SnowflakeIdUtils.id()).setType(1).setHitNum(0)
             //
-            .setMd5(Md5Utils.getMD5(sentenceContent)).setContent(sentenceContent)
+            .setMd5(Md5Utils.md5Hex(sentenceContent)).setContent(sentenceContent)
             //
             .setDatasetId(dataset_id).setDocumentId(documentIdFinal).setParagraphId(paragraph.getLong("id"));
 

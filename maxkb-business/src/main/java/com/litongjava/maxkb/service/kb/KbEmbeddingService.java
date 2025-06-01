@@ -26,7 +26,7 @@ public class KbEmbeddingService {
   }
   public PGobject getVector(String text, String model) {
     String v = null;
-    String md5 = Md5Utils.getMD5(text);
+    String md5 = Md5Utils.md5Hex(text);
     String sql = String.format("select v from %s where md5=? and m=?", MaxKbTableNames.max_kb_embedding_cache);
     PGobject pGobject = Db.queryFirst(sql, md5, model);
 
@@ -58,7 +58,7 @@ public class KbEmbeddingService {
 
 
   public Long getVectorId(String text, String model) {
-    String md5 = Md5Utils.getMD5(text);
+    String md5 = Md5Utils.md5Hex(text);
     String sql = String.format("select id from %s where md5=? and m=?", MaxKbTableNames.max_kb_embedding_cache);
     Long id = Db.queryLong(sql, md5, model);
 

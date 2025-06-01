@@ -18,7 +18,7 @@ public class MaxKbParagraphSummaryService {
   String selectContentSql = "select content from max_kb_paragraph_summary_cache where md5=?";
 
   public String summary(String paragraphContent) {
-    String md5 = Md5Utils.getMD5(paragraphContent);
+    String md5 = Md5Utils.md5Hex(paragraphContent);
     String summaryContent = Db.queryStr(selectContentSql, md5);
     if (summaryContent != null) {
       return summaryContent;

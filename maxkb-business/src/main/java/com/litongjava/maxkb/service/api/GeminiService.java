@@ -21,7 +21,6 @@ public class GeminiService {
     return GeminiClient.chatWithModel(apiKey, GoogleGeminiModels.GEMINI_2_0_FLASH_EXP, "user", prompt);
     //return OpenAiClient.chatWithModel(OpenAiConstants.GEMINI_OPENAI_API_BASE, apiKey, GoogleGeminiModels.GEMINI_2_0_FLASH_EXP, "user", prompt);
   }
-
   public Call stream(OpenAiChatRequestVo chatRequestVo, Callback callback) {
     String apiKey = EnvUtils.get("GEMINI_API_KEY");
     Call call = OpenAiClient.chatCompletions(OpenAiConstants.GEMINI_OPENAI_API_BASE, apiKey, chatRequestVo, callback);

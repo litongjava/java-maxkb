@@ -54,7 +54,7 @@ public class MaxKbDocumentConvertService {
    * @throws ExecutionException 执行异常
    */
   public String toMarkdown(String apiKey, byte[] data, String suffix) throws IOException, InterruptedException, ExecutionException {
-    String md5 = Md5Utils.digestHex(data);
+    String md5 = Md5Utils.md5Hex(data);
     log.info("Processing document with MD5: {}", md5);
 
     // 查询缓存以检查是否已经处理过该文档
@@ -144,7 +144,7 @@ public class MaxKbDocumentConvertService {
    * @throws IOException 可能的IO异常
    */
   public String convertPdfPageToMarkdown(String apiKey, byte[] imageBytes, String suffix) throws IOException {
-    String id = Md5Utils.digestHex(imageBytes);
+    String id = Md5Utils.md5Hex(imageBytes);
     String sql = String.format("SELECT content FROM %s WHERE id=?", MaxKbTableNames.max_kb_document_markdown_page_cache);
 
     // 查询缓存以避免重复处理

@@ -3,7 +3,6 @@ package com.litongjava.maxkb.client;
 import java.util.Arrays;
 
 import com.litongjava.openai.client.OpenAiClient;
-import com.litongjava.openai.consts.OpenAiModels;
 import com.litongjava.openai.embedding.EmbeddingRequestVo;
 import com.litongjava.openai.embedding.EmbeddingResponseVo;
 
@@ -13,7 +12,7 @@ public class RumiClient {
     String serverUrl = "http://java-api.rumibot.com";
     String apiKey = "";
 
-    EmbeddingRequestVo reqVo = new EmbeddingRequestVo(OpenAiModels.TEXT_EMBEDDING_3_LARGE, content);
+    EmbeddingRequestVo reqVo = new EmbeddingRequestVo(com.litongjava.openai.consts.OpenAiModels.TEXT_EMBEDDING_3_LARGE, content);
 
     EmbeddingResponseVo embeddings = OpenAiClient.embeddings(serverUrl, apiKey, reqVo);
 

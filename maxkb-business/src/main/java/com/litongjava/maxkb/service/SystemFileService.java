@@ -30,7 +30,7 @@ public class SystemFileService {
   public UploadResultVo upload(UploadFile uploadFile, String bucketName, String category) {
     if (uploadFile != null) {
       byte[] fileData = uploadFile.getData();
-      String digestHex = Md5Utils.digestHex(fileData);
+      String digestHex = Md5Utils.md5Hex(fileData);
       SystemUploadFileDao systemUploadFileDao = Aop.get(SystemUploadFileDao.class);
       Row record = systemUploadFileDao.getFileBasicInfoByMd5(bucketName, digestHex);
 

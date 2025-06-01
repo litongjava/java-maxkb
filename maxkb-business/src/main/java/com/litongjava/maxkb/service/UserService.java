@@ -23,7 +23,7 @@ import com.litongjava.tio.utils.token.TokenManager;
 public class UserService {
 
   public ResultVo login(UserLoginReqVo vo) {
-    vo.setPassword(Md5Utils.getMD5(vo.getPassword()));
+    vo.setPassword(Md5Utils.md5Hex(vo.getPassword()));
     String loginSql = String.format("select id from %s where username=? and password=?", MaxKbTableNames.max_kb_user);
     Long userId = Db.queryLong(loginSql, vo.getUsername(), vo.getPassword());
     if (userId == null) {
