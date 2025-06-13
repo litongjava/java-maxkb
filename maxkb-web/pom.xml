@@ -6,6 +6,7 @@
     <version>1.0.2</version>
   </parent>
   <artifactId>maxkb-web</artifactId>
+  <name>maxkb-web</name>
   <properties>
     <final.name>java-maxkb</final.name>
     <main.class>com.litongjava.maxkb.MaxKbApp</main.class>
