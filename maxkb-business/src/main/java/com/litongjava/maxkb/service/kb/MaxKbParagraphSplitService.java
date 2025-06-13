@@ -19,8 +19,6 @@ import com.litongjava.tio.utils.crypto.Md5Utils;
 import com.litongjava.tio.utils.hutool.FilenameUtils;
 import com.litongjava.tio.utils.snowflake.SnowflakeIdUtils;
 
-import lombok.extern.slf4j.Slf4j;
-
 public class MaxKbParagraphSplitService {
 
   KbEmbeddingService maxKbEmbeddingService = Aop.get(KbEmbeddingService.class);
