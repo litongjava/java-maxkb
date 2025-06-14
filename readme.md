@@ -142,13 +142,13 @@
 3. **构建项目**
 
    ```bash
-   mvn clean install
+   mvn clean install -DskipTests -Dgpg.skip=true
    ```
 
 4. **运行项目**
 
    ```bash
-   java -jar target/java-maxkb.jar
+   java -jar target/java-maxkb-web.jar
    ```
 
 5. **访问系统**
