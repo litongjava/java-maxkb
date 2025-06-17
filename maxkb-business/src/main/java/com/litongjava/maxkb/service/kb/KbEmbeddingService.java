@@ -4,6 +4,9 @@ import java.util.Arrays;
 
 import org.postgresql.util.PGobject;
 
+import com.litongjava.bailian.BaiLianAiModels;
+import com.litongjava.bailian.BaiLianClient;
+import com.litongjava.bailian.BaiLianConst;
 import com.litongjava.db.activerecord.Db;
 import com.litongjava.db.activerecord.Row;
 import com.litongjava.db.utils.PgVectorUtils;
@@ -16,7 +19,7 @@ import com.litongjava.tio.utils.snowflake.SnowflakeIdUtils;
 public class KbEmbeddingService {
   private final Object vectorLock = new Object();
   private final Object writeLock = new Object();
-  
+
   public Long getVectorId(String text) {
     return getVectorId(text, OpenAiModels.TEXT_EMBEDDING_3_LARGE);
   }
@@ -24,6 +27,7 @@ public class KbEmbeddingService {
   public PGobject getVector(String text) {
     return getVector(text, OpenAiModels.TEXT_EMBEDDING_3_LARGE);
   }
+
   public PGobject getVector(String text, String model) {
     String v = null;
     String md5 = Md5Utils.md5Hex(text);
@@ -56,8 +60,11 @@ public class KbEmbeddingService {
     return pGobject;
   }
 
-
   public Long getVectorId(String text, String model) {
+    return this.getVectorId(text, 1, model);
+  }
+
+  public Long getVectorId(String text, int areaCode, String model) {
     String md5 = Md5Utils.md5Hex(text);
     String sql = String.format("select id from %s where md5=? and m=?", MaxKbTableNames.max_kb_embedding_cache);
     Long id = Db.queryLong(sql, md5, model);
@@ -65,15 +72,18 @@ public class KbEmbeddingService {
     if (id == null) {
       float[] embeddingArray = null;
       synchronized (vectorLock) {
-        embeddingArray = OpenAiClient.embeddingArray(text, model);
+        if (areaCode == 86) {
+          embeddingArray = BaiLianClient.embeddingArray(BaiLianAiModels.TEXT_EMBEDDING_V4, "HI");
+        } else {
+          embeddingArray = OpenAiClient.embeddingArray(text, model);
+        }
+
       }
 
       String vString = Arrays.toString(embeddingArray);
       id = SnowflakeIdUtils.id();
       PGobject pGobject = PgVectorUtils.getPgVector(vString);
-      Row saveRecord = new Row().set("t", text).set("v", pGobject).set("id", id).set("md5", md5)
-          //
-          .set("m", model);
+      Row saveRecord = new Row().set("t", text).set("v", pGobject).set("id", id).set("md5", md5).set("m", model);
       synchronized (writeLock) {
         Db.save(MaxKbTableNames.max_kb_embedding_cache, saveRecord);
       }

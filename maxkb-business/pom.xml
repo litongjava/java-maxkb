@@ -3,7 +3,7 @@
   <parent>
     <groupId>com.litongjava</groupId>
     <artifactId>java-maxkb</artifactId>
-    <version>1.0.2</version>
+    <version>1.0.3</version>
   </parent>
   <packaging>jar</packaging>
   <artifactId>maxkb-business</artifactId>
