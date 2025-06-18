@@ -6,7 +6,6 @@ import org.postgresql.util.PGobject;
 
 import com.litongjava.bailian.BaiLianAiModels;
 import com.litongjava.bailian.BaiLianClient;
-import com.litongjava.bailian.BaiLianConst;
 import com.litongjava.db.activerecord.Db;
 import com.litongjava.db.activerecord.Row;
 import com.litongjava.db.utils.PgVectorUtils;
