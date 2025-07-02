@@ -11,7 +11,7 @@
   <description>java-maxkb-business</description>
   <url>https://github.com/litongjava/java-maxkb</url>
   <properties>
-    <java-openai.version>1.2.0</java-openai.version>
+    <java-openai.version>1.2.1</java-openai.version>
   </properties>
 
   <dependencies>
@@ -23,7 +23,7 @@
     <dependency>
       <groupId>com.litongjava</groupId>
       <artifactId>tio-boot-admin</artifactId>
-      <version>1.0.3</version>
+      <version>1.0.4</version>
     </dependency>
 
     <dependency>
