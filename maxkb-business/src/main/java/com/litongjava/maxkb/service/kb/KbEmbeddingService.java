@@ -72,7 +72,7 @@ public class KbEmbeddingService {
       float[] embeddingArray = null;
       synchronized (vectorLock) {
         if (areaCode == 86) {
-          embeddingArray = BaiLianClient.embeddingArray(BaiLianAiModels.TEXT_EMBEDDING_V4, "HI");
+          embeddingArray = BaiLianClient.embeddingArray(BaiLianAiModels.TEXT_EMBEDDING_V4, text);
         } else {
           embeddingArray = OpenAiClient.embeddingArray(text, model);
         }
