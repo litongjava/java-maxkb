@@ -2,7 +2,7 @@ package com.litongjava.maxkb.vo;
 
 import java.util.List;
 
-import com.litongjava.chat.ChatMessage;
+import com.litongjava.chat.UniChatMessage;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -18,7 +18,7 @@ public class MaxKbChatStep {
   private Long model_id;
   private Double run_time;
   private String step_type;
-  private List<ChatMessage> message_list;
+  private List<UniChatMessage> message_list;
   private Integer answer_tokens;
   private Integer message_tokens;
 }

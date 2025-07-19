@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.postgresql.util.PGobject;
 
-import com.litongjava.chat.ChatMessage;
+import com.litongjava.chat.UniChatMessage;
 import com.litongjava.db.activerecord.Db;
 import com.litongjava.db.activerecord.Row;
 import com.litongjava.jfinal.aop.Aop;
@@ -108,10 +108,10 @@ public class MaxKbApplicationChatMessageService {
     messageText.append(userPrompt);
 
     OpenAiChatRequestVo openAiChatRequestVo = new OpenAiChatRequestVo();
-    ChatMessage systemMessage = new ChatMessage("system", systemPrompt);
-    ChatMessage userMessage = new ChatMessage("user", userPrompt);
+    UniChatMessage systemMessage = new UniChatMessage("system", systemPrompt);
+    UniChatMessage userMessage = new UniChatMessage("user", userPrompt);
 
-    List<ChatMessage> messages = new ArrayList<>();
+    List<UniChatMessage> messages = new ArrayList<>();
     messages.add(systemMessage);
     messages.add(userMessage);
     openAiChatRequestVo.fromMessages(messages);

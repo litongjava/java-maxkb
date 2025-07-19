@@ -7,7 +7,7 @@ import java.util.List;
 import org.postgresql.util.PGobject;
 
 import com.jfinal.kit.Kv;
-import com.litongjava.chat.ChatMessage;
+import com.litongjava.chat.UniChatMessage;
 import com.litongjava.db.activerecord.Db;
 import com.litongjava.db.activerecord.Row;
 import com.litongjava.jfinal.aop.Aop;
@@ -119,8 +119,8 @@ public class MaxKbModelService {
           String api_key = modelVo.getCredential().getApi_key();
 
           // messages
-          List<ChatMessage> messages = new ArrayList<>();
-          ChatMessage message = new ChatMessage().role("user").content("hi");
+          List<UniChatMessage> messages = new ArrayList<>();
+          UniChatMessage message = new UniChatMessage().role("user").content("hi");
           messages.add(message);
 
           OpenAiChatRequestVo openAiChatRequestVo = new OpenAiChatRequestVo();
