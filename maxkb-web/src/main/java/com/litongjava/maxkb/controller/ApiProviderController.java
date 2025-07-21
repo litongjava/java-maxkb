@@ -22,7 +22,7 @@ public class ApiProviderController {
   @RequestPath
   public HttpResponse index() {
     URL resource = ResourceUtil.getResource("json/api_provider.json");
-    StringBuilder jsonString = FileUtil.readURLAsString(resource);
+    String jsonString = FileUtil.readString(resource);
     HttpResponse response = TioRequestContext.getResponse();
     response.setJson(jsonString.toString());
     return response;
@@ -43,7 +43,7 @@ public class ApiProviderController {
 
     log.info("filename:{}",filename);
     URL resource = ResourceUtil.getResource("json/" + filename);
-    StringBuilder jsonString = FileUtil.readURLAsString(resource);
+    String jsonString = FileUtil.readString(resource);
 
     HttpResponse response = TioRequestContext.getResponse();
     response.setJson(jsonString.toString());
@@ -59,7 +59,7 @@ public class ApiProviderController {
     
     log.info("filename:{}",filename);
     URL resource = ResourceUtil.getResource("json/" + filename);
-    StringBuilder jsonString = FileUtil.readURLAsString(resource);
+    String jsonString = FileUtil.readString(resource);
     HttpResponse response = TioRequestContext.getResponse();
     response.setJson(jsonString.toString());
     return response;

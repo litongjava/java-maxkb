@@ -20,7 +20,7 @@ public class DatasetDocumentSplitServiceTest {
 
     String filePath = "images/200-dpi.png";
     URL url = ResourceUtil.getResource(filePath);
-    byte[] readUrlAsBytes = FileUtil.readUrlAsBytes(url);
+    byte[] readUrlAsBytes = FileUtil.readBytes(url);
     String suffix = FilenameUtils.getSuffix(filePath);
     OpenAiChatResponseVo chatWithImage = OpenAiClient.chatWithImage(apiKey, prompt, readUrlAsBytes, suffix);
     System.out.println(JsonUtils.toJson(chatWithImage));
