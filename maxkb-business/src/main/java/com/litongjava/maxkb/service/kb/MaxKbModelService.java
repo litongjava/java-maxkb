@@ -18,7 +18,7 @@ import com.litongjava.maxkb.enumeration.ModelType;
 import com.litongjava.maxkb.vo.CredentialVo;
 import com.litongjava.maxkb.vo.ModelVo;
 import com.litongjava.model.result.ResultVo;
-import com.litongjava.openai.chat.OpenAiChatRequestVo;
+import com.litongjava.openai.chat.OpenAiChatRequest;
 import com.litongjava.openai.client.OpenAiClient;
 import com.litongjava.openai.consts.OpenAiModels;
 import com.litongjava.openai.embedding.EmbeddingRequestVo;
@@ -86,7 +86,7 @@ public class MaxKbModelService {
   public ResultVo save(Long userId, ModelVo modelVo) {
     String name = modelVo.getName();
     log.info("name:{}", name);
-    if (modelVo.getId()==null && Db.exists(MaxKbTableNames.max_kb_model, "name", name)) {
+    if (modelVo.getId() == null && Db.exists(MaxKbTableNames.max_kb_model, "name", name)) {
       return ResultVo.fail(400, "模型名称【" + name + "】已存在");
     }
 
@@ -123,12 +123,12 @@ public class MaxKbModelService {
           UniChatMessage message = new UniChatMessage().role("user").content("hi");
           messages.add(message);
 
-          OpenAiChatRequestVo openAiChatRequestVo = new OpenAiChatRequestVo();
-          openAiChatRequestVo.setStream(false);
-          openAiChatRequestVo.setModel(OpenAiModels.GPT_4O_MINI);
-          openAiChatRequestVo.fromMessages(messages);
+          OpenAiChatRequest OpenAiChatRequest = new OpenAiChatRequest();
+          OpenAiChatRequest.setStream(false);
+          OpenAiChatRequest.setModel(OpenAiModels.GPT_4O_MINI);
+          OpenAiChatRequest.fromMessages(messages);
 
-          String bodyString = JsonUtils.toJson(openAiChatRequestVo);
+          String bodyString = JsonUtils.toJson(OpenAiChatRequest);
           // send request
           try (Response response = OpenAiClient.chatCompletions(api_base, api_key, bodyString)) {
             if (!response.isSuccessful()) {

@@ -5,7 +5,7 @@ import java.util.concurrent.locks.Lock;
 import com.google.common.util.concurrent.Striped;
 import com.litongjava.db.activerecord.Db;
 import com.litongjava.maxkb.model.MaxKbParagraphSummaryCache;
-import com.litongjava.openai.chat.OpenAiChatResponseVo;
+import com.litongjava.openai.chat.OpenAiChatResponse;
 import com.litongjava.openai.client.OpenAiClient;
 import com.litongjava.template.PromptEngine;
 import com.litongjava.tio.utils.crypto.Md5Utils;
@@ -33,7 +33,7 @@ public class MaxKbParagraphSummaryService {
         return summaryContent;
       }
 
-      OpenAiChatResponseVo chat = null;
+      OpenAiChatResponse chat = null;
       long start = System.currentTimeMillis();
       try {
         chat = OpenAiClient.chat(newPrompt);

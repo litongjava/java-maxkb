@@ -4,7 +4,7 @@ import java.net.URL;
 
 import org.junit.Test;
 
-import com.litongjava.openai.chat.OpenAiChatResponseVo;
+import com.litongjava.openai.chat.OpenAiChatResponse;
 import com.litongjava.openai.client.OpenAiClient;
 import com.litongjava.tio.utils.hutool.FileUtil;
 import com.litongjava.tio.utils.hutool.FilenameUtils;
@@ -22,7 +22,7 @@ public class DatasetDocumentSplitServiceTest {
     URL url = ResourceUtil.getResource(filePath);
     byte[] readUrlAsBytes = FileUtil.readBytes(url);
     String suffix = FilenameUtils.getSuffix(filePath);
-    OpenAiChatResponseVo chatWithImage = OpenAiClient.chatWithImage(apiKey, prompt, readUrlAsBytes, suffix);
+    OpenAiChatResponse chatWithImage = OpenAiClient.chatWithImage(apiKey, prompt, readUrlAsBytes, suffix);
     System.out.println(JsonUtils.toJson(chatWithImage));
     String content = chatWithImage.getChoices().get(0).getMessage().getContent();
     System.out.println(content);

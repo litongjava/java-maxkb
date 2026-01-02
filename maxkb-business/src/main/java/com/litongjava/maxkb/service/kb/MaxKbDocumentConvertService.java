@@ -28,7 +28,7 @@ import com.litongjava.db.activerecord.Row;
 import com.litongjava.maxkb.constant.MaxKbTableNames;
 import com.litongjava.maxkb.utils.ExecutorServiceUtils;
 import com.litongjava.openai.chat.ChatResponseUsage;
-import com.litongjava.openai.chat.OpenAiChatResponseVo;
+import com.litongjava.openai.chat.OpenAiChatResponse;
 import com.litongjava.openai.client.OpenAiClient;
 import com.litongjava.openai.consts.OpenAiModels;
 import com.litongjava.table.services.ApiTable;
@@ -164,7 +164,7 @@ public class MaxKbDocumentConvertService {
 
     // 调用OpenAI API将图像转换为文本
     long start = System.currentTimeMillis();
-    OpenAiChatResponseVo chatResponseVo = null;
+    OpenAiChatResponse chatResponseVo = null;
     String imageToTextPrompt = Engine.use().getTemplate("image_to_text_prompt.txt").renderToString();
     try {
       chatResponseVo = OpenAiClient.chatWithImage(apiKey, imageToTextPrompt, imageBytes, suffix);
@@ -182,9 +182,10 @@ public class MaxKbDocumentConvertService {
     }
 
     ChatResponseUsage usage = chatResponseVo.getUsage();
-    TableInput saveInput = TableInput.by("id", id).set("target", imagePath).set("content", content).set("elapsed", System.currentTimeMillis() - start).set("model", OpenAiModels.GPT_4O)
-        .set("system_fingerprint", chatResponseVo.getSystem_fingerprint()).set("completion_tokens", usage.getCompletion_tokens()).set("prompt_tokens", usage.getPrompt_tokens())
-        .set("total_tokens", usage.getTotal_tokens());
+    TableInput saveInput = TableInput.by("id", id).set("target", imagePath).set("content", content)
+        .set("elapsed", System.currentTimeMillis() - start).set("model", OpenAiModels.GPT_4O)
+        .set("system_fingerprint", chatResponseVo.getSystem_fingerprint()).set("completion_tokens", usage.getCompletion_tokens())
+        .set("prompt_tokens", usage.getPrompt_tokens()).set("total_tokens", usage.getTotal_tokens());
 
     // 再次检查缓存以防止并发情况下的重复保存
     String cacheContent = Db.queryStr(sql, id);

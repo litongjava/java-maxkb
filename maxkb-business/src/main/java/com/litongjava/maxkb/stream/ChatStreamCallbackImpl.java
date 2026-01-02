@@ -8,8 +8,8 @@ import org.postgresql.util.PGobject;
 import com.litongjava.db.activerecord.Db;
 import com.litongjava.db.activerecord.Row;
 import com.litongjava.kit.PgObjectUtils;
-import com.litongjava.maxkb.constant.SSEConstant;
 import com.litongjava.maxkb.constant.MaxKbTableNames;
+import com.litongjava.maxkb.constant.SSEConstant;
 import com.litongjava.maxkb.service.ChatStreamCallCan;
 import com.litongjava.maxkb.utils.TokenCounter;
 import com.litongjava.maxkb.vo.MaxKbChatRecordDetail;
@@ -18,7 +18,7 @@ import com.litongjava.maxkb.vo.MaxKbRetrieveResult;
 import com.litongjava.maxkb.vo.MaxKbStreamChatVo;
 import com.litongjava.openai.chat.ChatResponseDelta;
 import com.litongjava.openai.chat.Choice;
-import com.litongjava.openai.chat.OpenAiChatResponseVo;
+import com.litongjava.openai.chat.OpenAiChatResponse;
 import com.litongjava.tio.core.ChannelContext;
 import com.litongjava.tio.core.Tio;
 import com.litongjava.tio.http.common.sse.SsePacket;
@@ -146,7 +146,7 @@ public class ChatStreamCallbackImpl implements Callback {
   private void processResponseChunk(Long chatId, Long messageId, ChannelContext channelContext, StringBuffer completionContent, String line) {
     String data = line.substring(6);
     if (data.endsWith("}")) {
-      OpenAiChatResponseVo chatResponse = FastJson2Utils.parse(data, OpenAiChatResponseVo.class);
+      OpenAiChatResponse chatResponse = FastJson2Utils.parse(data, OpenAiChatResponse.class);
       List<Choice> choices = chatResponse.getChoices();
       if (choices.size() > 0) {
         ChatResponseDelta delta = choices.get(0).getDelta();

@@ -2,9 +2,9 @@ package com.litongjava.maxkb.service.api;
 
 import com.litongjava.gemini.GeminiClient;
 import com.litongjava.gemini.GoogleModels;
-import com.litongjava.openai.chat.OpenAiChatRequestVo;
+import com.litongjava.openai.chat.OpenAiChatRequest;
 import com.litongjava.openai.client.OpenAiClient;
-import com.litongjava.openai.consts.OpenAiConstants;
+import com.litongjava.openai.consts.OpenAiConst;
 import com.litongjava.tio.utils.environment.EnvUtils;
 
 import lombok.extern.slf4j.Slf4j;
@@ -21,9 +21,9 @@ public class GeminiService {
     return GeminiClient.chatWithModel(apiKey, GoogleModels.GEMINI_2_0_FLASH_EXP, "user", prompt);
     //return OpenAiClient.chatWithModel(OpenAiConstants.GEMINI_OPENAI_API_BASE, apiKey, GoogleGeminiModels.GEMINI_2_0_FLASH_EXP, "user", prompt);
   }
-  public Call stream(OpenAiChatRequestVo chatRequestVo, Callback callback) {
+  public Call stream(OpenAiChatRequest chatRequestVo, Callback callback) {
     String apiKey = EnvUtils.get("GEMINI_API_KEY");
-    Call call = OpenAiClient.chatCompletions(OpenAiConstants.GEMINI_OPENAI_API_BASE, apiKey, chatRequestVo, callback);
+    Call call = OpenAiClient.chatCompletions(OpenAiConst.GEMINI_OPENAI_API_BASE, apiKey, chatRequestVo, callback);
     return call;
   }
 }

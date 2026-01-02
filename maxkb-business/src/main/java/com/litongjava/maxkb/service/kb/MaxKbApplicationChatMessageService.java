@@ -26,9 +26,9 @@ import com.litongjava.maxkb.vo.MaxKbModelSetting;
 import com.litongjava.maxkb.vo.MaxKbRetrieveResult;
 import com.litongjava.maxkb.vo.ParagraphSearchResultVo;
 import com.litongjava.model.result.ResultVo;
-import com.litongjava.openai.chat.OpenAiChatRequestVo;
+import com.litongjava.openai.chat.OpenAiChatRequest;
 import com.litongjava.openai.client.OpenAiClient;
-import com.litongjava.openai.consts.OpenAiConstants;
+import com.litongjava.openai.consts.OpenAiConst;
 import com.litongjava.openai.consts.OpenAiModels;
 import com.litongjava.tio.core.ChannelContext;
 import com.litongjava.tio.utils.environment.EnvUtils;
@@ -72,7 +72,7 @@ public class MaxKbApplicationChatMessageService {
     Row chatRecord = Row.by("id", messageId).set("problem_text", quesiton).set("message_tokens", countTokens).set("chat_id", chatId);
     Db.save(MaxKbApplicationChatRecord.tableName, chatRecord);
 
-    //搜索相关片段,并拼接
+    // 搜索相关片段,并拼接
     List<Long> dataset_id_list = applicationVo.getDataset_id_list();
     MaxKbDatasetSettingVo dataset_setting = applicationVo.getDataset_setting();
     Float similarity = 0.0f;
@@ -92,7 +92,8 @@ public class MaxKbApplicationChatMessageService {
     return ResultVo.ok("");
   }
 
-  private void chatWichApplication(ChannelContext channelContext, String quesiton, MaxKbApplicationVo applicationVo, Long chatId, long messageId, MaxKbRetrieveResult maxKbSearchStep) {
+  private void chatWichApplication(ChannelContext channelContext, String quesiton, MaxKbApplicationVo applicationVo, Long chatId,
+      long messageId, MaxKbRetrieveResult maxKbSearchStep) {
     List<ParagraphSearchResultVo> records = maxKbSearchStep.getParagraph_list();
     log.info("records size:{}", records.size());
     String xmlData = MaxKbParagraphXMLGenerator.generateXML(records);
@@ -107,17 +108,17 @@ public class MaxKbApplicationChatMessageService {
     messageText.append(systemPrompt);
     messageText.append(userPrompt);
 
-    OpenAiChatRequestVo openAiChatRequestVo = new OpenAiChatRequestVo();
+    OpenAiChatRequest OpenAiChatRequest = new OpenAiChatRequest();
     UniChatMessage systemMessage = new UniChatMessage("system", systemPrompt);
     UniChatMessage userMessage = new UniChatMessage("user", userPrompt);
 
     List<UniChatMessage> messages = new ArrayList<>();
     messages.add(systemMessage);
     messages.add(userMessage);
-    openAiChatRequestVo.fromMessages(messages);
-    openAiChatRequestVo.setModel(systemPrompt);
+    OpenAiChatRequest.fromMessages(messages);
+    OpenAiChatRequest.setModel(systemPrompt);
 
-    //获取模型
+    // 获取模型
     Long model_id = applicationVo.getModel_id();
     String api_key = null;
     String api_base = null;
@@ -136,19 +137,19 @@ public class MaxKbApplicationChatMessageService {
         }
         if (api_base == null || api_key == null) {
           api_key = EnvUtils.get("OPENAI_API_KEY");
-          api_base = OpenAiConstants.API_PERFIX_URL;
+          api_base = OpenAiConst.API_PREFIX_URL;
         }
 
         modelName = modelRecord.getStr("model_name");
       }
     } else {
       api_key = EnvUtils.get("OPENAI_API_KEY");
-      api_base = OpenAiConstants.API_PERFIX_URL;
+      api_base = OpenAiConst.API_PREFIX_URL;
       modelName = OpenAiModels.GPT_4O_MINI;
     }
 
-    openAiChatRequestVo.setModel(modelName);
-    openAiChatRequestVo.setStream(true);
+    OpenAiChatRequest.setModel(modelName);
+    OpenAiChatRequest.setStream(true);
 
     MaxKbChatStep maxKbChatStep = new MaxKbChatStep();
     int message_tokens = TokenCounter.countTokens(messageText.toString());
@@ -158,7 +159,7 @@ public class MaxKbApplicationChatMessageService {
 
     long start = System.currentTimeMillis();
     Callback callback = new ChatStreamCallbackImpl(chatId, messageId, start, maxKbSearchStep, maxKbChatStep, channelContext);
-    Call call = OpenAiClient.chatCompletions(api_base, api_key, openAiChatRequestVo, callback);
+    Call call = OpenAiClient.chatCompletions(api_base, api_key, OpenAiChatRequest, callback);
     ChatStreamCallCan.put(chatId, call);
   }
 
