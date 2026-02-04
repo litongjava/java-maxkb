@@ -2,9 +2,7 @@ package com.litongjava.maxkb.config;
 
 import com.litongjava.annotation.AConfiguration;
 import com.litongjava.annotation.Initialization;
-import com.litongjava.jfinal.aop.Aop;
 import com.litongjava.maxkb.httphandler.SearxngSearchHandler;
-import com.litongjava.maxkb.httphandler.SystemFileHandler;
 import com.litongjava.tio.boot.server.TioBootServer;
 import com.litongjava.tio.http.server.router.HttpRequestRouter;
 
@@ -16,11 +14,6 @@ public class HandlerConfiguration {
     if (router == null) {
       return;
     }
-    // 获取文件处理器实例并注册路由
-    SystemFileHandler fileHandler = Aop.get(SystemFileHandler.class);
-    router.add("/api/system/file/upload", fileHandler::upload);
-    router.add("/api/system/file/url", fileHandler::getUrl);
-    
     SearxngSearchHandler searxngSearchHandler = new SearxngSearchHandler();
     router.add("/api/v1/search", searxngSearchHandler::search);
   }
