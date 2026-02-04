@@ -1,10 +1,10 @@
 [win.build]
-mvn clean install -DskipTests
+mvn clean install -DskipTests -Dgpg.skip
 
 
 [linux.build]
-mvn clean install -DskipTests
+mvn clean install -DskipTests -Dgpg.skip
 
 
 [mac.build]
-mvn clean install -DskipTests
+mvn clean install -DskipTests -Dgpg.skip
