@@ -64,7 +64,9 @@ public class MaxKbDatasetService {
   public ResultVo save(Long userId, KbDatasetModel kbDatasetModel) {
     ResultVo resultVo = new ResultVo();
     TableResult<Kv> saveOrUpdate = Aop.get(MaxKbDatasetDao.class).saveOrUpdate(userId, kbDatasetModel);
-    return resultVo.setData(saveOrUpdate.getData());
+    Kv data = saveOrUpdate.getData();
+    resultVo.setData(data);
+    return resultVo;
   }
 
   public ResultVo get(Long userId, Long id) {
@@ -77,7 +79,8 @@ public class MaxKbDatasetService {
     }
     TableResult<Row> result = ApiTable.get(MaxKbTableNames.max_kb_dataset, tableInput);
     Kv kv = result.getData().toKv();
-    return resultVo.setData(kv);
+    resultVo.setData(kv);
+    return resultVo;
   }
 
   public ResultVo list(Long userId) {

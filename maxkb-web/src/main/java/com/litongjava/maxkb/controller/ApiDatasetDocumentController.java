@@ -4,9 +4,9 @@ import com.litongjava.annotation.RequestPath;
 import com.litongjava.jfinal.aop.Aop;
 import com.litongjava.maxkb.service.SystemFileService;
 import com.litongjava.maxkb.service.kb.MaxKbDocumentSplitService;
-import com.litongjava.maxkb.vo.UploadResultVo;
 import com.litongjava.model.result.ResultVo;
-import com.litongjava.tio.http.common.UploadFile;
+import com.litongjava.model.upload.UploadFile;
+import com.litongjava.model.upload.UploadResult;
 
 @RequestPath("/api/dataset/document")
 public class ApiDatasetDocumentController {
@@ -16,7 +16,7 @@ public class ApiDatasetDocumentController {
       return ResultVo.fail("请求体中未找到文件");
     }
     SystemFileService systemFileService = Aop.get(SystemFileService.class);
-    UploadResultVo vo = systemFileService.upload(file, "default", "default");
+    UploadResult vo = systemFileService.upload(file, "default", "default");
     return Aop.get(MaxKbDocumentSplitService.class).split(file.getData(), vo);
   }
 }

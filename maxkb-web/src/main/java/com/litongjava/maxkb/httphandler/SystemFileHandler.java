@@ -3,12 +3,12 @@ package com.litongjava.maxkb.httphandler;
 import com.jfinal.kit.StrKit;
 import com.litongjava.jfinal.aop.Aop;
 import com.litongjava.maxkb.service.SystemFileService;
-import com.litongjava.maxkb.vo.UploadResultVo;
 import com.litongjava.model.body.RespBodyVo;
+import com.litongjava.model.upload.UploadFile;
+import com.litongjava.model.upload.UploadResult;
 import com.litongjava.tio.boot.http.TioRequestContext;
 import com.litongjava.tio.http.common.HttpRequest;
 import com.litongjava.tio.http.common.HttpResponse;
-import com.litongjava.tio.http.common.UploadFile;
 import com.litongjava.tio.http.server.model.HttpCors;
 import com.litongjava.tio.http.server.util.CORSUtils;
 import com.litongjava.tio.http.server.util.Resps;
@@ -38,7 +38,7 @@ public class SystemFileHandler {
       return httpResponse.fail(RespBodyVo.fail("文件分类不能为空"));
     }
     SystemFileService systemFileService = Aop.get(SystemFileService.class);
-    UploadResultVo vo = systemFileService.upload(uploadFile, bucket, category);
+    UploadResult vo = systemFileService.upload(uploadFile, bucket, category);
     return httpResponse.setJson(vo);
   }
 
@@ -61,7 +61,7 @@ public class SystemFileHandler {
     String bucket = request.getParam("bucket");
     if (id != null && id > 0) {
       // 根据 ID 获取文件信息
-      UploadResultVo uploadResultVo = systemFileService.getUrlById(id);
+      UploadResult uploadResultVo = systemFileService.getUrlById(id);
       if (uploadResultVo == null) {
         respBodyVo = RespBodyVo.fail();
       } else {
@@ -70,7 +70,7 @@ public class SystemFileHandler {
 
     } else if (StrKit.notBlank(md5)) {
       // 根据 MD5 获取文件信息
-      UploadResultVo uploadResultVo = systemFileService.getUrlByMd5(bucket, md5);
+      UploadResult uploadResultVo = systemFileService.getUrlByMd5(bucket, md5);
       if (uploadResultVo == null) {
         respBodyVo = RespBodyVo.fail();
       } else {

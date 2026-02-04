@@ -7,8 +7,8 @@ import java.util.concurrent.ExecutionException;
 
 import com.jfinal.kit.Kv;
 import com.litongjava.jfinal.aop.Aop;
-import com.litongjava.maxkb.vo.UploadResultVo;
 import com.litongjava.model.result.ResultVo;
+import com.litongjava.model.upload.UploadResult;
 import com.litongjava.openai.token.OpenAiTokenizer;
 import com.litongjava.tio.utils.environment.EnvUtils;
 
@@ -39,9 +39,9 @@ public class MaxKbDocumentSplitService {
    * @throws InterruptedException 线程中断异常
    * @throws ExecutionException 执行异常
    */
-  public ResultVo split(byte[] data, UploadResultVo vo) throws IOException, InterruptedException, ExecutionException {
+  public ResultVo split(byte[] data, UploadResult vo) throws IOException, InterruptedException, ExecutionException {
     MaxKbDocumentConvertService maxKbDocumentConvertService = Aop.get(MaxKbDocumentConvertService.class);
-    String filename = vo.getFilename();
+    String filename = vo.getName();
     String suffix = "png";
     String apiKey = EnvUtils.getStr("OPENAI_API_KEY");
     String markdown = maxKbDocumentConvertService.toMarkdown(apiKey, data, suffix);

@@ -9,8 +9,8 @@ import java.nio.file.Paths;
 import com.litongjava.db.activerecord.Row;
 import com.litongjava.jfinal.aop.Aop;
 import com.litongjava.maxkb.dao.SystemUploadFileDao;
-import com.litongjava.maxkb.vo.UploadResultVo;
-import com.litongjava.tio.http.common.UploadFile;
+import com.litongjava.model.upload.UploadFile;
+import com.litongjava.model.upload.UploadResult;
 import com.litongjava.tio.utils.crypto.Md5Utils;
 import com.litongjava.tio.utils.environment.EnvUtils;
 import com.litongjava.tio.utils.hutool.FileUtil;
@@ -27,7 +27,7 @@ public class SystemFileService {
    * @param category    文件分类
    * @return UploadResultVo 文件上传结果
    */
-  public UploadResultVo upload(UploadFile uploadFile, String bucketName, String category) {
+  public UploadResult upload(UploadFile uploadFile, String bucketName, String category) {
     if (uploadFile != null) {
       byte[] fileData = uploadFile.getData();
       String digestHex = Md5Utils.md5Hex(fileData);
@@ -40,7 +40,7 @@ public class SystemFileService {
         String filename = record.getStr("filename");
         String targetName = record.getStr("target_name");
         String url = getUrl(bucketName, targetName);
-        return new UploadResultVo(id, filename, url, digestHex);
+        return new UploadResult(id, filename, url, digestHex);
       }
 
       // 生成新的文件名和路径
@@ -68,7 +68,7 @@ public class SystemFileService {
       String targetName = category + "/" + filename;
       String url = getUrl(bucketName, targetName);
       systemUploadFileDao.save(id, digestHex, originFilename, fileData.length, "local", bucketName, targetName);
-      return new UploadResultVo(id, originFilename, url, digestHex);
+      return new UploadResult(id, originFilename, url, digestHex);
     }
     return null;
   }
@@ -91,7 +91,7 @@ public class SystemFileService {
    * @param id 文件 ID
    * @return UploadResultVo 文件上传结果
    */
-  public UploadResultVo getUrlById(Long id) {
+  public UploadResult getUrlById(Long id) {
     SystemUploadFileDao systemUploadFileDao = Aop.get(SystemUploadFileDao.class);
     Row record = systemUploadFileDao.getFileBasicInfoById(id);
     String md5 = record.getStr("md5");
@@ -99,7 +99,7 @@ public class SystemFileService {
     String bucketName = record.getStr("bucket_name");
     String targetName = record.getStr("target_name");
     String url = getUrl(bucketName, targetName);
-    return new UploadResultVo(id, filename, url, md5);
+    return new UploadResult(id, filename, url, md5);
   }
 
   /**
@@ -109,13 +109,13 @@ public class SystemFileService {
    * @param md5        文件 MD5 值
    * @return UploadResultVo 文件上传结果
    */
-  public UploadResultVo getUrlByMd5(String bucketName, String md5) {
+  public UploadResult getUrlByMd5(String bucketName, String md5) {
     SystemUploadFileDao systemUploadFileDao = Aop.get(SystemUploadFileDao.class);
     Row record = systemUploadFileDao.getFileBasicInfoByMd5(bucketName, md5);
     Long id = record.getLong("id");
     String filename = record.getStr("filename");
     String targetName = record.getStr("target_name");
     String url = getUrl(bucketName, targetName);
-    return new UploadResultVo(id, filename, url, md5);
+    return new UploadResult(id, filename, url, md5);
   }
 }
