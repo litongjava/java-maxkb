@@ -5,6 +5,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
 
 import com.litongjava.annotation.AComponentScan;
+import com.litongjava.maxkb.config.boot.MaxKbBootConfig;
 import com.litongjava.tio.boot.TioApplication;
 import com.litongjava.tio.boot.server.TioBootServer;
 
@@ -26,7 +27,8 @@ public class MaxKbApp {
     server.setWorkThreadFactory(workTf);
     server.setBizExecutor(bizExecutor);
 
-    TioApplication.run(MaxKbApp.class, args);
+    MaxKbBootConfig maxKbBootConfig = new MaxKbBootConfig();
+    TioApplication.run(MaxKbApp.class, maxKbBootConfig, args);
     long end = System.currentTimeMillis();
     System.out.println((end - start) + "ms");
   }
