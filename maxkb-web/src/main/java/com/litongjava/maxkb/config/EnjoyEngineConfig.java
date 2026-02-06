@@ -1,15 +1,11 @@
 package com.litongjava.maxkb.config;
 
 import com.jfinal.template.Engine;
-import com.litongjava.annotation.AConfiguration;
-import com.litongjava.annotation.Initialization;
 
-@AConfiguration
 public class EnjoyEngineConfig {
 
   private final String RESOURCE_BASE_PATH = "/enjoy-templates/";
 
-  @Initialization
   public void config() {
     Engine engine = Engine.use();
     engine.setBaseTemplatePath(RESOURCE_BASE_PATH);

@@ -1,16 +1,12 @@
 package com.litongjava.maxkb.config;
 
-import com.litongjava.annotation.AConfiguration;
-import com.litongjava.annotation.Initialization;
 import com.litongjava.maxkb.inteceptor.AuthInterceptor;
 import com.litongjava.tio.boot.http.interceptor.HttpInteceptorConfigure;
 import com.litongjava.tio.boot.http.interceptor.HttpInterceptorModel;
 import com.litongjava.tio.boot.server.TioBootServer;
 
-@AConfiguration
 public class InterceptorConfiguration {
 
-  @Initialization
   public void config() {
     AuthInterceptor authTokenInterceptor = new AuthInterceptor();
     HttpInterceptorModel model = new HttpInterceptorModel();

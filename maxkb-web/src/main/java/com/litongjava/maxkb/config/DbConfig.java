@@ -14,9 +14,8 @@ import com.litongjava.tio.utils.environment.EnvUtils;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-@AConfiguration
 public class DbConfig {
-  @Initialization
+
   public void config() {
     String jdbcUrl = EnvUtils.getStr("jdbc.url");
     String jdbcUser = EnvUtils.getStr("jdbc.user");
