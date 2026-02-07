@@ -1,0 +1,12 @@
+{
+  "code": 200,
+  "message": "成功",
+  "data":
+  [
+    {
+      "name": "default",
+      "desc": "default",
+      "model_type": "EMBEDDING"
+    }
+  ]
+}

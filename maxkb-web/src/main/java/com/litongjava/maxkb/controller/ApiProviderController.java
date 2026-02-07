@@ -53,10 +53,10 @@ public class ApiProviderController {
   public HttpResponse model_form(String provider, String model_type, String model_name) {
 
     String filename =null;
-    if(ModelProvider.model_openai_provider.getName().equals(provider)) {
-      filename = provider + "_model_form.json";
-    }
+//    if(ModelProvider.model_openai_provider.getName().equals(provider)) {
+//    }
     
+    filename = provider + "_model_form.json";
     log.info("filename:{}",filename);
     URL resource = ResourceUtil.getResource("json/" + filename);
     String jsonString = FileUtil.readString(resource);

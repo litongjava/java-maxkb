@@ -2,6 +2,11 @@
     "code": 200,
     "message": "成功",
     "data": [
+	    {
+            "provider": "model_default_provider",
+            "name": "Default",
+            "icon": ""
+        },
         {
             "provider": "model_azure_provider",
             "name": "Azure OpenAI",

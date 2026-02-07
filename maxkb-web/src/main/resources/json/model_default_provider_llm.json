@@ -1,0 +1,11 @@
+{
+    "code": 200,
+    "message": "成功",
+    "data": [
+        {
+            "name": "default",
+            "desc": "最新的o1-preview",
+            "model_type": "LLM"
+        }
+    ]
+}
