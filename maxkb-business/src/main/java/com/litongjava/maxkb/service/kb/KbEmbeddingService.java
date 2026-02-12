@@ -37,6 +37,9 @@ public class KbEmbeddingService {
     PGobject pGobject = Db.queryFirst(sql, md5, model);
 
     if (pGobject == null) {
+      if ("default".equals(model)) {
+        model = OpenAiModels.TEXT_EMBEDDING_3_LARGE;
+      }
       float[] embeddingArray = embedding(text, model);
       String string = Arrays.toString(embeddingArray);
       long id = SnowflakeIdUtils.id();
@@ -53,10 +56,6 @@ public class KbEmbeddingService {
   }
 
   private float[] embedding(String text, String model) {
-    if ("default".equals(model)) {
-      model = OpenAiModels.TEXT_EMBEDDING_3_LARGE;
-    }
-
     float[] embeddingArray = null;
     for (int i = 0; i < 3; i++) {
       try {
@@ -84,6 +83,10 @@ public class KbEmbeddingService {
         if (areaCode == 86) {
           embeddingArray = BaiLianClient.embeddingArray(BaiLianAiModels.TEXT_EMBEDDING_V4, text);
         } else {
+          if ("default".equals(model)) {
+            model = OpenAiModels.TEXT_EMBEDDING_3_LARGE;
+          }
+
           embeddingArray = embedding(text, model);
         }
 
