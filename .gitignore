@@ -163,3 +163,4 @@ app-prod.properties
 app-test.properties
 .deploy.toml
 my.txt
+secrets.txt

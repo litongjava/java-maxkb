@@ -16,6 +16,8 @@ public class MaxKbBootConfig implements BootConfiguration {
 
   @Override
   public void config() throws Exception {
+    System.setProperty("net.sf.ehcache.skipUpdateCheck", "true");
+    
     new DbConfig().config();
     new EhCacheConfig().config();
     new EnjoyEngineConfig().config();

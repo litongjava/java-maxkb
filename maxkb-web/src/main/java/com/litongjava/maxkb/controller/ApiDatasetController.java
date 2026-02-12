@@ -15,6 +15,7 @@ import com.litongjava.maxkb.service.kb.MaxKbParagraphServcie;
 import com.litongjava.maxkb.service.kb.MaxKbParagraphSplitService;
 import com.litongjava.maxkb.service.kb.MaxKbProblemService;
 import com.litongjava.maxkb.vo.KbDatasetModel;
+import com.litongjava.maxkb.vo.MaxKbUpdateDocumentRequestVo;
 import com.litongjava.maxkb.vo.Paragraph;
 import com.litongjava.maxkb.vo.ParagraphBatchVo;
 import com.litongjava.maxkb.vo.ProbrolemCreateBatch;
@@ -65,7 +66,8 @@ public class ApiDatasetController {
     Integer top_number = request.getInt("top_number");
     String search_mode = request.getParam("search_mode");
     Long userId = TioRequestContext.getUserIdLong();
-    return Aop.get(MaxKbDatasetHitTestService.class).hitTest(userId, id, query_text, similarity, top_number, search_mode);
+    return Aop.get(MaxKbDatasetHitTestService.class).hitTest(userId, id, query_text, similarity, top_number,
+        search_mode);
   }
 
   @Post("/{id}/document/_bach")
@@ -100,6 +102,17 @@ public class ApiDatasetController {
     return Aop.get(MaxKbDocumentService.class).delete(userId, datasetId, documentId);
   }
 
+  @Put("/{datasetId}/document/{documentId}")
+  public ResultVo updateDocument(Long datasetId, Long documentId, HttpRequest httpRequest) {
+    Long userId = TioRequestContext.getUserIdLong();
+    String bodyString = httpRequest.getBodyString();
+    if (bodyString == null) {
+      return ResultVo.fail("request body can not be empty");
+    }
+    MaxKbUpdateDocumentRequestVo vo = JsonUtils.parse(bodyString, MaxKbUpdateDocumentRequestVo.class);
+    return Aop.get(MaxKbDocumentService.class).update(userId, datasetId, documentId, vo);
+  }
+
   @Get("/{datasetId}/application")
   public ResultVo getApplicationByDatasetId(Long datasetId) {
     return Aop.get(MaxKbDatasetService.class).getApplicationByDatasetId(datasetId);
@@ -113,7 +126,7 @@ public class ApiDatasetController {
     return Aop.get(MaxKbParagraphServcie.class).create(userId, datasetId, documentId, paragraph);
   }
 
-  //paragraph
+  // paragraph
   @Get("/{datasetId}/document/{documentId}/paragraph/{pageNo}/{pageSize}")
   public ResultVo listParagraph(Long datasetId, Long documentId, Integer pageNo, Integer pageSize) {
     Long userId = TioRequestContext.getUserIdLong();
@@ -151,7 +164,7 @@ public class ApiDatasetController {
     return Aop.get(MaxKbProblemService.class).page(datasetId, pageNo, pageSize);
   }
 
-  //api/dataset/443309276048408576/problem/444734959665311744/paragraph
+  // api/dataset/443309276048408576/problem/444734959665311744/paragraph
   @Get("/{datasetId}/problem/{problemId}/paragraph")
   public ResultVo listParagraphByProblemId(Long datasetId, Long problemId) {
     return Aop.get(MaxKbProblemService.class).listParagraphByProblemId(datasetId, problemId);

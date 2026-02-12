@@ -15,6 +15,9 @@ import com.litongjava.openai.consts.OpenAiModels;
 import com.litongjava.tio.utils.crypto.Md5Utils;
 import com.litongjava.tio.utils.snowflake.SnowflakeIdUtils;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 public class KbEmbeddingService {
   private final Object vectorLock = new Object();
   private final Object writeLock = new Object();
@@ -34,17 +37,7 @@ public class KbEmbeddingService {
     PGobject pGobject = Db.queryFirst(sql, md5, model);
 
     if (pGobject == null) {
-      float[] embeddingArray = null;
-      try {
-        embeddingArray = OpenAiClient.embeddingArray(text, model);
-      } catch (Exception e) {
-        try {
-          embeddingArray = OpenAiClient.embeddingArray(text, model);
-        } catch (Exception e1) {
-          embeddingArray = OpenAiClient.embeddingArray(text, model);
-        }
-      }
-
+      float[] embeddingArray = embedding(text, model);
       String string = Arrays.toString(embeddingArray);
       long id = SnowflakeIdUtils.id();
       v = (String) string;
@@ -57,6 +50,23 @@ public class KbEmbeddingService {
       }
     }
     return pGobject;
+  }
+
+  private float[] embedding(String text, String model) {
+    if ("default".equals(model)) {
+      model = OpenAiModels.TEXT_EMBEDDING_3_LARGE;
+    }
+
+    float[] embeddingArray = null;
+    for (int i = 0; i < 3; i++) {
+      try {
+        embeddingArray = OpenAiClient.embeddingArray(text, model);
+        break;
+      } catch (Exception e) {
+        log.error(e.getMessage(), e);
+      }
+    }
+    return embeddingArray;
   }
 
   public Long getVectorId(String text, String model) {
@@ -74,7 +84,7 @@ public class KbEmbeddingService {
         if (areaCode == 86) {
           embeddingArray = BaiLianClient.embeddingArray(BaiLianAiModels.TEXT_EMBEDDING_V4, text);
         } else {
-          embeddingArray = OpenAiClient.embeddingArray(text, model);
+          embeddingArray = embedding(text, model);
         }
 
       }

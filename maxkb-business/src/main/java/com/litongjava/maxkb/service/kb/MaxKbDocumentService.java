@@ -9,13 +9,17 @@ import com.litongjava.db.activerecord.Db;
 import com.litongjava.db.activerecord.Row;
 import com.litongjava.kit.RowUtils;
 import com.litongjava.maxkb.constant.MaxKbTableNames;
+import com.litongjava.maxkb.vo.MaxKbUpdateDocumentRequestVo;
 import com.litongjava.maxkb.vo.ResultPage;
 import com.litongjava.model.page.Page;
 import com.litongjava.model.result.ResultVo;
 import com.litongjava.table.services.ApiTable;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 public class MaxKbDocumentService {
-  
+
   public ResultVo page(Long userId, Long datasetId, Integer pageNo, Integer pageSize) {
     TableInput tableInput = new TableInput();
     if (userId != 1) {
@@ -56,10 +60,17 @@ public class MaxKbDocumentService {
   }
 
   public ResultVo delete(Long userId, Long datasetId, Long documentId) {
-    Row record = Row.by("id", documentId).set("user_id", userId).set("dataset_id", datasetId);
-    Db.delete(MaxKbTableNames.max_kb_document, record);
-    record = Row.by("document_id", documentId).set("dataset_id", datasetId);
-    Db.delete(MaxKbTableNames.max_kb_paragraph, record);
+    Row row = Row.by("id", documentId).set("user_id", userId).set("dataset_id", datasetId);
+    Db.delete(MaxKbTableNames.max_kb_document, row);
+    row = Row.by("document_id", documentId).set("dataset_id", datasetId);
+    Db.delete(MaxKbTableNames.max_kb_paragraph, row);
+    return ResultVo.ok();
+  }
+
+  public ResultVo update(Long userId, Long datasetId, Long documentId, MaxKbUpdateDocumentRequestVo vo) {
+    log.info("update vo:{}", vo);
+    Row row = Row.by("id", documentId).set("user_id", userId).set("dataset_id", datasetId).set("name", vo.getName());
+    Db.update(MaxKbTableNames.max_kb_document, row);
     return ResultVo.ok();
   }
 
