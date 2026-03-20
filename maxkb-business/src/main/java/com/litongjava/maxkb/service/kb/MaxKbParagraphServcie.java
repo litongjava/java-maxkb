@@ -147,4 +147,63 @@ public class MaxKbParagraphServcie {
     return ResultVo.ok();
   }
 
+  public ResultVo update(Long userId, Long datasetId, Long documentId, Long id, Paragraph p) {
+    TableInput tableInput = new TableInput();
+    tableInput.set("id", datasetId);
+    if (!userId.equals(1L)) {
+      tableInput.set("user_id", userId);
+    }
+
+    TableResult<Row> result = ApiTable.get(MaxKbTableNames.max_kb_dataset, tableInput);
+
+    Row dataset = result.getData();
+    if (dataset == null) {
+      return ResultVo.fail("Dataset not found.");
+    }
+
+    Long embedding_mode_id = dataset.getLong("embedding_mode_id");
+    String sqlModelName = String.format("SELECT provider,model_name FROM %s WHERE id = ?",
+        MaxKbTableNames.max_kb_model);
+    MaxKbModel maxKbModel = MaxKbModel.dao.findFirst(sqlModelName, embedding_mode_id);
+    String platformName = null;
+    String modelName = null;
+    if (maxKbModel != null) {
+      platformName = maxKbModel.getProvider();
+      modelName = maxKbModel.getModelName();
+    }
+
+    PlatformInput platformInput = new PlatformInput(platformName, modelName);
+
+    KbEmbeddingService maxKbEmbeddingService = Aop.get(KbEmbeddingService.class);
+
+    String title = p.getTitle();
+    String content = p.getContent();
+    PGobject contentVector = maxKbEmbeddingService.getVector(content, platformInput);
+    PGobject titleVector = maxKbEmbeddingService.getVector(title, platformInput);
+    Row record = Row.by("id", id)
+        //
+        // .set("source_id", )
+        //
+        .set("source_type", "md")
+        //
+        .set("title", title)
+        //
+        .set("content", content)
+        //
+        .set("md5", Md5Utils.md5Hex(content))
+        //
+        .set("status", "1")
+        //
+        .set("hit_num", 0)
+        //
+        .set("is_active", true).set("dataset_id", datasetId).set("document_id", documentId)
+        //
+        .set("embedding", contentVector).set(MaxKbParagraph.titleEmbedding, titleVector);
+
+    
+    Db.update(MaxKbTableNames.max_kb_paragraph, record);
+
+    return ResultVo.ok();
+  }
+
 }
