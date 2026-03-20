@@ -15,7 +15,7 @@
     <dependency>
       <groupId>com.litongjava</groupId>
       <artifactId>maxkb-business</artifactId>
-      <version>1.0.4</version>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.projectlombok</groupId>

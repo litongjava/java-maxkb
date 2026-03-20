@@ -28,7 +28,7 @@
     <dependency>
       <groupId>com.litongjava</groupId>
       <artifactId>tio-boot-admin</artifactId>
-      <version>1.1.0</version>
+      <version>1.1.2</version>
     </dependency>
 
     <dependency>
