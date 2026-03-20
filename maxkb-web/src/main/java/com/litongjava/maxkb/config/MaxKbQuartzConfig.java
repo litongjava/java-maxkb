@@ -4,7 +4,7 @@ import com.litongjava.hook.HookCan;
 import com.litongjava.tio.utils.environment.EnvUtils;
 import com.litongjava.tio.utils.quartz.QuartzUtils;
 
-public class QuartzConfig {
+public class MaxKbQuartzConfig {
 
   public void config() {
     if (EnvUtils.isProd()) {

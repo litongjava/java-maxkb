@@ -1,16 +1,16 @@
 package com.litongjava.maxkb.config.boot;
 
 import com.litongjava.context.BootConfiguration;
-import com.litongjava.maxkb.config.DbConfig;
-import com.litongjava.maxkb.config.EhCacheConfig;
-import com.litongjava.maxkb.config.EnjoyEngineConfig;
-import com.litongjava.maxkb.config.FastJsonConfig;
-import com.litongjava.maxkb.config.HandlerConfiguration;
+import com.litongjava.maxkb.config.MaxKbEhCacheConfig;
+import com.litongjava.maxkb.config.MaxKbEnjoyEngineConfig;
+import com.litongjava.maxkb.config.MaxKbFastJsonConfig;
+import com.litongjava.maxkb.config.MaxKbHandlerConfiguration;
 import com.litongjava.maxkb.config.InterceptorConfiguration;
-import com.litongjava.maxkb.config.PlaywrightConfig;
-import com.litongjava.maxkb.config.QuartzConfig;
-import com.litongjava.maxkb.config.TioServerConfig;
-import com.litongjava.maxkb.config.TokenStoreConfig;
+import com.litongjava.maxkb.config.MaxKbDbConfig;
+import com.litongjava.maxkb.config.MaxKbPlaywrightConfig;
+import com.litongjava.maxkb.config.MaxKbQuartzConfig;
+import com.litongjava.maxkb.config.MaxKbTioServerConfig;
+import com.litongjava.maxkb.config.MaxKbTokenStoreConfig;
 
 public class MaxKbBootConfig implements BootConfiguration {
 
@@ -18,15 +18,15 @@ public class MaxKbBootConfig implements BootConfiguration {
   public void config() throws Exception {
     System.setProperty("net.sf.ehcache.skipUpdateCheck", "true");
     
-    new DbConfig().config();
-    new EhCacheConfig().config();
-    new EnjoyEngineConfig().config();
-    new FastJsonConfig().config();
-    new HandlerConfiguration().config();
+    new MaxKbDbConfig().config();
+    new MaxKbEhCacheConfig().config();
+    new MaxKbEnjoyEngineConfig().config();
+    new MaxKbFastJsonConfig().config();
+    new MaxKbHandlerConfiguration().config();
     new InterceptorConfiguration().config();
-    new PlaywrightConfig().config();
-    new QuartzConfig().config();
-    new TioServerConfig().config();
-    new TokenStoreConfig().config();
+    new MaxKbPlaywrightConfig().config();
+    new MaxKbQuartzConfig().config();
+    new MaxKbTioServerConfig().config();
+    new MaxKbTokenStoreConfig().config();
   }
 }

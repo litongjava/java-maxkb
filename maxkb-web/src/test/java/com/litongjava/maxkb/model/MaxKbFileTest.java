@@ -2,7 +2,7 @@ package com.litongjava.maxkb.model;
 
 import org.junit.Test;
 
-import com.litongjava.maxkb.config.DbConfig;
+import com.litongjava.maxkb.config.MaxKbDbConfig;
 import com.litongjava.tio.boot.testing.TioBootTest;
 import com.litongjava.tio.utils.json.JsonUtils;
 import com.litongjava.tio.utils.snowflake.SnowflakeIdUtils;
@@ -11,7 +11,7 @@ public class MaxKbFileTest {
 
   @Test
   public void test() {
-    TioBootTest.runWith(DbConfig.class);
+    TioBootTest.runWith(MaxKbDbConfig.class);
     MaxKbFile maxKbFile = new MaxKbFile();
     maxKbFile.setId(SnowflakeIdUtils.id());
     maxKbFile.setMd5("001");

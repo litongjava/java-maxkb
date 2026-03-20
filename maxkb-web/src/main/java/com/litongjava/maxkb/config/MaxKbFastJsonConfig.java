@@ -6,7 +6,7 @@ import com.alibaba.fastjson2.reader.ObjectReaderProvider;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class FastJsonConfig {
+public class MaxKbFastJsonConfig {
 
   public void config() {
     log.info("clean fastjson 2 cache");

@@ -4,7 +4,7 @@ import com.litongjava.hook.HookCan;
 import com.litongjava.maxkb.playwright.PlaywrightBrowser;
 import com.litongjava.tio.utils.environment.EnvUtils;
 
-public class PlaywrightConfig {
+public class MaxKbPlaywrightConfig {
 
   public void config() {
 

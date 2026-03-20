@@ -7,7 +7,7 @@ import com.litongjava.tio.utils.environment.EnvUtils;
 import com.litongjava.tio.utils.token.ITokenStorage;
 import com.litongjava.tio.utils.token.TokenManager;
 
-public class TokenStoreConfig {
+public class MaxKbTokenStoreConfig {
 
   public void config() {
     if(EnvUtils.isDev()) {

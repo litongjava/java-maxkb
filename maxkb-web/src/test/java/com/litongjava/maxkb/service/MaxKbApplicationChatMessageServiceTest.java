@@ -3,7 +3,7 @@ package com.litongjava.maxkb.service;
 import org.junit.Test;
 
 import com.litongjava.jfinal.aop.Aop;
-import com.litongjava.maxkb.config.DbConfig;
+import com.litongjava.maxkb.config.MaxKbDbConfig;
 import com.litongjava.maxkb.service.kb.MaxKbApplicationChatMessageService;
 import com.litongjava.maxkb.vo.MaxKbChatRequestVo;
 import com.litongjava.model.result.ResultVo;
@@ -14,7 +14,7 @@ public class MaxKbApplicationChatMessageServiceTest {
 
   @Test
   public void test() {
-    TioBootTest.runWith(DbConfig.class);
+    TioBootTest.runWith(MaxKbDbConfig.class);
     MaxKbChatRequestVo chatRequestVo = new MaxKbChatRequestVo();
     chatRequestVo.setMessage("office hour");
     ResultVo ask = Aop.get(MaxKbApplicationChatMessageService.class).ask(null, 446472660186722304L, chatRequestVo);

@@ -2,7 +2,7 @@ package com.litongjava.maxkb.config;
 
 import com.jfinal.template.Engine;
 
-public class EnjoyEngineConfig {
+public class MaxKbEnjoyEngineConfig {
 
   private final String RESOURCE_BASE_PATH = "/enjoy-templates/";
 

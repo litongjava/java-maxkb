@@ -3,7 +3,7 @@ package com.litongjava.maxkb.config;
 import com.litongjava.ehcache.EhCachePlugin;
 import com.litongjava.hook.HookCan;
 
-public class EhCacheConfig {
+public class MaxKbEhCacheConfig {
 
   public void config() {
     EhCachePlugin ehCachePlugin = new EhCachePlugin();

@@ -3,7 +3,7 @@ package com.litongjava.maxkb.service;
 import org.junit.Test;
 
 import com.litongjava.jfinal.aop.Aop;
-import com.litongjava.maxkb.config.DbConfig;
+import com.litongjava.maxkb.config.MaxKbDbConfig;
 import com.litongjava.maxkb.service.kb.MaxKbParagraphRetrieveService;
 import com.litongjava.maxkb.vo.MaxKbRetrieveResult;
 import com.litongjava.tio.boot.testing.TioBootTest;
@@ -13,7 +13,7 @@ public class MaxKbParagraphSearchServiceTest {
 
   @Test
   public void test() {
-    TioBootTest.runWith(DbConfig.class);
+    TioBootTest.runWith(MaxKbDbConfig.class);
     Long[] datasetIdArray = { 474194391515324416L };
     Float similarity = 0.2f;
     Integer top_n = 20;

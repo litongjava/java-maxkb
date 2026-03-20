@@ -10,7 +10,7 @@ public class DbConfigTest {
   @Test
   public void test() {
     EnvUtils.load();
-    new DbConfig().config();
+    new MaxKbDbConfig().config();
     for (int i=0;i<2;i++) {
       Db.queryInt("select 1");
     }

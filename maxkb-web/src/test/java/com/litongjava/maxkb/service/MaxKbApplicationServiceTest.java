@@ -4,7 +4,7 @@ import org.junit.Test;
 
 import com.litongjava.db.TableInput;
 import com.litongjava.jfinal.aop.Aop;
-import com.litongjava.maxkb.config.DbConfig;
+import com.litongjava.maxkb.config.MaxKbDbConfig;
 import com.litongjava.maxkb.service.kb.MaxKbApplicationService;
 import com.litongjava.model.result.ResultVo;
 import com.litongjava.tio.boot.testing.TioBootTest;
@@ -16,7 +16,7 @@ public class MaxKbApplicationServiceTest {
   @Test
   public void testPage() {
     EnvUtils.load();
-    new DbConfig().config();
+    new MaxKbDbConfig().config();
     TableInput tableInput = new TableInput();
     tableInput.setPageNo(1).setPageSize(20);
     ResultVo page = Aop.get(MaxKbApplicationService.class).page(tableInput);
@@ -25,14 +25,14 @@ public class MaxKbApplicationServiceTest {
   
   @Test
   public void testGet() {
-    TioBootTest.runWith(DbConfig.class);
+    TioBootTest.runWith(MaxKbDbConfig.class);
     ResultVo resultVo = Aop.get(MaxKbApplicationService.class).get(1L, 445801809260630016L);
     System.out.println(JsonUtils.toJson(resultVo));
   }
 
   @Test
   public void getList() {
-    TioBootTest.runWith(DbConfig.class);
+    TioBootTest.runWith(MaxKbDbConfig.class);
     ResultVo resultVo = Aop.get(MaxKbApplicationService.class).list(1L);
     System.out.println(JsonUtils.toJson(resultVo));
   }
