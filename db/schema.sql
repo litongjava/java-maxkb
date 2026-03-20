@@ -255,6 +255,7 @@ CREATE TABLE "public"."max_kb_document" (
 
 DROP TABLE IF EXISTS "public"."max_kb_paragraph";
 
+
 CREATE TABLE "public"."max_kb_paragraph" (
   "id" BIGINT PRIMARY KEY,
   "source_id" BIGINT,
@@ -268,6 +269,7 @@ CREATE TABLE "public"."max_kb_paragraph" (
   "dataset_id" BIGINT NOT NULL,
   "document_id" BIGINT NOT NULL,
   "embedding" VECTOR,
+  "title_embedding" VECTOR,
   "meta" JSONB,
   "search_vector" TSVECTOR,
   "creator" VARCHAR(64) DEFAULT '',
@@ -452,6 +454,7 @@ CREATE TABLE "public"."max_kb_application_public_access_client" (
   "access_num" INT NOT NULL,
   "intraday_access_num" INT NOT NULL,
   "application_id" BIGINT NOT NULL,
+  "client_id" BIGINT,
   "creator" VARCHAR(64) DEFAULT '',
   "create_time" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
   "updater" VARCHAR(64) DEFAULT '',

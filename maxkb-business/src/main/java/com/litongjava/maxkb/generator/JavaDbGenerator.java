@@ -5,6 +5,7 @@ import javax.sql.DataSource;
 import com.litongjava.db.activerecord.dialect.PostgreSqlDialect;
 import com.litongjava.db.activerecord.generator.Generator;
 import com.litongjava.db.druid.DruidPlugin;
+import com.litongjava.db.hikaricp.HikariCpPlugin;
 import com.litongjava.tio.utils.environment.EnvUtils;
 
 public class JavaDbGenerator {
@@ -27,7 +28,8 @@ public class JavaDbGenerator {
     String modelOutputDir = baseModelOutputDir + "/..";
 
     // 创建生成器
-    Generator generator = new Generator(dataSource, baseModelPackageName, baseModelOutputDir, modelPackageName, modelOutputDir);
+    Generator generator = new Generator(dataSource, baseModelPackageName, baseModelOutputDir, modelPackageName,
+        modelOutputDir);
 
     // 配置生成器
     generator.setGenerateRemarks(true); // 生成字段备注
@@ -49,7 +51,8 @@ public class JavaDbGenerator {
         //
         "max_kb_problem", "max_kb_problem_paragraph_mapping",
         //
-        "max_kb_embedding_cache", "max_kb_document_markdown_cache", "max_kb_document_markdown_page_cache", "max_kb_paragraph_summary_cache",
+        "max_kb_embedding_cache", "max_kb_document_markdown_cache", "max_kb_document_markdown_page_cache",
+        "max_kb_paragraph_summary_cache",
         //
         "max_kb_application_public_access_client"
 
@@ -64,16 +67,28 @@ public class JavaDbGenerator {
     return "src/main/java/" + replace;
   }
 
-  public static DruidPlugin createDruidPlugin() {
+  public static DataSource getDruidPluginDataSource() {
     String url = EnvUtils.get("jdbc.url").trim();
     String user = EnvUtils.get("jdbc.user").trim();
     String pswd = EnvUtils.get("jdbc.pswd").trim();
-    return new DruidPlugin(url, user, pswd);
+    DruidPlugin druidPlugin = new DruidPlugin(url, user, pswd);
+    druidPlugin.start();
+    return druidPlugin.getDataSource();
+  }
+
+  public static DataSource getHikariCpDataSource() {
+    // 初始化 HikariCP 数据库连接池
+    String url = EnvUtils.get("jdbc.url").trim();
+    String user = EnvUtils.get("jdbc.user").trim();
+    String pswd = EnvUtils.get("jdbc.pswd").trim();
+    
+
+    HikariCpPlugin hikariCpPlugin = new HikariCpPlugin(url, user, pswd);
+    hikariCpPlugin.start();
+    return hikariCpPlugin.getDataSource();
   }
 
   public static DataSource getDataSource() {
-    DruidPlugin druidPlugin = createDruidPlugin();
-    druidPlugin.start();
-    return druidPlugin.getDataSource();
+    return getHikariCpDataSource();
   }
 }

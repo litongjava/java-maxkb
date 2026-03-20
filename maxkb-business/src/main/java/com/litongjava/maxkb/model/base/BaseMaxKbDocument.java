@@ -54,6 +54,33 @@ public abstract class BaseMaxKbDocument<M extends BaseMaxKbDocument<M>> extends 
 		return getStr("name");
 	}
 	
+	public M setType(java.lang.String type) {
+		set("type", type);
+		return (M)this;
+	}
+	
+	public java.lang.String getType() {
+		return getStr("type");
+	}
+	
+	public M setUrl(java.lang.String url) {
+		set("url", url);
+		return (M)this;
+	}
+	
+	public java.lang.String getUrl() {
+		return getStr("url");
+	}
+	
+	public M setContent(java.lang.String content) {
+		set("content", content);
+		return (M)this;
+	}
+	
+	public java.lang.String getContent() {
+		return getStr("content");
+	}
+	
 	public M setCharLength(java.lang.Integer charLength) {
 		set("char_length", charLength);
 		return (M)this;
@@ -80,33 +107,6 @@ public abstract class BaseMaxKbDocument<M extends BaseMaxKbDocument<M>> extends 
 	public java.lang.Boolean getIsActive() {
 		return getBoolean("is_active");
 	}
-	
-	public M setType(java.lang.String type) {
-		set("type", type);
-		return (M)this;
-	}
-	
-	public java.lang.String getType() {
-		return getStr("type");
-	}
-	
-	 public M setUrl(java.lang.String type) {
-	    set("url", type);
-	    return (M)this;
-	  }
-	  
-	  public java.lang.String geturl() {
-	    return getStr("url");
-	  }
-	
-	 public M setContent(java.lang.String type) {
-	    set("content", type);
-	    return (M)this;
-	  }
-	  
-	  public java.lang.String getCotnent() {
-	    return getStr("content");
-	  }
 	
 	public M setMeta(java.lang.String meta) {
 		set("meta", meta);

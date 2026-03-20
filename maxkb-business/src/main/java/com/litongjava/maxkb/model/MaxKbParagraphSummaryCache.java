@@ -7,10 +7,10 @@ import com.litongjava.maxkb.model.base.BaseMaxKbParagraphSummaryCache;
  */
 public class MaxKbParagraphSummaryCache extends BaseMaxKbParagraphSummaryCache<MaxKbParagraphSummaryCache> {
   private static final long serialVersionUID = 1L;
-  public static final MaxKbParagraphSummaryCache dao = new MaxKbParagraphSummaryCache().dao();
-  /**
-   * 
-   */
+	public static final MaxKbParagraphSummaryCache dao = new MaxKbParagraphSummaryCache().dao();
+	/**
+	 * 
+	 */
   public static final String tableName = "max_kb_paragraph_summary_cache";
   public static final String primaryKey = "id";
   //java.lang.Long 
@@ -44,3 +44,4 @@ public class MaxKbParagraphSummaryCache extends BaseMaxKbParagraphSummaryCache<M
     return tableName;
   }
 }
+

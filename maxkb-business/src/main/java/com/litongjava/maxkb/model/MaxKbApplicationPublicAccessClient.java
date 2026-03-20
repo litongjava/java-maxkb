@@ -15,14 +15,14 @@ public class MaxKbApplicationPublicAccessClient extends BaseMaxKbApplicationPubl
   public static final String primaryKey = "id";
   //java.lang.Long 
   public static final String id = "id";
-  //java.lang.Long 
-  public static final String clientId = "client_id";
   //java.lang.Integer 
   public static final String accessNum = "access_num";
   //java.lang.Integer 
   public static final String intradayAccessNum = "intraday_access_num";
   //java.lang.Long 
   public static final String applicationId = "application_id";
+  //java.lang.Long 
+  public static final String clientId = "client_id";
   //java.lang.String 
   public static final String creator = "creator";
   //java.util.Date 

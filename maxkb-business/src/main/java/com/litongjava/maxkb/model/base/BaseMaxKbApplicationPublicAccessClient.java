@@ -18,15 +18,6 @@ public abstract class BaseMaxKbApplicationPublicAccessClient<M extends BaseMaxKb
 		return getLong("id");
 	}
 	
-	public M setClientId(java.lang.Long clientId) {
-		set("client_id", clientId);
-		return (M)this;
-	}
-	
-	public java.lang.Long getClientId() {
-		return getLong("client_id");
-	}
-	
 	public M setAccessNum(java.lang.Integer accessNum) {
 		set("access_num", accessNum);
 		return (M)this;
@@ -52,6 +43,15 @@ public abstract class BaseMaxKbApplicationPublicAccessClient<M extends BaseMaxKb
 	
 	public java.lang.Long getApplicationId() {
 		return getLong("application_id");
+	}
+	
+	public M setClientId(java.lang.Long clientId) {
+		set("client_id", clientId);
+		return (M)this;
+	}
+	
+	public java.lang.Long getClientId() {
+		return getLong("client_id");
 	}
 	
 	public M setCreator(java.lang.String creator) {

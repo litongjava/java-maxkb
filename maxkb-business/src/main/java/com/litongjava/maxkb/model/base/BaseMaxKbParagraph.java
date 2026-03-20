@@ -117,6 +117,15 @@ public abstract class BaseMaxKbParagraph<M extends BaseMaxKbParagraph<M>> extend
 		return getStr("embedding");
 	}
 	
+	public M setTitleEmbedding(java.lang.String titleEmbedding) {
+		set("title_embedding", titleEmbedding);
+		return (M)this;
+	}
+	
+	public java.lang.String getTitleEmbedding() {
+		return getStr("title_embedding");
+	}
+	
 	public M setMeta(java.lang.String meta) {
 		set("meta", meta);
 		return (M)this;

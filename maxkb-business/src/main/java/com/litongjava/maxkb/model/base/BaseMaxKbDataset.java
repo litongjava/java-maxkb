@@ -54,6 +54,15 @@ public abstract class BaseMaxKbDataset<M extends BaseMaxKbDataset<M>> extends Mo
 		return getLong("embedding_mode_id");
 	}
 	
+	public M setLlmModeId(java.lang.Long llmModeId) {
+		set("llm_mode_id", llmModeId);
+		return (M)this;
+	}
+	
+	public java.lang.Long getLlmModeId() {
+		return getLong("llm_mode_id");
+	}
+	
 	public M setMeta(java.lang.String meta) {
 		set("meta", meta);
 		return (M)this;

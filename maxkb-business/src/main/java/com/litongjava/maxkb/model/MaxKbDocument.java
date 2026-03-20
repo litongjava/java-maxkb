@@ -7,10 +7,10 @@ import com.litongjava.maxkb.model.base.BaseMaxKbDocument;
  */
 public class MaxKbDocument extends BaseMaxKbDocument<MaxKbDocument> {
   private static final long serialVersionUID = 1L;
-  public static final MaxKbDocument dao = new MaxKbDocument().dao();
-  /**
-   * 
-   */
+	public static final MaxKbDocument dao = new MaxKbDocument().dao();
+	/**
+	 * 
+	 */
   public static final String tableName = "max_kb_document";
   public static final String primaryKey = "id";
   //java.lang.Long 
@@ -23,16 +23,18 @@ public class MaxKbDocument extends BaseMaxKbDocument<MaxKbDocument> {
   public static final String title = "title";
   //java.lang.String 
   public static final String name = "name";
+  //java.lang.String 
+  public static final String type = "type";
+  //java.lang.String 
+  public static final String url = "url";
+  //java.lang.String 
+  public static final String content = "content";
   //java.lang.Integer 
   public static final String charLength = "char_length";
   //java.lang.String 
   public static final String status = "status";
   //java.lang.Boolean 
   public static final String isActive = "is_active";
-  //java.lang.String 
-  public static final String type = "type";
-  public static final String url = "url";
-  public static final String content = "content";
   //java.lang.String 
   public static final String meta = "meta";
   //java.lang.Long 
@@ -68,3 +70,4 @@ public class MaxKbDocument extends BaseMaxKbDocument<MaxKbDocument> {
     return tableName;
   }
 }
+

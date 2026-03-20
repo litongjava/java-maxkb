@@ -38,6 +38,8 @@ public class MaxKbParagraph extends BaseMaxKbParagraph<MaxKbParagraph> {
   //java.lang.String 
   public static final String embedding = "embedding";
   //java.lang.String 
+  public static final String titleEmbedding = "title_embedding";
+  //java.lang.String 
   public static final String meta = "meta";
   //java.lang.String 
   public static final String searchVector = "search_vector";

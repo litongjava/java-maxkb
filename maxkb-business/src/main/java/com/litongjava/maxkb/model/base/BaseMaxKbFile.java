@@ -45,13 +45,13 @@ public abstract class BaseMaxKbFile<M extends BaseMaxKbFile<M>> extends Model<M>
 		return getLong("file_size");
 	}
 	
-	public M setUserId(java.lang.String userId) {
+	public M setUserId(java.lang.Long userId) {
 		set("user_id", userId);
 		return (M)this;
 	}
 	
-	public java.lang.String getUserId() {
-		return getStr("user_id");
+	public java.lang.Long getUserId() {
+		return getLong("user_id");
 	}
 	
 	public M setPlatform(java.lang.String platform) {

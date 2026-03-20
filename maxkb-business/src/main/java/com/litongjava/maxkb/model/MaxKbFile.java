@@ -21,7 +21,7 @@ public class MaxKbFile extends BaseMaxKbFile<MaxKbFile> {
   public static final String filename = "filename";
   //java.lang.Long 
   public static final String fileSize = "file_size";
-  //java.lang.String 
+  //java.lang.Long 
   public static final String userId = "user_id";
   //java.lang.String 
   public static final String platform = "platform";

@@ -23,6 +23,8 @@ public class MaxKbDataset extends BaseMaxKbDataset<MaxKbDataset> {
   public static final String type = "type";
   //java.lang.Long 
   public static final String embeddingModeId = "embedding_mode_id";
+  //java.lang.Long 
+  public static final String llmModeId = "llm_mode_id";
   //java.lang.String 
   public static final String meta = "meta";
   //java.lang.Long 
