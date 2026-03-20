@@ -5,7 +5,7 @@ import com.litongjava.maxkb.config.MaxKbEhCacheConfig;
 import com.litongjava.maxkb.config.MaxKbEnjoyEngineConfig;
 import com.litongjava.maxkb.config.MaxKbFastJsonConfig;
 import com.litongjava.maxkb.config.MaxKbHandlerConfiguration;
-import com.litongjava.maxkb.config.InterceptorConfiguration;
+import com.litongjava.maxkb.config.MaxKbInterceptorConfiguration;
 import com.litongjava.maxkb.config.MaxKbDbConfig;
 import com.litongjava.maxkb.config.MaxKbPlaywrightConfig;
 import com.litongjava.maxkb.config.MaxKbQuartzConfig;
@@ -23,7 +23,7 @@ public class MaxKbBootConfig implements BootConfiguration {
     new MaxKbEnjoyEngineConfig().config();
     new MaxKbFastJsonConfig().config();
     new MaxKbHandlerConfiguration().config();
-    new InterceptorConfiguration().config();
+    new MaxKbInterceptorConfiguration().config();
     new MaxKbPlaywrightConfig().config();
     new MaxKbQuartzConfig().config();
     new MaxKbTioServerConfig().config();

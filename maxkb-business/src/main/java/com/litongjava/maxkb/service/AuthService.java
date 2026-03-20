@@ -1,6 +1,7 @@
 package com.litongjava.maxkb.service;
 
-import com.litongjava.maxkb.constant.AppConstant;
+import com.litongjava.tio.boot.admin.services.TioBootAdminTokenPredicate;
+import com.litongjava.tio.boot.admin.utils.TioAdminEnvUtils;
 import com.litongjava.tio.utils.hutool.StrUtil;
 import com.litongjava.tio.utils.token.TokenManager;
 
@@ -8,6 +9,8 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class AuthService {
+  private TioBootAdminTokenPredicate tioBootAdminTokenPredicate = new TioBootAdminTokenPredicate();
+
   /**
    * @param authorization
    * @return
@@ -17,16 +20,25 @@ public class AuthService {
     if (StrUtil.isBlank(authorization)) {
       return null;
     }
+
     String[] split = authorization.split(" ");
 
-    Long userId = 0L;
+    String SECRET_KEY = TioAdminEnvUtils.getAdminSecretKey();
+    String userId;
+    String idToken = null;
     if (split.length > 1) {
-      String idToken = split[1];
-      userId = TokenManager.parseUserIdLong(AppConstant.SECRET_KEY, idToken);
+      idToken = split[1];
     } else {
-      userId = TokenManager.parseUserIdLong(AppConstant.SECRET_KEY, authorization);
+      idToken = authorization;
     }
-    return userId;
+
+    boolean test = tioBootAdminTokenPredicate.test(idToken);
+    if (test) {
+      userId = tioBootAdminTokenPredicate.parseUserIdString(idToken);
+    } else {
+      userId = TokenManager.parseUserIdString(SECRET_KEY, idToken);
+    }
+    return Long.valueOf(userId);
   }
 
 }

@@ -6,11 +6,11 @@ import com.jfinal.kit.Kv;
 import com.litongjava.db.activerecord.Db;
 import com.litongjava.db.activerecord.Row;
 import com.litongjava.jfinal.aop.Aop;
-import com.litongjava.maxkb.constant.AppConstant;
 import com.litongjava.maxkb.model.MaxKbApplicationAccessToken;
 import com.litongjava.maxkb.model.MaxKbApplicationPublicAccessClient;
 import com.litongjava.maxkb.service.AuthService;
 import com.litongjava.model.result.ResultVo;
+import com.litongjava.tio.boot.admin.utils.TioAdminEnvUtils;
 import com.litongjava.tio.utils.json.JsonUtils;
 import com.litongjava.tio.utils.jwt.JwtUtils;
 import com.litongjava.tio.utils.mcid.McIdUtils;
@@ -70,7 +70,8 @@ public class MaxKbApplicationAccessTokenService {
       clientId = SnowflakeIdUtils.id();
     }
     Long id = SnowflakeIdUtils.id();
-    longToken = JwtUtils.createTokenByUserId(AppConstant.SECRET_KEY, clientId);
+    String SECRET_KEY = TioAdminEnvUtils.getAdminSecretKey();
+    longToken = JwtUtils.createTokenByUserId(SECRET_KEY, clientId);
     TokenManager.login(clientId, longToken);
     new MaxKbApplicationPublicAccessClient().setId(id).setClientId(clientId).setApplicationId(applicationId)
         //

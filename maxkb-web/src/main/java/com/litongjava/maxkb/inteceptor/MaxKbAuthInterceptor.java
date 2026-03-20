@@ -9,14 +9,14 @@ import com.litongjava.tio.http.common.HttpResponseStatus;
 import com.litongjava.tio.http.common.RequestLine;
 import com.litongjava.tio.http.server.intf.HttpRequestInterceptor;
 
-public class AuthInterceptor implements HttpRequestInterceptor {
+public class MaxKbAuthInterceptor implements HttpRequestInterceptor {
 
   private Object body = null;
 
-  public AuthInterceptor() {
+  public MaxKbAuthInterceptor() {
   }
 
-  public AuthInterceptor(Object body) {
+  public MaxKbAuthInterceptor(Object body) {
     this.body = body;
   }
 

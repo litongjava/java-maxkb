@@ -9,13 +9,13 @@ import com.litongjava.db.activerecord.Db;
 import com.litongjava.db.activerecord.Row;
 import com.litongjava.jfinal.aop.Aop;
 import com.litongjava.kit.RowUtils;
-import com.litongjava.maxkb.constant.AppConstant;
 import com.litongjava.maxkb.constant.MaxKbTableNames;
 import com.litongjava.maxkb.vo.ResultPage;
 import com.litongjava.maxkb.vo.UserLoginReqVo;
 import com.litongjava.model.page.Page;
 import com.litongjava.model.result.ResultVo;
 import com.litongjava.table.services.ApiTable;
+import com.litongjava.tio.boot.admin.utils.TioAdminEnvUtils;
 import com.litongjava.tio.utils.crypto.Md5Utils;
 import com.litongjava.tio.utils.jwt.JwtUtils;
 import com.litongjava.tio.utils.token.TokenManager;
@@ -29,7 +29,8 @@ public class UserService {
     if (userId == null) {
       return ResultVo.fail("用户名或者密码不正确");
     }
-    String token = JwtUtils.createTokenByUserId(AppConstant.SECRET_KEY, userId);
+    String SECRET_KEY = TioAdminEnvUtils.getAdminSecretKey();
+    String token = JwtUtils.createTokenByUserId(SECRET_KEY, userId);
     TokenManager.login(userId, token);
     return ResultVo.ok("成功", token);
   }
