@@ -3,12 +3,10 @@ package com.litongjava.maxkb;
 import java.io.IOException;
 
 import com.litongjava.openai.client.OpenAiClient;
-import com.litongjava.openai.embedding.EmbeddingRequestVo;
-import com.litongjava.openai.embedding.EmbeddingResponseVo;
+import com.litongjava.openai.embedding.EmbeddingRequest;
+import com.litongjava.openai.embedding.EmbeddingResponse;
 import com.litongjava.tio.utils.environment.EnvUtils;
 import com.litongjava.tio.utils.json.JsonUtils;
-
-import okhttp3.Response;
 
 public class EmbeddingExample {
 
@@ -16,18 +14,18 @@ public class EmbeddingExample {
     // load config
     EnvUtils.load();
     // request model
-    EmbeddingRequestVo embeddingRequestVo = new EmbeddingRequestVo();
+    EmbeddingRequest embeddingRequestVo = new EmbeddingRequest();
     embeddingRequestVo.input("What's your name").model("text-embedding-3-small");
 
     String bodyString = JsonUtils.toJson(embeddingRequestVo);
     // send request
-    try (Response response = OpenAiClient.embeddings(bodyString)) {
+    try (okhttp3.Response response = OpenAiClient.embeddings(bodyString)) {
       if (response.isSuccessful()) {
         // get response string
         String string = response.body().string();
         System.out.println(string);
         // process the resposne data
-        EmbeddingResponseVo responseVo = JsonUtils.parse(string, EmbeddingResponseVo.class);
+        EmbeddingResponse responseVo = JsonUtils.parse(string, EmbeddingResponse.class);
         System.out.println(JsonUtils.toJson(responseVo));
       } else {
         System.out.println(response);

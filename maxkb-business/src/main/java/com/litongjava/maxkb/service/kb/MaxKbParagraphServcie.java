@@ -6,6 +6,7 @@ import java.util.List;
 import org.postgresql.util.PGobject;
 
 import com.jfinal.kit.Kv;
+import com.litongjava.chat.PlatformInput;
 import com.litongjava.db.TableInput;
 import com.litongjava.db.TableResult;
 import com.litongjava.db.activerecord.Db;
@@ -13,6 +14,8 @@ import com.litongjava.db.activerecord.Row;
 import com.litongjava.jfinal.aop.Aop;
 import com.litongjava.kit.RowUtils;
 import com.litongjava.maxkb.constant.MaxKbTableNames;
+import com.litongjava.maxkb.model.MaxKbModel;
+import com.litongjava.maxkb.model.MaxKbParagraph;
 import com.litongjava.maxkb.vo.Paragraph;
 import com.litongjava.maxkb.vo.ResultPage;
 import com.litongjava.model.page.Page;
@@ -100,17 +103,27 @@ public class MaxKbParagraphServcie {
     }
 
     Long embedding_mode_id = dataset.getLong("embedding_mode_id");
-    String sqlModelName = String.format("SELECT model_name FROM %s WHERE id = ?", MaxKbTableNames.max_kb_model);
-    String modelName = Db.queryStr(sqlModelName, embedding_mode_id);
+    String sqlModelName = String.format("SELECT provider,model_name FROM %s WHERE id = ?",
+        MaxKbTableNames.max_kb_model);
+    MaxKbModel maxKbModel = MaxKbModel.dao.findFirst(sqlModelName, embedding_mode_id);
+    String platformName = null;
+    String modelName = null;
+    if (maxKbModel != null) {
+      platformName = maxKbModel.getProvider();
+      modelName = maxKbModel.getModelName();
+    }
+
+    PlatformInput platformInput = new PlatformInput(platformName, modelName);
 
     KbEmbeddingService maxKbEmbeddingService = Aop.get(KbEmbeddingService.class);
 
     String title = p.getTitle();
     String content = p.getContent();
-    PGobject vector = maxKbEmbeddingService.getVector(content, modelName);
+    PGobject contentVector = maxKbEmbeddingService.getVector(content, platformInput);
+    PGobject titleVector = maxKbEmbeddingService.getVector(title, platformInput);
     Row record = Row.by("id", SnowflakeIdUtils.id())
         //
-        //.set("source_id", )
+        // .set("source_id", )
         //
         .set("source_type", "md")
         //
@@ -126,8 +139,9 @@ public class MaxKbParagraphServcie {
         //
         .set("is_active", true).set("dataset_id", datasetId).set("document_id", documentId)
         //
-        .set("embedding", vector);
+        .set("embedding", contentVector).set(MaxKbParagraph.titleEmbedding, titleVector);
 
+    
     Db.save(MaxKbTableNames.max_kb_paragraph, record);
 
     return ResultVo.ok();

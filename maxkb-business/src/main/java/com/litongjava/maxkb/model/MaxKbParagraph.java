@@ -7,53 +7,53 @@ import com.litongjava.maxkb.model.base.BaseMaxKbParagraph;
  */
 public class MaxKbParagraph extends BaseMaxKbParagraph<MaxKbParagraph> {
   private static final long serialVersionUID = 1L;
-	public static final MaxKbParagraph dao = new MaxKbParagraph().dao();
-	/**
-	 * 
-	 */
+  public static final MaxKbParagraph dao = new MaxKbParagraph().dao();
+  /**
+   * 
+   */
   public static final String tableName = "max_kb_paragraph";
   public static final String primaryKey = "id";
-  //java.lang.Long 
+  // java.lang.Long
   public static final String id = "id";
-  //java.lang.Long 
+  // java.lang.Long
   public static final String sourceId = "source_id";
-  //java.lang.String 
+  // java.lang.String
   public static final String sourceType = "source_type";
-  //java.lang.String 
+  // java.lang.String
   public static final String title = "title";
-  //java.lang.String 
+  // java.lang.String
   public static final String content = "content";
-  //java.lang.String 
+  // java.lang.String
   public static final String md5 = "md5";
-  //java.lang.String 
+  // java.lang.String
   public static final String status = "status";
-  //java.lang.Integer 
+  // java.lang.Integer
   public static final String hitNum = "hit_num";
-  //java.lang.Boolean 
+  // java.lang.Boolean
   public static final String isActive = "is_active";
-  //java.lang.Long 
+  // java.lang.Long
   public static final String datasetId = "dataset_id";
-  //java.lang.Long 
+  // java.lang.Long
   public static final String documentId = "document_id";
-  //java.lang.String 
+  // java.lang.String
   public static final String embedding = "embedding";
-  //java.lang.String 
+  // java.lang.String
   public static final String titleEmbedding = "title_embedding";
-  //java.lang.String 
+  // java.lang.String
   public static final String meta = "meta";
-  //java.lang.String 
+  // java.lang.String
   public static final String searchVector = "search_vector";
-  //java.lang.String 
+  // java.lang.String
   public static final String creator = "creator";
-  //java.util.Date 
+  // java.util.Date
   public static final String createTime = "create_time";
-  //java.lang.String 
+  // java.lang.String
   public static final String updater = "updater";
-  //java.util.Date 
+  // java.util.Date
   public static final String updateTime = "update_time";
-  //java.lang.Integer 
+  // java.lang.Integer
   public static final String deleted = "deleted";
-  //java.lang.Long 
+  // java.lang.Long
   public static final String tenantId = "tenant_id";
 
   @Override
@@ -66,4 +66,3 @@ public class MaxKbParagraph extends BaseMaxKbParagraph<MaxKbParagraph> {
     return tableName;
   }
 }
-

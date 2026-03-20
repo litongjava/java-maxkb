@@ -6,12 +6,15 @@ import org.postgresql.util.PGobject;
 
 import com.litongjava.bailian.BaiLianAiModels;
 import com.litongjava.bailian.BaiLianClient;
+import com.litongjava.chat.PlatformInput;
+import com.litongjava.chat.UniEmbeddingClient;
 import com.litongjava.db.activerecord.Db;
 import com.litongjava.db.activerecord.Row;
 import com.litongjava.db.utils.PgVectorUtils;
 import com.litongjava.maxkb.constant.MaxKbTableNames;
 import com.litongjava.openai.client.OpenAiClient;
 import com.litongjava.openai.consts.OpenAiModels;
+import com.litongjava.openai.embedding.EmbeddingResponse;
 import com.litongjava.tio.utils.crypto.Md5Utils;
 import com.litongjava.tio.utils.snowflake.SnowflakeIdUtils;
 
@@ -101,6 +104,39 @@ public class KbEmbeddingService {
       }
     }
     return id;
+  }
+
+  public PGobject getVector(String text, PlatformInput platformInput) {
+    if (platformInput == null || platformInput.getPlatform() == null) {
+      String embeddingPlatform = MaxKbEnvUtils.getEmbeddingPlatform();
+      String embeddingModel = MaxKbEnvUtils.getEmbeddingModel();
+      platformInput = new PlatformInput(embeddingPlatform, embeddingModel);
+    }
+
+    String model = platformInput.getModel();
+    String md5 = Md5Utils.md5Hex(text);
+    String sql = String.format("select v from %s where md5=? and m=?", MaxKbTableNames.max_kb_embedding_cache);
+    PGobject pGobject = Db.queryFirst(sql, md5, model);
+
+    if (pGobject == null) {
+      float[] embeddingArray = embedding(text, platformInput);
+      String string = Arrays.toString(embeddingArray);
+      long id = SnowflakeIdUtils.id();
+      String v = (String) string;
+      pGobject = PgVectorUtils.getPgVector(v);
+      Row saveRecord = new Row().set("t", text).set("v", pGobject).set("id", id).set("md5", md5)
+          //
+          .set("m", model);
+      synchronized (writeLock) {
+        Db.save(MaxKbTableNames.max_kb_embedding_cache, saveRecord);
+      }
+    }
+    return pGobject;
+  }
+
+  public float[] embedding(String text, PlatformInput platformInput) {
+    EmbeddingResponse embedding = UniEmbeddingClient.embeddings(platformInput, text);
+    return embedding.getData().get(0).getEmbedding();
   }
 
 }

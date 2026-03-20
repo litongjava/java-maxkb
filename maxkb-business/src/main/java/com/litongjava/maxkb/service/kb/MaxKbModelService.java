@@ -21,7 +21,7 @@ import com.litongjava.model.result.ResultVo;
 import com.litongjava.openai.chat.OpenAiChatRequest;
 import com.litongjava.openai.client.OpenAiClient;
 import com.litongjava.openai.consts.OpenAiModels;
-import com.litongjava.openai.embedding.EmbeddingRequestVo;
+import com.litongjava.openai.embedding.EmbeddingRequest;
 import com.litongjava.tio.utils.hutool.DataMaskingUtil;
 import com.litongjava.tio.utils.json.JsonUtils;
 
@@ -95,7 +95,7 @@ public class MaxKbModelService {
 
     if (ModelProvider.model_openai_provider.getName().equals(provider)) {
       if (ModelType.EMBEDDING.getName().equals(model_type)) {
-        EmbeddingRequestVo embeddingRequestVo = new EmbeddingRequestVo();
+        EmbeddingRequest embeddingRequestVo = new EmbeddingRequest();
         embeddingRequestVo.input("Hi").model(OpenAiModels.TEXT_EMBEDDING_3_SMALL);
 
         String api_base = modelVo.getCredential().getApi_base();

@@ -3,8 +3,8 @@ package com.litongjava.maxkb.embedding;
 import org.junit.Test;
 
 import com.litongjava.openai.client.OpenAiClient;
-import com.litongjava.openai.embedding.EmbeddingRequestVo;
-import com.litongjava.openai.embedding.EmbeddingResponseVo;
+import com.litongjava.openai.embedding.EmbeddingRequest;
+import com.litongjava.openai.embedding.EmbeddingResponse;
 import com.litongjava.tio.utils.json.JsonUtils;
 
 public class JinaEmbeddingTest {
@@ -16,8 +16,8 @@ public class JinaEmbeddingTest {
     // 因为调用的是本地模型可以随便写
     String apiKey = "1234";
 
-    EmbeddingRequestVo embeddingRequestVo = new EmbeddingRequestVo(input);
-    EmbeddingResponseVo embeddings = OpenAiClient.embeddings(url, apiKey, embeddingRequestVo);
+    EmbeddingRequest embeddingRequestVo = new EmbeddingRequest(input);
+    EmbeddingResponse embeddings = OpenAiClient.embeddings(url, apiKey, embeddingRequestVo);
     System.out.println(JsonUtils.toSkipNullJson(embeddings));
   }
 }
