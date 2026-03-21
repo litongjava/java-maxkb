@@ -59,9 +59,8 @@ public class ApiRagDatasetRetrievalTitleHandler {
     ApiRagDatasetRetrievalRequest req = JsonUtils.parse(bodyString, ApiRagDatasetRetrievalRequest.class);
 
     // 2. 基础参数校验
-    if (req.getDatasetName() == null || req.getDatasetName().isEmpty() || req.getInput() == null
+    if (req.getDataset_name() == null || req.getDataset_name().isEmpty() || req.getInput() == null
         || req.getInput().isEmpty()) {
-
       response.setStatus(HttpResponseStatus.C400);
       ResultVo json = ResultVo.fail("datasetName and input are required");
       response.setJson(json);

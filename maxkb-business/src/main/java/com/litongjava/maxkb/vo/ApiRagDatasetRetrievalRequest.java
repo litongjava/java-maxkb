@@ -10,7 +10,7 @@ import lombok.experimental.Accessors;
 @AllArgsConstructor
 @Accessors(chain=true)
 public class ApiRagDatasetRetrievalRequest {
-  private String datasetName;
+  private String dataset_name;
   private String input;
   private Double similarity;
   private Integer top_number;

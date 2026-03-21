@@ -17,7 +17,7 @@ public class RagDatasetRetrievalServiceTest {
   public void test() {
     TioBootTest.runWith(new MaxKbBootConfig());
     ApiRagDatasetRetrievalRequest request=new ApiRagDatasetRetrievalRequest() ;
-    request.setDatasetName("plan_scene").setInput("勾股定理").setSimilarity(0.5d).setTop_number(10);
+    request.setDataset_name("plan_scene").setInput("勾股定理").setSimilarity(0.5d).setTop_number(10);
     List<MaxKbRetrievalResult> results = Aop.get(RagDatasetRetrievalService.class).retrievalByTitle(request);
     PrintlnUtils.printJson(results);
   }

@@ -19,7 +19,7 @@ public class RagDatasetRetrievalService {
   private KbRetrievalService kbRetrievalService = Aop.get(KbRetrievalService.class);
   
   public List<MaxKbRetrievalResult> retrievalByTitle(ApiRagDatasetRetrievalRequest req) {
-    String datasetName = req.getDatasetName();
+    String datasetName = req.getDataset_name();
     String input = req.getInput();
     Double similarity = req.getSimilarity();
     Integer top_number = req.getTop_number();

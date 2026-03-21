@@ -24,7 +24,7 @@ public class MaxKbInterceptorConfiguration {
 
     model.addAllowUrls("/api/v1/search", "/api/display/info", "/api/auth/types", "/api/qr_type");
     //
-    model.addAllowUrl("/api/v1/rag/dataset/question");
+    model.addAllowUrl("/api/v1/rag/dataset/retrieval/title");
 
     HttpInteceptorConfigure configure = new HttpInteceptorConfigure();
     configure.add(model);
