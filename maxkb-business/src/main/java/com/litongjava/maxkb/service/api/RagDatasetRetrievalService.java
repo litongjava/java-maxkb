@@ -5,9 +5,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.litongjava.chat.PlatformInput;
-import com.litongjava.db.activerecord.Db;
 import com.litongjava.jfinal.aop.Aop;
 import com.litongjava.maxkb.model.MaxKbDataset;
+import com.litongjava.maxkb.service.kb.KbEmbeddingService;
 import com.litongjava.maxkb.service.kb.MaxKbModelService;
 import com.litongjava.maxkb.vo.ApiRagDatasetResponse;
 import com.litongjava.maxkb.vo.ApiRagDatasetRetrievalRequest;
@@ -16,9 +16,11 @@ import com.litongjava.maxkb.vo.KbParagraph;
 public class RagDatasetRetrievalService {
 
   private MaxKbModelService maxKbModelService = Aop.get(MaxKbModelService.class);
+  private KbEmbeddingService kbEmbeddingService = Aop.get(KbEmbeddingService.class);
   
   public ApiRagDatasetResponse retrievalByTitle(ApiRagDatasetRetrievalRequest req) {
     String datasetName = req.getDatasetName();
+    String input = req.getInput();
     String sql = "select id,embedding_mode_id from max_kb_dataset where deleted=0 and name=?";
     MaxKbDataset dataset = MaxKbDataset.dao.findFirst(sql,datasetName);
     Long datasetId = dataset.getId();
@@ -26,6 +28,8 @@ public class RagDatasetRetrievalService {
     
     PlatformInput platformInput = maxKbModelService.getEmbeddingPlatformInput(embeddingModeId);
     
+    
+    Long vectorId = kbEmbeddingService.getVectorId(input, platformInput);
     
     List<KbParagraph> paragraphs = new ArrayList<>();
 

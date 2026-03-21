@@ -1,9 +1,11 @@
 package com.litongjava.maxkb.service.kb;
 
 import java.util.Arrays;
+import java.util.concurrent.locks.Lock;
 
 import org.postgresql.util.PGobject;
 
+import com.google.common.util.concurrent.Striped;
 import com.litongjava.bailian.BaiLianAiModels;
 import com.litongjava.bailian.BaiLianClient;
 import com.litongjava.chat.PlatformInput;
@@ -12,6 +14,7 @@ import com.litongjava.db.activerecord.Db;
 import com.litongjava.db.activerecord.Row;
 import com.litongjava.db.utils.PgVectorUtils;
 import com.litongjava.maxkb.constant.MaxKbTableNames;
+import com.litongjava.maxkb.model.MaxKbEmbeddingCache;
 import com.litongjava.openai.client.OpenAiClient;
 import com.litongjava.openai.consts.OpenAiModels;
 import com.litongjava.openai.embedding.EmbeddingResponse;
@@ -22,6 +25,8 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class KbEmbeddingService {
+  private static final Striped<Lock> stripedLocks = Striped.lock(1024);
+
   private final Object vectorLock = new Object();
   private final Object writeLock = new Object();
 
@@ -133,4 +138,31 @@ public class KbEmbeddingService {
     return embedding.getData().get(0).getEmbedding();
   }
 
+  public Long getVectorId(String text, PlatformInput platformInput) {
+    String model = platformInput.getModel();
+    String md5 = Md5Utils.md5Hex(text);
+    String sql = String.format("select id from %s where md5=? and m=?", MaxKbTableNames.max_kb_embedding_cache);
+    Long vectorId = Db.queryLong(sql, md5, model);
+
+    Lock lock = stripedLocks.get(md5);
+
+    if (vectorId == null) {
+      lock.lock();
+      vectorId = SnowflakeIdUtils.id();
+      try {
+        float[] embeddingArray = embedding(text, platformInput);
+        String string = Arrays.toString(embeddingArray);
+        PGobject pGobject = PgVectorUtils.getPgVector(string);
+        Row saveRecord = new Row().set("t", text).set("v", pGobject).set("id", vectorId).set("md5", md5).set("m",
+            model);
+        Db.save(MaxKbTableNames.max_kb_embedding_cache, saveRecord);
+//        MaxKbEmbeddingCache cache = new MaxKbEmbeddingCache().setId(vectorId).setT(text).setV(string).setMd5(md5)
+//            .setM(model);
+//        cache.save();
+      } finally {
+        lock.unlock();
+      }
+    }
+    return vectorId;
+  }
 }
