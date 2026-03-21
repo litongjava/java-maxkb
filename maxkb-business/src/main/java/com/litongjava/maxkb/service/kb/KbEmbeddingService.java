@@ -107,12 +107,6 @@ public class KbEmbeddingService {
   }
 
   public PGobject getVector(String text, PlatformInput platformInput) {
-    if (platformInput == null || platformInput.getPlatform() == null) {
-      String embeddingPlatform = MaxKbEnvUtils.getEmbeddingPlatform();
-      String embeddingModel = MaxKbEnvUtils.getEmbeddingModel();
-      platformInput = new PlatformInput(embeddingPlatform, embeddingModel);
-    }
-
     String model = platformInput.getModel();
     String md5 = Md5Utils.md5Hex(text);
     String sql = String.format("select v from %s where md5=? and m=?", MaxKbTableNames.max_kb_embedding_cache);

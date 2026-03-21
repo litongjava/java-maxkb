@@ -28,6 +28,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class MaxKbParagraphServcie {
+  private MaxKbModelService maxKbModelService = Aop.get(MaxKbModelService.class);
 
   public ResultVo page(Long userId, Long datasetId, Long documentId, Integer pageNo, Integer pageSize) {
     log.info("datasetId:{},documentId:{}", datasetId, documentId);
@@ -103,17 +104,7 @@ public class MaxKbParagraphServcie {
     }
 
     Long embedding_mode_id = dataset.getLong("embedding_mode_id");
-    String sqlModelName = String.format("SELECT provider,model_name FROM %s WHERE id = ?",
-        MaxKbTableNames.max_kb_model);
-    MaxKbModel maxKbModel = MaxKbModel.dao.findFirst(sqlModelName, embedding_mode_id);
-    String platformName = null;
-    String modelName = null;
-    if (maxKbModel != null) {
-      platformName = maxKbModel.getProvider();
-      modelName = maxKbModel.getModelName();
-    }
-
-    PlatformInput platformInput = new PlatformInput(platformName, modelName);
+    PlatformInput platformInput = maxKbModelService.getEmbeddingPlatformInput(embedding_mode_id);
 
     KbEmbeddingService maxKbEmbeddingService = Aop.get(KbEmbeddingService.class);
 
@@ -141,7 +132,6 @@ public class MaxKbParagraphServcie {
         //
         .set("embedding", contentVector).set(MaxKbParagraph.titleEmbedding, titleVector);
 
-    
     Db.save(MaxKbTableNames.max_kb_paragraph, record);
 
     return ResultVo.ok();
@@ -200,7 +190,6 @@ public class MaxKbParagraphServcie {
         //
         .set("embedding", contentVector).set(MaxKbParagraph.titleEmbedding, titleVector);
 
-    
     Db.update(MaxKbTableNames.max_kb_paragraph, record);
 
     return ResultVo.ok();

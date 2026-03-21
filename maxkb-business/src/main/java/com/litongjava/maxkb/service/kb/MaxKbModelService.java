@@ -7,6 +7,7 @@ import java.util.List;
 import org.postgresql.util.PGobject;
 
 import com.jfinal.kit.Kv;
+import com.litongjava.chat.PlatformInput;
 import com.litongjava.chat.UniChatMessage;
 import com.litongjava.db.activerecord.Db;
 import com.litongjava.db.activerecord.Row;
@@ -15,6 +16,7 @@ import com.litongjava.maxkb.constant.MaxKbTableNames;
 import com.litongjava.maxkb.dao.ModelDao;
 import com.litongjava.maxkb.enumeration.ModelProvider;
 import com.litongjava.maxkb.enumeration.ModelType;
+import com.litongjava.maxkb.model.MaxKbModel;
 import com.litongjava.maxkb.vo.CredentialVo;
 import com.litongjava.maxkb.vo.ModelVo;
 import com.litongjava.model.result.ResultVo;
@@ -169,5 +171,22 @@ public class MaxKbModelService {
       kv.set("credential", crdentianlVo);
     }
     return ResultVo.ok(kv);
+  }
+
+  public PlatformInput getEmbeddingPlatformInput(Long embedding_mode_id) {
+    String sqlModelName = String.format("SELECT provider,model_name FROM %s WHERE id = ?",
+        MaxKbTableNames.max_kb_model);
+    MaxKbModel maxKbModel = MaxKbModel.dao.findFirst(sqlModelName, embedding_mode_id);
+    String embeddingPlatformName = null;
+    String embeddingModel = null;
+    if (maxKbModel != null) {
+      embeddingPlatformName = maxKbModel.getProvider();
+      embeddingModel = maxKbModel.getModelName();
+    } else {
+      embeddingPlatformName = MaxKbEnvUtils.getEmbeddingPlatform();
+      embeddingModel = MaxKbEnvUtils.getEmbeddingModel();
+    }
+    PlatformInput platformInput = new PlatformInput(embeddingPlatformName, embeddingModel);
+    return platformInput;
   }
 }

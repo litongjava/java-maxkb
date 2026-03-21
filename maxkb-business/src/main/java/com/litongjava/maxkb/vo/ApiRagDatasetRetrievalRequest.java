@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ApiRagDatasetRequest {
+public class ApiRagDatasetRetrievalRequest {
   private String datasetName;
   private String input;
 }
