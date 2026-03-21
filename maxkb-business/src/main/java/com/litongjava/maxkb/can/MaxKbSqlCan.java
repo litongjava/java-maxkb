@@ -35,12 +35,12 @@ public interface MaxKbSqlCan {
           (1 - (p.title_embedding <=> c.v)) AS similarity
         FROM
           max_kb_paragraph p
-        JOIN
-          max_kb_document d ON p.document_id = d.id
-        JOIN
-          max_kb_dataset ds ON p.dataset_id = ds.id
-        JOIN
+       JOIN
           max_kb_embedding_cache c ON c.id = ?
+        left JOIN
+          max_kb_dataset ds ON p.dataset_id = ds.id
+        left JOIN
+          max_kb_document d ON p.document_id = d.id
         WHERE
           p.is_active = TRUE
           AND p.deleted = 0

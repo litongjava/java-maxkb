@@ -1,9 +1,11 @@
 package com.litongjava.maxkb.handler;
 
+import java.util.List;
+
 import com.litongjava.jfinal.aop.Aop;
 import com.litongjava.maxkb.service.api.RagDatasetRetrievalService;
-import com.litongjava.maxkb.vo.ApiRagDatasetResponse;
 import com.litongjava.maxkb.vo.ApiRagDatasetRetrievalRequest;
+import com.litongjava.maxkb.vo.MaxKbRetrievalResult;
 import com.litongjava.model.result.ResultVo;
 import com.litongjava.tio.boot.admin.utils.TioAdminEnvUtils;
 import com.litongjava.tio.boot.http.TioRequestContext;
@@ -69,8 +71,9 @@ public class ApiRagDatasetRetrievalTitleHandler {
     try {
 
       // 3. 返回JSON
-      ApiRagDatasetResponse resp = ragDatasetRetrievalService.retrievalByTitle(req);
-      response.setJson(JsonUtils.toJson(resp));
+      List<MaxKbRetrievalResult> results = ragDatasetRetrievalService.retrievalByTitle(req);
+      ResultVo ok = ResultVo.ok(results);
+      response.body(ok);
       return response;
     } catch (Exception e) {
       log.error(e.getMessage(), e);

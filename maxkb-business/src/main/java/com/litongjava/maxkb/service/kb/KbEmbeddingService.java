@@ -14,7 +14,6 @@ import com.litongjava.db.activerecord.Db;
 import com.litongjava.db.activerecord.Row;
 import com.litongjava.db.utils.PgVectorUtils;
 import com.litongjava.maxkb.constant.MaxKbTableNames;
-import com.litongjava.maxkb.model.MaxKbEmbeddingCache;
 import com.litongjava.openai.client.OpenAiClient;
 import com.litongjava.openai.consts.OpenAiModels;
 import com.litongjava.openai.embedding.EmbeddingResponse;
