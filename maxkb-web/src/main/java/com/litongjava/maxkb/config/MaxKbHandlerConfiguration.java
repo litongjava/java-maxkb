@@ -1,6 +1,6 @@
 package com.litongjava.maxkb.config;
 
-import com.litongjava.maxkb.handler.ApiRagDatasetHandler;
+import com.litongjava.maxkb.handler.ApiRagDatasetRetrievalHandler;
 import com.litongjava.maxkb.httphandler.SearxngSearchHandler;
 import com.litongjava.tio.boot.admin.config.TioAdminControllerConfiguration;
 import com.litongjava.tio.boot.admin.config.TioAdminHandlerConfiguration;
@@ -15,8 +15,8 @@ public class MaxKbHandlerConfiguration {
     }
     SearxngSearchHandler searxngSearchHandler = new SearxngSearchHandler();
     router.add("/api/v1/search", searxngSearchHandler::search);
-    ApiRagDatasetHandler apiRagDatasetHandler = new ApiRagDatasetHandler();
-    router.add("/api/v1/rag/dataset/question", apiRagDatasetHandler::index);
+    ApiRagDatasetRetrievalHandler apiRagDatasetHandler = new ApiRagDatasetRetrievalHandler();
+    router.add("/api/v1/rag/dataset/retrieval", apiRagDatasetHandler::index);
     
     new TioAdminHandlerConfiguration().config();
     new TioAdminControllerConfiguration().config();

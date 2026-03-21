@@ -18,7 +18,7 @@ import com.litongjava.tio.utils.json.JsonUtils;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class ApiRagDatasetHandler {
+public class ApiRagDatasetRetrievalHandler {
 
   public HttpResponse index(HttpRequest request) {
     HttpResponse response = TioRequestContext.getResponse();
