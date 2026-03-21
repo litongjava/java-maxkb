@@ -7,7 +7,6 @@ import com.litongjava.maxkb.service.api.RagDatasetRetrievalService;
 import com.litongjava.maxkb.vo.ApiRagDatasetRetrievalRequest;
 import com.litongjava.maxkb.vo.MaxKbRetrievalResult;
 import com.litongjava.model.result.ResultVo;
-import com.litongjava.tio.boot.admin.utils.TioAdminEnvUtils;
 import com.litongjava.tio.boot.http.TioRequestContext;
 import com.litongjava.tio.http.common.HttpRequest;
 import com.litongjava.tio.http.common.HttpResponse;
@@ -24,28 +23,6 @@ public class ApiRagDatasetRetrievalTitleHandler {
 
   public HttpResponse index(HttpRequest request) {
     HttpResponse response = TioRequestContext.getResponse();
-
-    String authorization = request.getAuthorization();
-    if (authorization == null) {
-      response.setStatus(HttpResponseStatus.C401);
-      ResultVo fail = ResultVo.fail("authorization is empty");
-      response.setJson(fail);
-      return response;
-    }
-    String[] split = authorization.split(" ");
-    if (split.length < 1) {
-      response.setStatus(HttpResponseStatus.C401);
-      ResultVo fail = ResultVo.fail("authorization is empty");
-      response.setJson(fail);
-      return response;
-    }
-    String token = TioAdminEnvUtils.getAdminToken();
-    if (!token.equals(split[1])) {
-      ResultVo fail = ResultVo.fail("Failed to validate token");
-      response.setJson(fail);
-      return response;
-    }
-
     // 1. 解析请求
     String bodyString = request.getBodyString();
 

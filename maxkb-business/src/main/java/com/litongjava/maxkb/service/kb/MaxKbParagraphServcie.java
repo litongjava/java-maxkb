@@ -14,7 +14,6 @@ import com.litongjava.db.activerecord.Row;
 import com.litongjava.jfinal.aop.Aop;
 import com.litongjava.kit.RowUtils;
 import com.litongjava.maxkb.constant.MaxKbTableNames;
-import com.litongjava.maxkb.model.MaxKbModel;
 import com.litongjava.maxkb.model.MaxKbParagraph;
 import com.litongjava.maxkb.vo.Paragraph;
 import com.litongjava.maxkb.vo.ResultPage;
@@ -152,17 +151,7 @@ public class MaxKbParagraphServcie {
     }
 
     Long embedding_mode_id = dataset.getLong("embedding_mode_id");
-    String sqlModelName = String.format("SELECT provider,model_name FROM %s WHERE id = ?",
-        MaxKbTableNames.max_kb_model);
-    MaxKbModel maxKbModel = MaxKbModel.dao.findFirst(sqlModelName, embedding_mode_id);
-    String platformName = null;
-    String modelName = null;
-    if (maxKbModel != null) {
-      platformName = maxKbModel.getProvider();
-      modelName = maxKbModel.getModelName();
-    }
-
-    PlatformInput platformInput = new PlatformInput(platformName, modelName);
+    PlatformInput platformInput = maxKbModelService.getEmbeddingPlatformInput(embedding_mode_id);
 
     KbEmbeddingService maxKbEmbeddingService = Aop.get(KbEmbeddingService.class);
 
