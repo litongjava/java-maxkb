@@ -1,6 +1,8 @@
+[win.env]
+set JAVA_HOME=D:\java\jdk-21.0.6
+
 [win.build]
 mvn clean install -DskipTests -Dgpg.skip
-
 
 [linux.build]
 mvn clean install -DskipTests -Dgpg.skip

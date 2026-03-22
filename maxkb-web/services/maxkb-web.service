@@ -1,0 +1,14 @@
+[Unit]
+Description=max kb
+After=network.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/data/apps/maxkb-web
+ExecStart=/usr/java/jdk-25.0.2/bin/java -jar maxkb-web-1.0.4.jar
+Restart=on-failure
+RestartSec=5s
+
+[Install]
+WantedBy=default.target
