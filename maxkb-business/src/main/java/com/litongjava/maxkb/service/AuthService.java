@@ -2,6 +2,7 @@ package com.litongjava.maxkb.service;
 
 import com.litongjava.tio.boot.admin.services.TioBootAdminTokenPredicate;
 import com.litongjava.tio.boot.admin.utils.TioAdminEnvUtils;
+import com.litongjava.tio.boot.token.PredicateResult;
 import com.litongjava.tio.utils.hutool.StrUtil;
 import com.litongjava.tio.utils.token.TokenManager;
 
@@ -23,8 +24,6 @@ public class AuthService {
 
     String[] split = authorization.split(" ");
 
-    String SECRET_KEY = TioAdminEnvUtils.getAdminSecretKey();
-    String userId;
     String idToken = null;
     if (split.length > 1) {
       idToken = split[1];
@@ -32,13 +31,20 @@ public class AuthService {
       idToken = authorization;
     }
 
-    boolean test = tioBootAdminTokenPredicate.test(idToken);
-    if (test) {
-      userId = tioBootAdminTokenPredicate.parseUserIdString(idToken);
+    String userId;
+    PredicateResult validate = tioBootAdminTokenPredicate.validate(idToken);
+    if (validate.isOk()) {
+      userId = validate.getUserId();
+      return Long.valueOf(userId);
     } else {
+      String SECRET_KEY = TioAdminEnvUtils.getAdminSecretKey();
       userId = TokenManager.parseUserIdString(SECRET_KEY, idToken);
     }
-    return Long.valueOf(userId);
+
+    if (userId != null) {
+      return Long.valueOf(userId);
+    }
+    return null;
   }
 
 }
