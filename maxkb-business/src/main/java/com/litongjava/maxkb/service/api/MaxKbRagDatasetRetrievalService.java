@@ -12,7 +12,7 @@ import com.litongjava.maxkb.service.kb.MaxKbModelService;
 import com.litongjava.maxkb.vo.ApiRagDatasetRetrievalRequest;
 import com.litongjava.maxkb.vo.MaxKbRetrievalResult;
 
-public class RagDatasetRetrievalService {
+public class MaxKbRagDatasetRetrievalService {
 
   private MaxKbModelService maxKbModelService = Aop.get(MaxKbModelService.class);
   private KbEmbeddingService kbEmbeddingService = Aop.get(KbEmbeddingService.class);

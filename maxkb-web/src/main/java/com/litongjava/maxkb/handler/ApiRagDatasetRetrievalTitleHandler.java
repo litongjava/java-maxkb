@@ -3,7 +3,7 @@ package com.litongjava.maxkb.handler;
 import java.util.List;
 
 import com.litongjava.jfinal.aop.Aop;
-import com.litongjava.maxkb.service.api.RagDatasetRetrievalService;
+import com.litongjava.maxkb.service.api.MaxKbRagDatasetRetrievalService;
 import com.litongjava.maxkb.vo.ApiRagDatasetRetrievalRequest;
 import com.litongjava.maxkb.vo.MaxKbRetrievalResult;
 import com.litongjava.model.result.ResultVo;
@@ -19,7 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class ApiRagDatasetRetrievalTitleHandler {
 
-  private RagDatasetRetrievalService ragDatasetRetrievalService = Aop.get(RagDatasetRetrievalService.class);
+  private MaxKbRagDatasetRetrievalService ragDatasetRetrievalService = Aop.get(MaxKbRagDatasetRetrievalService.class);
 
   public HttpResponse index(HttpRequest request) {
     HttpResponse response = TioRequestContext.getResponse();
