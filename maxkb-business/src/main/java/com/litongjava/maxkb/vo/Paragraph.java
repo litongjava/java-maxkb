@@ -11,9 +11,15 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 public class Paragraph {
   private String title;
+  private String question;
   private String content;
 
   public Paragraph(String content) {
+    this.content = content;
+  }
+
+  public Paragraph(String title, String content) {
+    this.title = title;
     this.content = content;
   }
 }

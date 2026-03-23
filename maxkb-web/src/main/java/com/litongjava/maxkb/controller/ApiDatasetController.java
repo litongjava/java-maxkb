@@ -152,12 +152,6 @@ public class ApiDatasetController {
     return Aop.get(MaxKbProblemService.class).create(datasetId, problems);
   }
 
-  @Delete("/{datasetId}/problem/_batch")
-  public ResultVo deleteProblem(Long datasetId, HttpRequest request) {
-    String bodyString = request.getBodyString();
-    List<Long> problems = JsonUtils.parseArray(bodyString, Long.class);
-    return Aop.get(MaxKbProblemService.class).delete(datasetId, problems);
-  }
 
   @Get("/{datasetId}/problem/{pageNo}/{pageSize}")
   public ResultVo pageDatasetProbleam(Long datasetId, Integer pageNo, Integer pageSize) {
@@ -190,6 +184,14 @@ public class ApiDatasetController {
   @Delete("/{datasetId}/problem/{problemId}")
   public ResultVo deleteProblem(Long datasetId, Long problemId) {
     return Aop.get(MaxKbProblemService.class).delete(datasetId, problemId);
+  }
+  
+
+  @Delete("/{datasetId}/problem/_batch")
+  public ResultVo deleteProblemBatch(Long datasetId, HttpRequest request) {
+    String bodyString = request.getBodyString();
+    List<Long> problems = JsonUtils.parseArray(bodyString, Long.class);
+    return Aop.get(MaxKbProblemService.class).delete(datasetId, problems);
   }
 
 }

@@ -13,6 +13,7 @@ import lombok.NoArgsConstructor;
 public class KbParagraph {
   private Long id;
   private String title;
+  private String question;
   private String content;
   private String status;
   private Integer hitNum;
