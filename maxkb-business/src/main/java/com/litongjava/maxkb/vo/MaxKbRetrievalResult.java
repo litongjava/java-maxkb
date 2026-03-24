@@ -12,7 +12,7 @@ import lombok.experimental.Accessors;
 public class MaxKbRetrievalResult {
   private Long id, dataset_id, document_id;
   private String dataset_name, document_name;
-  private String title, question, content;
+  private String title, question, content,image_url;
   private Double similarity, comprehensive_score;
   private String status;
   private boolean is_active;

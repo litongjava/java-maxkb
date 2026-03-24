@@ -32,6 +32,7 @@ public class KbRetrievalService {
         String title = row.getStr("title");
         String quesiton = row.getStr("question");
         String content = row.getStr("content");
+        String image_url = row.getStr("image_url");
 
         Double output_similarity = row.getDouble("similarity");
         Double comprehensive_score = row.getDouble("comprehensive_score");
@@ -43,7 +44,7 @@ public class KbRetrievalService {
         Timestamp update_time = row.getTimestamp("update_time");
         MaxKbRetrievalResult maxKbRetrievalResult = new MaxKbRetrievalResult(id, dataset_id, document_id,
             //
-            dataset_name, document_name, title, quesiton, content,
+            dataset_name, document_name, title, quesiton, content,image_url,
             //
             output_similarity, comprehensive_score,
             //
