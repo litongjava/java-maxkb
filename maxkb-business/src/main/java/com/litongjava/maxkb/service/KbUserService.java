@@ -20,7 +20,7 @@ import com.litongjava.tio.utils.crypto.Md5Utils;
 import com.litongjava.tio.utils.jwt.JwtUtils;
 import com.litongjava.tio.utils.token.TokenManager;
 
-public class UserService {
+public class KbUserService {
 
   public ResultVo login(UserLoginReqVo vo) {
     vo.setPassword(Md5Utils.md5Hex(vo.getPassword()));

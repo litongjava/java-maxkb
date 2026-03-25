@@ -14,7 +14,7 @@ public class UserServiceTest {
   public void test() {
     EnvUtils.load();
     new MaxKbDbConfig().config();
-    ResultVo resultVo = Aop.get(UserService.class).index(1L);
+    ResultVo resultVo = Aop.get(KbUserService.class).index(1L);
     System.out.println(JsonUtils.toJson(resultVo));
   }
 
