@@ -9,7 +9,7 @@ import com.litongjava.tio.utils.token.TokenManager;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class AuthService {
+public class MaxKbAuthService {
   private TioBootAdminTokenPredicate tioBootAdminTokenPredicate = new TioBootAdminTokenPredicate();
 
   /**

@@ -1,7 +1,7 @@
 package com.litongjava.maxkb.inteceptor;
 
 import com.litongjava.jfinal.aop.Aop;
-import com.litongjava.maxkb.service.AuthService;
+import com.litongjava.maxkb.service.MaxKbAuthService;
 import com.litongjava.tio.boot.http.TioRequestContext;
 import com.litongjava.tio.http.common.HttpRequest;
 import com.litongjava.tio.http.common.HttpResponse;
@@ -24,7 +24,7 @@ public class MaxKbAuthInterceptor implements HttpRequestInterceptor {
   public HttpResponse doBeforeHandler(HttpRequest request, RequestLine requestLine, HttpResponse responseFromCache) {
     String authorization = request.getHeader("authorization");
 
-    AuthService authService = Aop.get(AuthService.class);
+    MaxKbAuthService authService = Aop.get(MaxKbAuthService.class);
     Long userId = authService.getIdByToken(authorization);
 
     if (userId != null) {

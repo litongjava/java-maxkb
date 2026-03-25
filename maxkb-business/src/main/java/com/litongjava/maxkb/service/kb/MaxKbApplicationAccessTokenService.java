@@ -8,7 +8,7 @@ import com.litongjava.db.activerecord.Row;
 import com.litongjava.jfinal.aop.Aop;
 import com.litongjava.maxkb.model.MaxKbApplicationAccessToken;
 import com.litongjava.maxkb.model.MaxKbApplicationPublicAccessClient;
-import com.litongjava.maxkb.service.AuthService;
+import com.litongjava.maxkb.service.MaxKbAuthService;
 import com.litongjava.model.result.ResultVo;
 import com.litongjava.tio.boot.admin.utils.TioAdminEnvUtils;
 import com.litongjava.tio.utils.json.JsonUtils;
@@ -59,7 +59,7 @@ public class MaxKbApplicationAccessTokenService {
       return ResultVo.fail("not found applicaiton id:" + shortToken);
     }
 
-    Long clientId = Aop.get(AuthService.class).getIdByToken(longToken);
+    Long clientId = Aop.get(MaxKbAuthService.class).getIdByToken(longToken);
     if (clientId != null) {
       sql = "select count(1) from $table_name where application_id=? and client_id=?";
       boolean exist = MaxKbApplicationPublicAccessClient.dao.existsBySql(sql, applicationId, clientId);
