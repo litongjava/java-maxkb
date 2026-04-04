@@ -1,0 +1,25 @@
+package nexus.io.maxkb.vo;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.experimental.Accessors;
+
+@NoArgsConstructor
+@AllArgsConstructor
+@Data
+@Accessors(chain = true)
+public class Paragraph {
+  private String title;
+  private String question;
+  private String content;
+
+  public Paragraph(String content) {
+    this.content = content;
+  }
+
+  public Paragraph(String title, String content) {
+    this.title = title;
+    this.content = content;
+  }
+}

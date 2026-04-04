@@ -4,9 +4,9 @@ import java.util.List;
 
 import org.junit.Test;
 
-import com.litongjava.maxkb.config.MaxKbDbConfig;
-
 import nexus.io.jfinal.aop.Aop;
+import nexus.io.maxkb.config.MaxKbDbConfig;
+import nexus.io.maxkb.service.PermissionsService;
 import nexus.io.tio.utils.environment.EnvUtils;
 import nexus.io.tio.utils.json.JsonUtils;
 

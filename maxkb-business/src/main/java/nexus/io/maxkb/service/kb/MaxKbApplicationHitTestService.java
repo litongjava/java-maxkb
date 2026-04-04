@@ -1,0 +1,135 @@
+package nexus.io.maxkb.service.kb;
+
+import java.util.Arrays;
+import java.util.List;
+
+import com.jfinal.kit.Kv;
+
+import lombok.extern.slf4j.Slf4j;
+import nexus.io.db.TableInput;
+import nexus.io.db.TableResult;
+import nexus.io.db.activerecord.Db;
+import nexus.io.db.activerecord.Row;
+import nexus.io.jfinal.aop.Aop;
+import nexus.io.kit.RowUtils;
+import nexus.io.maxkb.constant.MaxKbTableNames;
+import nexus.io.model.result.ResultVo;
+import nexus.io.openai.consts.OpenAiModels;
+import nexus.io.table.services.ApiTable;
+import nexus.io.template.SqlTemplates;
+
+@Slf4j
+public class MaxKbApplicationHitTestService {
+
+  public ResultVo hitTest(Long userId, Long applicationId, String query_text, Double similarity, Integer top_number, String search_mode) {
+    if ("embedding".equals(search_mode)) {
+      return embeddingSearch(userId, applicationId, query_text, similarity, top_number);
+    } else if ("blend".equals(search_mode)) {
+      return blendSearch(userId, applicationId, query_text, similarity, top_number);
+    }
+    return null;
+  }
+
+  private ResultVo blendSearch(Long userId, Long applicationId, String query_text, Double similarity, Integer top_number) {
+    // 获取数据集信息
+    TableInput tableInput = new TableInput();
+    tableInput.set("id", applicationId);
+    if (userId.equals(1L)) {
+
+    } else {
+      tableInput.set("user_id", userId);
+    }
+
+    TableResult<Row> datasetResult = ApiTable.get(MaxKbTableNames.max_kb_dataset, tableInput);
+
+    Row dataset = datasetResult.getData();
+    // 获取模型名称
+    Long embeddingModeId = dataset.getLong("embedding_mode_id");
+    String modelName = null;
+    if (embeddingModeId != null) {
+      modelName = Db.queryStr(String.format("SELECT model_name FROM %s WHERE id = ?", MaxKbTableNames.max_kb_model), embeddingModeId);
+      if (modelName == null) {
+        modelName = OpenAiModels.TEXT_EMBEDDING_3_LARGE;
+      }
+
+    } else {
+      modelName = OpenAiModels.TEXT_EMBEDDING_3_LARGE;
+    }
+
+    String sql = SqlTemplates.get("kb.list_datab  ase_id_by_application_id");
+    List<Long> datasetIds = Db.queryListLong(sql, applicationId);
+    if (datasetIds.size() < 1) {
+      return ResultVo.fail("not found database of application id:", applicationId);
+    }
+    Long vectorId = Aop.get(KbEmbeddingService.class).getVectorId(query_text, modelName);
+
+    sql = SqlTemplates.get("kb.search_sentense_related_paragraph__with_dataset_ids");
+    Long[] array = datasetIds.toArray(new Long[0]);
+    List<Row> records = Db.find(sql, vectorId, array, similarity, top_number);
+    List<Kv> kvs = RowUtils.toKv(records, false);
+    return ResultVo.ok(kvs);
+  }
+
+  private ResultVo embeddingSearch(Long userId, Long applicationId, String query_text, Double similarity, Integer top_number) {
+    // 获取数据集信息
+    TableInput tableInput = new TableInput();
+    tableInput.set("id", applicationId);
+    if (userId.equals(1L)) {
+
+    } else {
+      tableInput.set("user_id", userId);
+    }
+
+    TableResult<Row> datasetResult = ApiTable.get(MaxKbTableNames.max_kb_dataset, tableInput);
+
+    Row dataset = datasetResult.getData();
+    // 获取模型名称
+    String modelName = null;
+    Long embeddingModeId = null;
+    if (dataset != null) {
+      embeddingModeId = dataset.getLong("embedding_mode_id");
+      if (embeddingModeId != null) {
+        modelName = Db.queryStr(String.format("SELECT model_name FROM %s WHERE id = ?", MaxKbTableNames.max_kb_model), embeddingModeId);
+      }
+      if (modelName == null) {
+        modelName = OpenAiModels.TEXT_EMBEDDING_3_LARGE;
+      }
+
+    } else {
+      modelName = OpenAiModels.TEXT_EMBEDDING_3_LARGE;
+    }
+
+    String sql = SqlTemplates.get("kb.list_database_id_by_application_id");
+    List<Long> datasetIds = Db.queryListLong(sql, applicationId);
+    if (datasetIds.size() < 1) {
+      return ResultVo.fail("not found database of application id:", applicationId);
+    }
+    Long vectorId = Aop.get(KbEmbeddingService.class).getVectorId(query_text, modelName);
+    //String ids = datasetIds.stream().map(id -> "?").collect(Collectors.joining(", "));
+
+    //    sql = SqlTemplates.get("kb.hit_test_by_dataset_ids_with_max_kb_embedding_cache");
+    //    sql = sql.replace("#(in_list)", ids);
+    //
+    //    int paramSize = 3 + datasetIds.size();
+    //    Object[] params = new Object[paramSize];
+    //
+    //    params[0] = vectorId;
+    //    for (int i = 0; i < datasetIds.size(); i++) {
+    //      params[i + 1] = datasetIds.get(0);
+    //    }
+    //    params[paramSize - 2] = similarity;
+    //    params[paramSize - 1] = top_number;
+    //    log.info("sql:{},params:{}", sql, params);
+    //    List<Row> records = Db.find(sql, params);
+
+    sql = SqlTemplates.get("kb.search_sentense_related_paragraph__with_dataset_ids");
+    Long[] array = datasetIds.toArray(new Long[0]);
+    List<Row> records = Db.find(sql, vectorId, array, similarity, top_number);
+
+    log.info("search_paragraph:{},{},{},{},{}", vectorId, Arrays.toString(array), similarity, top_number, records.size());
+
+    List<Kv> kvs = RowUtils.toKv(records, false);
+    return ResultVo.ok(kvs);
+  }
+
+}

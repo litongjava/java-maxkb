@@ -1,0 +1,21 @@
+package nexus.io.maxkb.config;
+
+import nexus.io.hook.HookCan;
+import nexus.io.tio.utils.environment.EnvUtils;
+import nexus.io.tio.utils.quartz.QuartzUtils;
+
+public class MaxKbQuartzConfig {
+
+  public void config() {
+    if (EnvUtils.isProd()) {
+      // 启动 Quartz 定时任务
+      QuartzUtils.start();
+
+      // 在应用销毁时停止 Quartz
+      HookCan.me().addDestroyMethod(() -> {
+        QuartzUtils.stop();
+      });
+    }
+
+  }
+}

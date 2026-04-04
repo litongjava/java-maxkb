@@ -2,10 +2,9 @@ package com.litongjava.maxkb.service;
 
 import org.junit.Test;
 
-import com.litongjava.maxkb.config.MaxKbDbConfig;
-import com.litongjava.maxkb.service.kb.KbParagraphService;
-
 import nexus.io.jfinal.aop.Aop;
+import nexus.io.maxkb.config.MaxKbDbConfig;
+import nexus.io.maxkb.service.kb.KbParagraphService;
 import nexus.io.tio.utils.environment.EnvUtils;
 
 public class KbParagraphServiceTest {

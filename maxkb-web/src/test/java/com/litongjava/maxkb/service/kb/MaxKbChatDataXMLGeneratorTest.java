@@ -5,7 +5,8 @@ import java.util.List;
 
 import org.junit.Test;
 
-import com.litongjava.maxkb.vo.ParagraphSearchResultVo;
+import nexus.io.maxkb.service.kb.MaxKbParagraphXMLGenerator;
+import nexus.io.maxkb.vo.ParagraphSearchResultVo;
 
 public class MaxKbChatDataXMLGeneratorTest {
 

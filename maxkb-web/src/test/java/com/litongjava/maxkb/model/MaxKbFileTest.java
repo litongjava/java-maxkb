@@ -2,8 +2,8 @@ package com.litongjava.maxkb.model;
 
 import org.junit.Test;
 
-import com.litongjava.maxkb.config.MaxKbDbConfig;
-
+import nexus.io.maxkb.config.MaxKbDbConfig;
+import nexus.io.maxkb.model.MaxKbFile;
 import nexus.io.tio.boot.testing.TioBootTest;
 import nexus.io.tio.utils.json.JsonUtils;
 import nexus.io.tio.utils.snowflake.SnowflakeIdUtils;

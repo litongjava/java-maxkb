@@ -1,0 +1,187 @@
+package nexus.io.maxkb.service.kb;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.postgresql.util.PGobject;
+
+import com.jfinal.kit.Kv;
+
+import lombok.extern.slf4j.Slf4j;
+import nexus.io.chat.PlatformInput;
+import nexus.io.db.TableInput;
+import nexus.io.db.TableResult;
+import nexus.io.db.activerecord.Db;
+import nexus.io.db.activerecord.Row;
+import nexus.io.jfinal.aop.Aop;
+import nexus.io.kit.RowUtils;
+import nexus.io.maxkb.constant.MaxKbTableNames;
+import nexus.io.maxkb.model.MaxKbParagraph;
+import nexus.io.maxkb.vo.Paragraph;
+import nexus.io.maxkb.vo.ResultPage;
+import nexus.io.model.page.Page;
+import nexus.io.model.result.ResultVo;
+import nexus.io.table.services.ApiTable;
+import nexus.io.tio.utils.crypto.Md5Utils;
+import nexus.io.tio.utils.snowflake.SnowflakeIdUtils;
+
+@Slf4j
+public class MaxKbParagraphServcie {
+  private MaxKbModelService maxKbModelService = Aop.get(MaxKbModelService.class);
+
+  public ResultVo page(Long userId, Long datasetId, Long documentId, Integer pageNo, Integer pageSize) {
+    log.info("datasetId:{},documentId:{}", datasetId, documentId);
+    TableInput tableInput = new TableInput();
+    tableInput.setColumns("id,title,content,is_active,document_id,create_time,update_time");
+    tableInput.set("dataset_id", datasetId).set("document_id", documentId);
+    tableInput.setPageNo(pageNo).setPageSize(pageSize);
+
+    TableResult<Page<Row>> tableResult = ApiTable.page(MaxKbTableNames.max_kb_paragraph, tableInput);
+    Page<Row> page = tableResult.getData();
+    int totalRow = page.getTotalRow();
+    List<Row> records = page.getList();
+    List<Kv> kvs = RowUtils.toKv(records, false);
+    ResultPage<Kv> resultPage = new ResultPage<>(pageNo, pageSize, totalRow, kvs);
+    return ResultVo.ok(resultPage);
+  }
+
+  public ResultVo listProblemByParagraphId(Long datasetId, Long documentId, Long paragraphId) {
+    String sql = "select p.id,p.content,p.dataset_id from max_kb_problem p JOIN max_kb_problem_paragraph_mapping mapping on mapping.problem_id=p.id where mapping.paragraph_id=?";
+    List<Row> records = Db.find(sql, paragraphId);
+    List<Kv> kvs = RowUtils.toKv(records, false);
+    return ResultVo.ok(kvs);
+  }
+
+  public ResultVo addProblemsById(Long datasetId, Long documentId, Long paragraphId, List<String> problems) {
+    List<Row> problemRecords = new ArrayList<>();
+    List<Row> mappings = new ArrayList<>();
+    for (String str : problems) {
+      long problemId = SnowflakeIdUtils.id();
+      problemRecords.add(Row.by("id", problemId).set("dataset_id", datasetId).set("hit_num", 0).set("content", str));
+      long mappingId = SnowflakeIdUtils.id();
+      mappings.add(Row.by("id", mappingId).set("dataset_id", datasetId).set("document_id", documentId)
+          //
+          .set("paragraph_id", paragraphId).set("problem_id", problemId));
+    }
+
+    Db.tx(() -> {
+      Db.batchSave(MaxKbTableNames.max_kb_problem, problemRecords, 2000);
+      Db.batchSave(MaxKbTableNames.max_kb_problem_paragraph_mapping, mappings, 2000);
+      return true;
+    });
+    return null;
+  }
+
+  public ResultVo addProblemById(Long datasetId, Long documentId, Long paragraphId, String content) {
+    long problemId = SnowflakeIdUtils.id();
+    Row problem = Row.by("id", problemId).set("dataset_id", datasetId).set("hit_num", 0).set("content", content);
+    long mappingId = SnowflakeIdUtils.id();
+    Row mapping = Row.by("id", mappingId).set("dataset_id", datasetId).set("document_id", documentId)
+        //
+        .set("paragraph_id", paragraphId).set("problem_id", problemId);
+    ;
+    Db.tx(() -> {
+      Db.save(MaxKbTableNames.max_kb_problem, problem);
+      Db.save(MaxKbTableNames.max_kb_problem_paragraph_mapping, mapping);
+      return true;
+    });
+    return null;
+  }
+
+  public ResultVo create(Long userId, Long datasetId, Long documentId, Paragraph p) {
+    TableInput tableInput = new TableInput();
+    tableInput.set("id", datasetId);
+    if (!userId.equals(1L)) {
+      tableInput.set("user_id", userId);
+    }
+
+    TableResult<Row> result = ApiTable.get(MaxKbTableNames.max_kb_dataset, tableInput);
+
+    Row dataset = result.getData();
+    if (dataset == null) {
+      return ResultVo.fail("Dataset not found.");
+    }
+
+    Long embedding_mode_id = dataset.getLong("embedding_mode_id");
+    PlatformInput platformInput = maxKbModelService.getEmbeddingPlatformInput(embedding_mode_id);
+
+    KbEmbeddingService maxKbEmbeddingService = Aop.get(KbEmbeddingService.class);
+
+    String title = p.getTitle();
+    String content = p.getContent();
+    PGobject contentVector = maxKbEmbeddingService.getVector(content, platformInput);
+    PGobject titleVector = maxKbEmbeddingService.getVector(title, platformInput);
+    Row record = Row.by("id", SnowflakeIdUtils.id())
+        //
+        // .set("source_id", )
+        //
+        .set("source_type", "md")
+        //
+        .set("title", title)
+        //
+        .set("content", content)
+        //
+        .set("md5", Md5Utils.md5Hex(content))
+        //
+        .set("status", "1")
+        //
+        .set("hit_num", 0)
+        //
+        .set("is_active", true).set("dataset_id", datasetId).set("document_id", documentId)
+        //
+        .set("embedding", contentVector).set(MaxKbParagraph.titleEmbedding, titleVector);
+
+    Db.save(MaxKbTableNames.max_kb_paragraph, record);
+
+    return ResultVo.ok();
+  }
+
+  public ResultVo update(Long userId, Long datasetId, Long documentId, Long id, Paragraph p) {
+    TableInput tableInput = new TableInput();
+    tableInput.set("id", datasetId);
+    if (!userId.equals(1L)) {
+      tableInput.set("user_id", userId);
+    }
+
+    TableResult<Row> result = ApiTable.get(MaxKbTableNames.max_kb_dataset, tableInput);
+
+    Row dataset = result.getData();
+    if (dataset == null) {
+      return ResultVo.fail("Dataset not found.");
+    }
+
+    Long embedding_mode_id = dataset.getLong("embedding_mode_id");
+    PlatformInput platformInput = maxKbModelService.getEmbeddingPlatformInput(embedding_mode_id);
+
+    KbEmbeddingService maxKbEmbeddingService = Aop.get(KbEmbeddingService.class);
+
+    String title = p.getTitle();
+    String content = p.getContent();
+    PGobject contentVector = maxKbEmbeddingService.getVector(content, platformInput);
+    PGobject titleVector = maxKbEmbeddingService.getVector(title, platformInput);
+    Row record = Row.by("id", id)
+        //
+        // .set("source_id", )
+        //
+        .set("source_type", "md")
+        //
+        .set("title", title)
+        //
+        .set("content", content)
+        //
+        .set("md5", Md5Utils.md5Hex(content))
+        //
+        .set("status", "1")
+        //
+        .set("hit_num", 0)
+        //
+        .set("is_active", true).set("dataset_id", datasetId).set("document_id", documentId)
+        //
+        .set("embedding", contentVector).set(MaxKbParagraph.titleEmbedding, titleVector);
+
+    Db.update(MaxKbTableNames.max_kb_paragraph, record);
+
+    return ResultVo.ok();
+  }
+
+}

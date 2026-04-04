@@ -2,6 +2,7 @@ package com.litongjava.maxkb.vo;
 
 import org.junit.Test;
 
+import nexus.io.maxkb.vo.ModelVo;
 import nexus.io.tio.utils.json.FastJson2Utils;
 import nexus.io.tio.utils.json.JsonUtils;
 

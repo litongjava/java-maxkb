@@ -1,0 +1,167 @@
+package nexus.io.maxkb.service.kb;
+
+import java.util.Arrays;
+import java.util.concurrent.locks.Lock;
+
+import org.postgresql.util.PGobject;
+
+import com.google.common.util.concurrent.Striped;
+
+import lombok.extern.slf4j.Slf4j;
+import nexus.io.bailian.BaiLianAiModels;
+import nexus.io.bailian.BaiLianClient;
+import nexus.io.chat.PlatformInput;
+import nexus.io.chat.UniEmbeddingClient;
+import nexus.io.db.activerecord.Db;
+import nexus.io.db.activerecord.Row;
+import nexus.io.db.utils.PgVectorUtils;
+import nexus.io.maxkb.constant.MaxKbTableNames;
+import nexus.io.openai.client.OpenAiClient;
+import nexus.io.openai.consts.OpenAiModels;
+import nexus.io.openai.embedding.EmbeddingResponse;
+import nexus.io.tio.utils.crypto.Md5Utils;
+import nexus.io.tio.utils.snowflake.SnowflakeIdUtils;
+
+@Slf4j
+public class KbEmbeddingService {
+  private static final Striped<Lock> stripedLocks = Striped.lock(1024);
+
+  private final Object vectorLock = new Object();
+  private final Object writeLock = new Object();
+
+  public Long getVectorId(String text) {
+    return getVectorId(text, OpenAiModels.TEXT_EMBEDDING_3_LARGE);
+  }
+
+  public PGobject getVector(String text) {
+    return getVector(text, OpenAiModels.TEXT_EMBEDDING_3_LARGE);
+  }
+
+  public PGobject getVector(String text, String model) {
+    String v = null;
+    String md5 = Md5Utils.md5Hex(text);
+    String sql = String.format("select v from %s where md5=? and m=?", MaxKbTableNames.max_kb_embedding_cache);
+    PGobject pGobject = Db.queryFirst(sql, md5, model);
+
+    if (pGobject == null) {
+      if ("default".equals(model)) {
+        model = OpenAiModels.TEXT_EMBEDDING_3_LARGE;
+      }
+      float[] embeddingArray = embedding(text, model);
+      String string = Arrays.toString(embeddingArray);
+      long id = SnowflakeIdUtils.id();
+      v = (String) string;
+      pGobject = PgVectorUtils.getPgVector(v);
+      Row saveRecord = new Row().set("t", text).set("v", pGobject).set("id", id).set("md5", md5)
+          //
+          .set("m", model);
+      synchronized (writeLock) {
+        Db.save(MaxKbTableNames.max_kb_embedding_cache, saveRecord);
+      }
+    }
+    return pGobject;
+  }
+
+  private float[] embedding(String text, String model) {
+    float[] embeddingArray = null;
+    for (int i = 0; i < 3; i++) {
+      try {
+        embeddingArray = OpenAiClient.embeddingArray(text, model);
+        break;
+      } catch (Exception e) {
+        log.error(e.getMessage(), e);
+      }
+    }
+    return embeddingArray;
+  }
+
+  public Long getVectorId(String text, String model) {
+    return this.getVectorId(text, 1, model);
+  }
+
+  public Long getVectorId(String text, int areaCode, String model) {
+    String md5 = Md5Utils.md5Hex(text);
+    String sql = String.format("select id from %s where md5=? and m=?", MaxKbTableNames.max_kb_embedding_cache);
+    Long id = Db.queryLong(sql, md5, model);
+
+    if (id == null) {
+      float[] embeddingArray = null;
+      synchronized (vectorLock) {
+        if (areaCode == 86) {
+          embeddingArray = BaiLianClient.embeddingArray(BaiLianAiModels.TEXT_EMBEDDING_V4, text);
+        } else {
+          if ("default".equals(model)) {
+            model = OpenAiModels.TEXT_EMBEDDING_3_LARGE;
+          }
+
+          embeddingArray = embedding(text, model);
+        }
+
+      }
+
+      String vString = Arrays.toString(embeddingArray);
+      id = SnowflakeIdUtils.id();
+      PGobject pGobject = PgVectorUtils.getPgVector(vString);
+      Row saveRecord = new Row().set("t", text).set("v", pGobject).set("id", id).set("md5", md5).set("m", model);
+      synchronized (writeLock) {
+        Db.save(MaxKbTableNames.max_kb_embedding_cache, saveRecord);
+      }
+    }
+    return id;
+  }
+
+  public PGobject getVector(String text, PlatformInput platformInput) {
+    String model = platformInput.getModel();
+    String md5 = Md5Utils.md5Hex(text);
+    String sql = String.format("select v from %s where md5=? and m=?", MaxKbTableNames.max_kb_embedding_cache);
+    PGobject pGobject = Db.queryFirst(sql, md5, model);
+
+    if (pGobject == null) {
+      float[] embeddingArray = embedding(text, platformInput);
+      String string = Arrays.toString(embeddingArray);
+      long id = SnowflakeIdUtils.id();
+      String v = (String) string;
+      pGobject = PgVectorUtils.getPgVector(v);
+      Row saveRecord = new Row().set("t", text).set("v", pGobject).set("id", id).set("md5", md5)
+          //
+          .set("m", model);
+      synchronized (writeLock) {
+        Db.save(MaxKbTableNames.max_kb_embedding_cache, saveRecord);
+      }
+    }
+    return pGobject;
+  }
+
+  public float[] embedding(String text, PlatformInput platformInput) {
+    EmbeddingResponse embedding = UniEmbeddingClient.embeddings(platformInput, text);
+    return embedding.getData().get(0).getEmbedding();
+  }
+
+  public Long getVectorId(String text, PlatformInput platformInput) {
+    String model = platformInput.getModel();
+    String md5 = Md5Utils.md5Hex(text);
+    String sql = String.format("select id from %s where md5=? and m=?", MaxKbTableNames.max_kb_embedding_cache);
+    Long vectorId = Db.queryLong(sql, md5, model);
+
+    Lock lock = stripedLocks.get(md5);
+
+    if (vectorId == null) {
+      lock.lock();
+      vectorId = SnowflakeIdUtils.id();
+      try {
+        float[] embeddingArray = embedding(text, platformInput);
+        String string = Arrays.toString(embeddingArray);
+        PGobject pGobject = PgVectorUtils.getPgVector(string);
+        Row saveRecord = new Row().set("t", text).set("v", pGobject).set("id", vectorId).set("md5", md5).set("m",
+            model);
+        Db.save(MaxKbTableNames.max_kb_embedding_cache, saveRecord);
+//        MaxKbEmbeddingCache cache = new MaxKbEmbeddingCache().setId(vectorId).setT(text).setV(string).setMd5(md5)
+//            .setM(model);
+//        cache.save();
+      } finally {
+        lock.unlock();
+      }
+    }
+    return vectorId;
+  }
+}

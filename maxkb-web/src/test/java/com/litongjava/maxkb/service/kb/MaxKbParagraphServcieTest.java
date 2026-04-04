@@ -2,10 +2,10 @@ package com.litongjava.maxkb.service.kb;
 
 import org.junit.Test;
 
-import com.litongjava.maxkb.config.boot.MaxKbBootConfig;
-import com.litongjava.maxkb.vo.Paragraph;
-
 import nexus.io.jfinal.aop.Aop;
+import nexus.io.maxkb.config.boot.MaxKbBootConfig;
+import nexus.io.maxkb.service.kb.MaxKbParagraphServcie;
+import nexus.io.maxkb.vo.Paragraph;
 import nexus.io.model.result.ResultVo;
 import nexus.io.tio.boot.testing.TioBootTest;
 import nexus.io.tio.utils.json.JsonUtils;

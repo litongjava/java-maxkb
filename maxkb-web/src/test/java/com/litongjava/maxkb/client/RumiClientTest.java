@@ -3,6 +3,7 @@ package com.litongjava.maxkb.client;
 import org.junit.Test;
 
 import nexus.io.jfinal.aop.Aop;
+import nexus.io.maxkb.client.RumiClient;
 
 public class RumiClientTest {
 

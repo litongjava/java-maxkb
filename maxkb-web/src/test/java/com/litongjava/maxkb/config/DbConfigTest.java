@@ -3,6 +3,7 @@ package com.litongjava.maxkb.config;
 import org.junit.Test;
 
 import nexus.io.db.activerecord.Db;
+import nexus.io.maxkb.config.MaxKbDbConfig;
 import nexus.io.tio.utils.environment.EnvUtils;
 
 public class DbConfigTest {
