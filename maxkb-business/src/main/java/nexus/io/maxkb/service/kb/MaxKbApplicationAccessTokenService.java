@@ -3,7 +3,6 @@ package nexus.io.maxkb.service.kb;
 import java.util.List;
 
 import com.jfinal.kit.Kv;
-import com.litongjava.tio.boot.admin.utils.TioAdminEnvUtils;
 
 import nexus.io.db.activerecord.Db;
 import nexus.io.db.activerecord.Row;
@@ -12,6 +11,7 @@ import nexus.io.maxkb.model.MaxKbApplicationAccessToken;
 import nexus.io.maxkb.model.MaxKbApplicationPublicAccessClient;
 import nexus.io.maxkb.service.MaxKbAuthService;
 import nexus.io.model.result.ResultVo;
+import nexus.io.tio.boot.admin.utils.TioAdminEnvUtils;
 import nexus.io.tio.utils.json.JsonUtils;
 import nexus.io.tio.utils.jwt.JwtUtils;
 import nexus.io.tio.utils.mcid.McIdUtils;

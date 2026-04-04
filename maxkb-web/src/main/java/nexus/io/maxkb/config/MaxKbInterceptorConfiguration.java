@@ -1,8 +1,7 @@
 package nexus.io.maxkb.config;
 
-import com.litongjava.tio.boot.admin.consts.TioBootAdminUrls;
-
 import nexus.io.maxkb.inteceptor.MaxKbAuthInterceptor;
+import nexus.io.tio.boot.admin.consts.TioBootAdminUrls;
 import nexus.io.tio.boot.http.interceptor.HttpInteceptorConfigure;
 import nexus.io.tio.boot.http.interceptor.HttpInterceptorModel;
 import nexus.io.tio.boot.server.TioBootServer;

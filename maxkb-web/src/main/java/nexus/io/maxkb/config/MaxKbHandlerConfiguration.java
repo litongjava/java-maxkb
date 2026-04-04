@@ -1,10 +1,9 @@
 package nexus.io.maxkb.config;
 
-import com.litongjava.tio.boot.admin.config.TioAdminControllerConfiguration;
-import com.litongjava.tio.boot.admin.config.TioAdminHandlerConfiguration;
-
 import nexus.io.maxkb.handler.ApiRagDatasetRetrievalTitleHandler;
 import nexus.io.maxkb.httphandler.SearxngSearchHandler;
+import nexus.io.tio.boot.admin.config.TioAdminControllerConfiguration;
+import nexus.io.tio.boot.admin.config.TioAdminHandlerConfiguration;
 import nexus.io.tio.boot.server.TioBootServer;
 import nexus.io.tio.http.server.router.HttpRequestRouter;
 

@@ -8,7 +8,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.jfinal.kit.Kv;
-import com.litongjava.tio.boot.admin.utils.ApiTableUtils;
 
 import nexus.io.annotation.EnableCORS;
 import nexus.io.annotation.RequestPath;
@@ -27,6 +26,7 @@ import nexus.io.model.result.ResultVo;
 import nexus.io.table.services.ApiTable;
 import nexus.io.table.utils.TableInputUtils;
 import nexus.io.table.utils.TableResultUtils;
+import nexus.io.tio.boot.admin.utils.ApiTableUtils;
 import nexus.io.tio.boot.http.TioRequestContext;
 import nexus.io.tio.boot.utils.TioRequestParamUtils;
 import nexus.io.tio.http.common.HttpRequest;

@@ -1,9 +1,8 @@
 package nexus.io.maxkb.service;
 
-import com.litongjava.tio.boot.admin.services.TioBootAdminTokenPredicate;
-import com.litongjava.tio.boot.admin.utils.TioAdminEnvUtils;
-
 import lombok.extern.slf4j.Slf4j;
+import nexus.io.tio.boot.admin.services.TioBootAdminTokenPredicate;
+import nexus.io.tio.boot.admin.utils.TioAdminEnvUtils;
 import nexus.io.tio.boot.token.PredicateResult;
 import nexus.io.tio.utils.hutool.StrUtil;
 import nexus.io.tio.utils.token.TokenManager;

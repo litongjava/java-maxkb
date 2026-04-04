@@ -3,7 +3,6 @@ package nexus.io.maxkb.service;
 import java.util.List;
 
 import com.jfinal.kit.Kv;
-import com.litongjava.tio.boot.admin.utils.TioAdminEnvUtils;
 
 import nexus.io.db.TableInput;
 import nexus.io.db.TableResult;
@@ -17,6 +16,7 @@ import nexus.io.maxkb.vo.UserLoginReqVo;
 import nexus.io.model.page.Page;
 import nexus.io.model.result.ResultVo;
 import nexus.io.table.services.ApiTable;
+import nexus.io.tio.boot.admin.utils.TioAdminEnvUtils;
 import nexus.io.tio.utils.crypto.Md5Utils;
 import nexus.io.tio.utils.jwt.JwtUtils;
 import nexus.io.tio.utils.token.TokenManager;
