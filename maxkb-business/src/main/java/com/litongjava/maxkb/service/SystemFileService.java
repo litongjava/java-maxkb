@@ -7,16 +7,16 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import com.litongjava.maxkb.dao.SystemUploadFileDao;
-import com.litongjava.tio.utils.crypto.Md5Utils;
-import com.litongjava.tio.utils.environment.EnvUtils;
-import com.litongjava.tio.utils.hutool.FileUtil;
-import com.litongjava.tio.utils.hutool.FilenameUtils;
-import com.litongjava.tio.utils.snowflake.SnowflakeIdUtils;
 
 import nexus.io.db.activerecord.Row;
 import nexus.io.jfinal.aop.Aop;
 import nexus.io.model.upload.UploadFile;
 import nexus.io.model.upload.UploadResult;
+import nexus.io.tio.utils.crypto.Md5Utils;
+import nexus.io.tio.utils.environment.EnvUtils;
+import nexus.io.tio.utils.hutool.FileUtil;
+import nexus.io.tio.utils.hutool.FilenameUtils;
+import nexus.io.tio.utils.snowflake.SnowflakeIdUtils;
 
 public class SystemFileService {
 

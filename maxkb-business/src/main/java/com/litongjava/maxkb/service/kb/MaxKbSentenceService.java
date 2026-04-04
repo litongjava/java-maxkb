@@ -11,8 +11,6 @@ import org.postgresql.util.PGobject;
 import com.litongjava.maxkb.constant.MaxKbTableNames;
 import com.litongjava.maxkb.model.MaxKbSentence;
 import com.litongjava.maxkb.utils.ExecutorServiceUtils;
-import com.litongjava.tio.utils.crypto.Md5Utils;
-import com.litongjava.tio.utils.snowflake.SnowflakeIdUtils;
 
 import dev.langchain4j.data.document.Document;
 import dev.langchain4j.data.document.DocumentSplitter;
@@ -23,6 +21,8 @@ import nexus.io.db.activerecord.Db;
 import nexus.io.db.activerecord.Row;
 import nexus.io.jfinal.aop.Aop;
 import nexus.io.openai.token.OpenAiTokenizer;
+import nexus.io.tio.utils.crypto.Md5Utils;
+import nexus.io.tio.utils.snowflake.SnowflakeIdUtils;
 
 @Slf4j
 public class MaxKbSentenceService {

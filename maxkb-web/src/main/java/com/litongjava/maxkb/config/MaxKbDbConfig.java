@@ -2,7 +2,6 @@ package com.litongjava.maxkb.config;
 
 import com.jfinal.template.Engine;
 import com.jfinal.template.source.ClassPathSourceFactory;
-import com.litongjava.tio.utils.environment.EnvUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import nexus.io.db.activerecord.ActiveRecordPlugin;
@@ -10,6 +9,7 @@ import nexus.io.db.activerecord.OrderedFieldContainerFactory;
 import nexus.io.db.activerecord.dialect.PostgreSqlDialect;
 import nexus.io.db.hikaricp.HikariCpPlugin;
 import nexus.io.hook.HookCan;
+import nexus.io.tio.utils.environment.EnvUtils;
 
 @Slf4j
 public class MaxKbDbConfig {

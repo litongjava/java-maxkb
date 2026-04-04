@@ -20,10 +20,6 @@ import com.litongjava.maxkb.vo.MaxKbDatasetSettingVo;
 import com.litongjava.maxkb.vo.MaxKbModelSetting;
 import com.litongjava.maxkb.vo.MaxKbRetrieveResult;
 import com.litongjava.maxkb.vo.ParagraphSearchResultVo;
-import com.litongjava.tio.utils.environment.EnvUtils;
-import com.litongjava.tio.utils.hutool.StrUtil;
-import com.litongjava.tio.utils.json.JsonUtils;
-import com.litongjava.tio.utils.snowflake.SnowflakeIdUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import nexus.io.chat.UniChatMessage;
@@ -37,6 +33,10 @@ import nexus.io.openai.client.OpenAiClient;
 import nexus.io.openai.consts.OpenAiConst;
 import nexus.io.openai.consts.OpenAiModels;
 import nexus.io.tio.core.ChannelContext;
+import nexus.io.tio.utils.environment.EnvUtils;
+import nexus.io.tio.utils.hutool.StrUtil;
+import nexus.io.tio.utils.json.JsonUtils;
+import nexus.io.tio.utils.snowflake.SnowflakeIdUtils;
 import okhttp3.Call;
 import okhttp3.Callback;
 

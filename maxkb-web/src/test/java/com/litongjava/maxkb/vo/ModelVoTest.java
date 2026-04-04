@@ -2,8 +2,8 @@ package com.litongjava.maxkb.vo;
 
 import org.junit.Test;
 
-import com.litongjava.tio.utils.json.FastJson2Utils;
-import com.litongjava.tio.utils.json.JsonUtils;
+import nexus.io.tio.utils.json.FastJson2Utils;
+import nexus.io.tio.utils.json.JsonUtils;
 
 public class ModelVoTest {
 

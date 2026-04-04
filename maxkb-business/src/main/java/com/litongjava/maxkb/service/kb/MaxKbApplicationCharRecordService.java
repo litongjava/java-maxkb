@@ -11,12 +11,12 @@ import com.jfinal.kit.Kv;
 import com.litongjava.maxkb.constant.MaxKbTableNames;
 import com.litongjava.maxkb.vo.MaxKbChatRecordDetail;
 import com.litongjava.maxkb.vo.ParagraphSearchResultVo;
-import com.litongjava.tio.utils.hutool.StrUtil;
-import com.litongjava.tio.utils.json.JsonUtils;
 
 import nexus.io.db.activerecord.Db;
 import nexus.io.db.activerecord.Row;
 import nexus.io.model.result.ResultVo;
+import nexus.io.tio.utils.hutool.StrUtil;
+import nexus.io.tio.utils.json.JsonUtils;
 
 public class MaxKbApplicationCharRecordService {
 

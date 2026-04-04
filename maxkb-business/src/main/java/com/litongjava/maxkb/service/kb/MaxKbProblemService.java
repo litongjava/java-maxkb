@@ -8,7 +8,6 @@ import com.litongjava.maxkb.constant.MaxKbTableNames;
 import com.litongjava.maxkb.vo.MaxKbParagraphId;
 import com.litongjava.maxkb.vo.ProbrolemCreateBatch;
 import com.litongjava.maxkb.vo.ResultPage;
-import com.litongjava.tio.utils.snowflake.SnowflakeIdUtils;
 
 import nexus.io.db.TableInput;
 import nexus.io.db.TableResult;
@@ -18,6 +17,7 @@ import nexus.io.kit.RowUtils;
 import nexus.io.model.page.Page;
 import nexus.io.model.result.ResultVo;
 import nexus.io.table.services.ApiTable;
+import nexus.io.tio.utils.snowflake.SnowflakeIdUtils;
 
 public class MaxKbProblemService {
 

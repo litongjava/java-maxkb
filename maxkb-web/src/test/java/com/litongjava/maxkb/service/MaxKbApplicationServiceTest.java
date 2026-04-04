@@ -4,13 +4,13 @@ import org.junit.Test;
 
 import com.litongjava.maxkb.config.MaxKbDbConfig;
 import com.litongjava.maxkb.service.kb.MaxKbApplicationService;
-import com.litongjava.tio.utils.environment.EnvUtils;
-import com.litongjava.tio.utils.json.JsonUtils;
 
 import nexus.io.db.TableInput;
 import nexus.io.jfinal.aop.Aop;
 import nexus.io.model.result.ResultVo;
 import nexus.io.tio.boot.testing.TioBootTest;
+import nexus.io.tio.utils.environment.EnvUtils;
+import nexus.io.tio.utils.json.JsonUtils;
 
 public class MaxKbApplicationServiceTest {
 

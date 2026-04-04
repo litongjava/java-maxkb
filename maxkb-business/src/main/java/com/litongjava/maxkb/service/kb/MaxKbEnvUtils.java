@@ -1,10 +1,10 @@
 package com.litongjava.maxkb.service.kb;
 
 import com.litongjava.maxkb.constant.MaxKbKeysConst;
-import com.litongjava.tio.utils.environment.EnvUtils;
 
 import nexus.io.bailian.BaiLianAiModels;
 import nexus.io.consts.ModelPlatformName;
+import nexus.io.tio.utils.environment.EnvUtils;
 
 public class MaxKbEnvUtils {
 

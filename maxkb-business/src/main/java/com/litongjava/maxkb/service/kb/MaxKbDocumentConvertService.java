@@ -23,8 +23,6 @@ import com.google.common.util.concurrent.Striped;
 import com.jfinal.template.Engine;
 import com.litongjava.maxkb.constant.MaxKbTableNames;
 import com.litongjava.maxkb.utils.ExecutorServiceUtils;
-import com.litongjava.tio.utils.crypto.Md5Utils;
-import com.litongjava.tio.utils.hutool.FileUtil;
 
 import lombok.extern.slf4j.Slf4j;
 import nexus.io.db.TableInput;
@@ -36,6 +34,8 @@ import nexus.io.openai.chat.OpenAiChatResponse;
 import nexus.io.openai.client.OpenAiClient;
 import nexus.io.openai.consts.OpenAiModels;
 import nexus.io.table.services.ApiTable;
+import nexus.io.tio.utils.crypto.Md5Utils;
+import nexus.io.tio.utils.hutool.FileUtil;
 
 @Slf4j
 public class MaxKbDocumentConvertService {

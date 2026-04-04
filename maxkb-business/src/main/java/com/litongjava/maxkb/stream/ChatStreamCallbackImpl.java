@@ -13,8 +13,6 @@ import com.litongjava.maxkb.vo.MaxKbChatRecordDetail;
 import com.litongjava.maxkb.vo.MaxKbChatStep;
 import com.litongjava.maxkb.vo.MaxKbRetrieveResult;
 import com.litongjava.maxkb.vo.MaxKbStreamChatVo;
-import com.litongjava.tio.utils.json.FastJson2Utils;
-import com.litongjava.tio.utils.json.JsonUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import nexus.io.db.activerecord.Db;
@@ -27,6 +25,8 @@ import nexus.io.openai.chat.OpenAiChatResponse;
 import nexus.io.tio.core.ChannelContext;
 import nexus.io.tio.core.Tio;
 import nexus.io.tio.http.server.util.SseEmitter;
+import nexus.io.tio.utils.json.FastJson2Utils;
+import nexus.io.tio.utils.json.JsonUtils;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;

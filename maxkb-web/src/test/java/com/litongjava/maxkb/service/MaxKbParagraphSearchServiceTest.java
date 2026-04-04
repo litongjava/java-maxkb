@@ -5,10 +5,10 @@ import org.junit.Test;
 import com.litongjava.maxkb.config.MaxKbDbConfig;
 import com.litongjava.maxkb.service.kb.MaxKbParagraphRetrieveService;
 import com.litongjava.maxkb.vo.MaxKbRetrieveResult;
-import com.litongjava.tio.utils.json.JsonUtils;
 
 import nexus.io.jfinal.aop.Aop;
 import nexus.io.tio.boot.testing.TioBootTest;
+import nexus.io.tio.utils.json.JsonUtils;
 
 public class MaxKbParagraphSearchServiceTest {
 

@@ -2,9 +2,10 @@ package com.litongjava.maxkb.playwright;
 
 import java.util.concurrent.TimeUnit;
 
-import com.litongjava.tio.utils.environment.EnvUtils;
 import com.microsoft.playwright.BrowserContext;
 import com.microsoft.playwright.Page;
+
+import nexus.io.tio.utils.environment.EnvUtils;
 
 public enum PlaywrightBrowser {
   INSTANCE;

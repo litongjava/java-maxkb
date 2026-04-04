@@ -5,11 +5,11 @@ import org.postgresql.util.PGobject;
 
 import com.litongjava.maxkb.config.MaxKbDbConfig;
 import com.litongjava.maxkb.vo.MaxKbApplicationVo;
-import com.litongjava.tio.utils.json.JsonUtils;
 
 import nexus.io.db.activerecord.Db;
 import nexus.io.kit.PgObjectUtils;
 import nexus.io.tio.boot.testing.TioBootTest;
+import nexus.io.tio.utils.json.JsonUtils;
 
 public class MaxKbApplicationTempSettingTest {
 

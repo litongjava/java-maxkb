@@ -7,9 +7,6 @@ import com.litongjava.maxkb.constant.MaxKbTableNames;
 import com.litongjava.maxkb.vo.ResultPage;
 import com.litongjava.maxkb.vo.UserLoginReqVo;
 import com.litongjava.tio.boot.admin.utils.TioAdminEnvUtils;
-import com.litongjava.tio.utils.crypto.Md5Utils;
-import com.litongjava.tio.utils.jwt.JwtUtils;
-import com.litongjava.tio.utils.token.TokenManager;
 
 import nexus.io.db.TableInput;
 import nexus.io.db.TableResult;
@@ -20,6 +17,9 @@ import nexus.io.kit.RowUtils;
 import nexus.io.model.page.Page;
 import nexus.io.model.result.ResultVo;
 import nexus.io.table.services.ApiTable;
+import nexus.io.tio.utils.crypto.Md5Utils;
+import nexus.io.tio.utils.jwt.JwtUtils;
+import nexus.io.tio.utils.token.TokenManager;
 
 public class KbUserService {
 

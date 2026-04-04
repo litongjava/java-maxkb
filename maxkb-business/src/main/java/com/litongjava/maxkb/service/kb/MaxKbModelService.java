@@ -14,8 +14,6 @@ import com.litongjava.maxkb.enumeration.ModelType;
 import com.litongjava.maxkb.model.MaxKbModel;
 import com.litongjava.maxkb.vo.CredentialVo;
 import com.litongjava.maxkb.vo.ModelVo;
-import com.litongjava.tio.utils.hutool.DataMaskingUtil;
-import com.litongjava.tio.utils.json.JsonUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import nexus.io.chat.PlatformInput;
@@ -28,6 +26,8 @@ import nexus.io.openai.chat.OpenAiChatRequest;
 import nexus.io.openai.client.OpenAiClient;
 import nexus.io.openai.consts.OpenAiModels;
 import nexus.io.openai.embedding.EmbeddingRequest;
+import nexus.io.tio.utils.hutool.DataMaskingUtil;
+import nexus.io.tio.utils.json.JsonUtils;
 import okhttp3.Response;
 
 @Slf4j

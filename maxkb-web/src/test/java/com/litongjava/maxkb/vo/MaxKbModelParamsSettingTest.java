@@ -2,7 +2,7 @@ package com.litongjava.maxkb.vo;
 
 import org.junit.Test;
 
-import com.litongjava.tio.utils.json.JsonUtils;
+import nexus.io.tio.utils.json.JsonUtils;
 
 public class MaxKbModelParamsSettingTest {
 

@@ -13,7 +13,6 @@ import com.litongjava.maxkb.service.kb.MaxKbParagraphServcie;
 import com.litongjava.maxkb.vo.KbParagraph;
 import com.litongjava.maxkb.vo.Paragraph;
 import com.litongjava.tio.boot.admin.utils.ApiTableUtils;
-import com.litongjava.tio.utils.json.JsonUtils;
 
 import nexus.io.annotation.EnableCORS;
 import nexus.io.annotation.RequestPath;
@@ -32,6 +31,7 @@ import nexus.io.tio.boot.http.TioRequestContext;
 import nexus.io.tio.boot.utils.TioRequestParamUtils;
 import nexus.io.tio.http.common.HttpRequest;
 import nexus.io.tio.http.common.HttpResponse;
+import nexus.io.tio.utils.json.JsonUtils;
 
 @RequestPath("/api/table/max_kb_paragraph")
 @EnableCORS

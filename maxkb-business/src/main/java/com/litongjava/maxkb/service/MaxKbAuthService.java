@@ -2,11 +2,11 @@ package com.litongjava.maxkb.service;
 
 import com.litongjava.tio.boot.admin.services.TioBootAdminTokenPredicate;
 import com.litongjava.tio.boot.admin.utils.TioAdminEnvUtils;
-import com.litongjava.tio.utils.hutool.StrUtil;
-import com.litongjava.tio.utils.token.TokenManager;
 
 import lombok.extern.slf4j.Slf4j;
 import nexus.io.tio.boot.token.PredicateResult;
+import nexus.io.tio.utils.hutool.StrUtil;
+import nexus.io.tio.utils.token.TokenManager;
 
 @Slf4j
 public class MaxKbAuthService {

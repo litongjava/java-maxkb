@@ -1,9 +1,8 @@
 package com.litongjava.maxkb.config;
 
-import com.litongjava.tio.utils.environment.EnvUtils;
-import com.litongjava.tio.utils.quartz.QuartzUtils;
-
 import nexus.io.hook.HookCan;
+import nexus.io.tio.utils.environment.EnvUtils;
+import nexus.io.tio.utils.quartz.QuartzUtils;
 
 public class MaxKbQuartzConfig {
 

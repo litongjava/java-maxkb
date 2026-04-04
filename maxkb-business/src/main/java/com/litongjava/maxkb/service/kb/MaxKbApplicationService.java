@@ -14,7 +14,6 @@ import com.litongjava.maxkb.vo.MaxKbApplicationVo;
 import com.litongjava.maxkb.vo.MaxKbDatasetSettingVo;
 import com.litongjava.maxkb.vo.MaxKbModelParamsSetting;
 import com.litongjava.maxkb.vo.MaxKbModelSetting;
-import com.litongjava.tio.utils.snowflake.SnowflakeIdUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import nexus.io.db.TableInput;
@@ -26,6 +25,7 @@ import nexus.io.kit.PgObjectUtils;
 import nexus.io.model.page.Page;
 import nexus.io.model.result.ResultVo;
 import nexus.io.table.services.ApiTable;
+import nexus.io.tio.utils.snowflake.SnowflakeIdUtils;
 
 @Slf4j
 public class MaxKbApplicationService {

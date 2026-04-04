@@ -7,16 +7,16 @@ import com.litongjava.maxkb.model.MaxKbApplicationAccessToken;
 import com.litongjava.maxkb.model.MaxKbApplicationPublicAccessClient;
 import com.litongjava.maxkb.service.MaxKbAuthService;
 import com.litongjava.tio.boot.admin.utils.TioAdminEnvUtils;
-import com.litongjava.tio.utils.json.JsonUtils;
-import com.litongjava.tio.utils.jwt.JwtUtils;
-import com.litongjava.tio.utils.mcid.McIdUtils;
-import com.litongjava.tio.utils.snowflake.SnowflakeIdUtils;
-import com.litongjava.tio.utils.token.TokenManager;
 
 import nexus.io.db.activerecord.Db;
 import nexus.io.db.activerecord.Row;
 import nexus.io.jfinal.aop.Aop;
 import nexus.io.model.result.ResultVo;
+import nexus.io.tio.utils.json.JsonUtils;
+import nexus.io.tio.utils.jwt.JwtUtils;
+import nexus.io.tio.utils.mcid.McIdUtils;
+import nexus.io.tio.utils.snowflake.SnowflakeIdUtils;
+import nexus.io.tio.utils.token.TokenManager;
 
 public class MaxKbApplicationAccessTokenService {
 

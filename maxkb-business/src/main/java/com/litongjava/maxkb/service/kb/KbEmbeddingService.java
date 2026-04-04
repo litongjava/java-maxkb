@@ -7,8 +7,6 @@ import org.postgresql.util.PGobject;
 
 import com.google.common.util.concurrent.Striped;
 import com.litongjava.maxkb.constant.MaxKbTableNames;
-import com.litongjava.tio.utils.crypto.Md5Utils;
-import com.litongjava.tio.utils.snowflake.SnowflakeIdUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import nexus.io.bailian.BaiLianAiModels;
@@ -21,6 +19,8 @@ import nexus.io.db.utils.PgVectorUtils;
 import nexus.io.openai.client.OpenAiClient;
 import nexus.io.openai.consts.OpenAiModels;
 import nexus.io.openai.embedding.EmbeddingResponse;
+import nexus.io.tio.utils.crypto.Md5Utils;
+import nexus.io.tio.utils.snowflake.SnowflakeIdUtils;
 
 @Slf4j
 public class KbEmbeddingService {

@@ -10,8 +10,6 @@ import com.litongjava.maxkb.constant.MaxKbTableNames;
 import com.litongjava.maxkb.model.MaxKbParagraph;
 import com.litongjava.maxkb.vo.Paragraph;
 import com.litongjava.maxkb.vo.ResultPage;
-import com.litongjava.tio.utils.crypto.Md5Utils;
-import com.litongjava.tio.utils.snowflake.SnowflakeIdUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import nexus.io.chat.PlatformInput;
@@ -24,6 +22,8 @@ import nexus.io.kit.RowUtils;
 import nexus.io.model.page.Page;
 import nexus.io.model.result.ResultVo;
 import nexus.io.table.services.ApiTable;
+import nexus.io.tio.utils.crypto.Md5Utils;
+import nexus.io.tio.utils.snowflake.SnowflakeIdUtils;
 
 @Slf4j
 public class MaxKbParagraphServcie {

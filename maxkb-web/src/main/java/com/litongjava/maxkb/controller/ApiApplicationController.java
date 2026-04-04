@@ -12,9 +12,6 @@ import com.litongjava.maxkb.service.kb.MaxKbApplicationCharRecordService;
 import com.litongjava.maxkb.service.kb.MaxKbApplicationHitTestService;
 import com.litongjava.maxkb.service.kb.MaxKbApplicationService;
 import com.litongjava.maxkb.vo.MaxKbApplicationVo;
-import com.litongjava.tio.utils.hutool.StrUtil;
-import com.litongjava.tio.utils.json.FastJson2Utils;
-import com.litongjava.tio.utils.json.JsonUtils;
 
 import nexus.io.annotation.Delete;
 import nexus.io.annotation.Get;
@@ -27,6 +24,9 @@ import nexus.io.model.result.ResultVo;
 import nexus.io.table.constants.Operators;
 import nexus.io.tio.boot.http.TioRequestContext;
 import nexus.io.tio.http.common.HttpRequest;
+import nexus.io.tio.utils.hutool.StrUtil;
+import nexus.io.tio.utils.json.FastJson2Utils;
+import nexus.io.tio.utils.json.JsonUtils;
 
 @RequestPath("/api/application")
 public class ApiApplicationController {

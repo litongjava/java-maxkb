@@ -5,7 +5,7 @@ import java.security.PrivateKey;
 
 import org.junit.Test;
 
-import com.litongjava.tio.utils.crypto.RsaUtils;
+import nexus.io.tio.utils.crypto.RsaUtils;
 
 public class RsaUtilsTest {
 

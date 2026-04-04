@@ -13,7 +13,6 @@ import com.litongjava.maxkb.vo.MaxKbUpdateDocumentRequestVo;
 import com.litongjava.maxkb.vo.Paragraph;
 import com.litongjava.maxkb.vo.ParagraphBatchVo;
 import com.litongjava.maxkb.vo.ProbrolemCreateBatch;
-import com.litongjava.tio.utils.json.JsonUtils;
 
 import nexus.io.annotation.Delete;
 import nexus.io.annotation.Get;
@@ -24,6 +23,7 @@ import nexus.io.jfinal.aop.Aop;
 import nexus.io.model.result.ResultVo;
 import nexus.io.tio.boot.http.TioRequestContext;
 import nexus.io.tio.http.common.HttpRequest;
+import nexus.io.tio.utils.json.JsonUtils;
 
 @RequestPath("/api/dataset")
 public class ApiDatasetController {

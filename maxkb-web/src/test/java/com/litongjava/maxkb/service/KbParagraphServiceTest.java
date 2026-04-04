@@ -4,9 +4,9 @@ import org.junit.Test;
 
 import com.litongjava.maxkb.config.MaxKbDbConfig;
 import com.litongjava.maxkb.service.kb.KbParagraphService;
-import com.litongjava.tio.utils.environment.EnvUtils;
 
 import nexus.io.jfinal.aop.Aop;
+import nexus.io.tio.utils.environment.EnvUtils;
 
 public class KbParagraphServiceTest {
 

@@ -8,13 +8,13 @@ import org.postgresql.util.PGobject;
 
 import com.litongjava.maxkb.client.RumiClient;
 import com.litongjava.maxkb.vo.KbParagraph;
-import com.litongjava.tio.utils.UUIDUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import nexus.io.db.activerecord.Db;
 import nexus.io.db.activerecord.Row;
 import nexus.io.db.utils.PgVectorUtils;
 import nexus.io.jfinal.aop.Aop;
+import nexus.io.tio.utils.UUIDUtils;
 
 @Slf4j
 public class KbParagraphService {

@@ -2,12 +2,11 @@ package com.litongjava.maxkb;
 
 import java.io.IOException;
 
-import com.litongjava.tio.utils.environment.EnvUtils;
-import com.litongjava.tio.utils.json.JsonUtils;
-
 import nexus.io.openai.client.OpenAiClient;
 import nexus.io.openai.embedding.EmbeddingRequest;
 import nexus.io.openai.embedding.EmbeddingResponse;
+import nexus.io.tio.utils.environment.EnvUtils;
+import nexus.io.tio.utils.json.JsonUtils;
 
 public class EmbeddingExample {
 
