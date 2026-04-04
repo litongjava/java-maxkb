@@ -2,11 +2,11 @@ package com.litongjava.maxkb.service;
 
 import org.junit.Test;
 
-import com.litongjava.jfinal.aop.Aop;
 import com.litongjava.maxkb.config.MaxKbDbConfig;
 import com.litongjava.tio.utils.environment.EnvUtils;
 import com.litongjava.tio.utils.json.JsonUtils;
 
+import nexus.io.jfinal.aop.Aop;
 import nexus.io.model.result.ResultVo;
 
 public class UserServiceTest {

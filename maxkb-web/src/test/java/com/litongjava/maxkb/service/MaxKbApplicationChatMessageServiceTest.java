@@ -2,14 +2,14 @@ package com.litongjava.maxkb.service;
 
 import org.junit.Test;
 
-import com.litongjava.jfinal.aop.Aop;
 import com.litongjava.maxkb.config.MaxKbDbConfig;
 import com.litongjava.maxkb.service.kb.MaxKbApplicationChatMessageService;
 import com.litongjava.maxkb.vo.MaxKbChatRequestVo;
-import com.litongjava.tio.boot.testing.TioBootTest;
 import com.litongjava.tio.utils.json.JsonUtils;
 
+import nexus.io.jfinal.aop.Aop;
 import nexus.io.model.result.ResultVo;
+import nexus.io.tio.boot.testing.TioBootTest;
 
 public class MaxKbApplicationChatMessageServiceTest {
 

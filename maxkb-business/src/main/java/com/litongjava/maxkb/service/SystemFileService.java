@@ -6,8 +6,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import com.litongjava.db.activerecord.Row;
-import com.litongjava.jfinal.aop.Aop;
 import com.litongjava.maxkb.dao.SystemUploadFileDao;
 import com.litongjava.tio.utils.crypto.Md5Utils;
 import com.litongjava.tio.utils.environment.EnvUtils;
@@ -15,6 +13,8 @@ import com.litongjava.tio.utils.hutool.FileUtil;
 import com.litongjava.tio.utils.hutool.FilenameUtils;
 import com.litongjava.tio.utils.snowflake.SnowflakeIdUtils;
 
+import nexus.io.db.activerecord.Row;
+import nexus.io.jfinal.aop.Aop;
 import nexus.io.model.upload.UploadFile;
 import nexus.io.model.upload.UploadResult;
 

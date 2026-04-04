@@ -2,14 +2,14 @@ package com.litongjava.maxkb.service.kb;
 
 import org.postgresql.util.PGobject;
 
-import com.litongjava.db.activerecord.Db;
-import com.litongjava.db.activerecord.Row;
-import com.litongjava.kit.PgObjectUtils;
 import com.litongjava.maxkb.model.MaxKbApplicationChat;
 import com.litongjava.maxkb.model.MaxKbApplicationTempSetting;
 import com.litongjava.maxkb.vo.MaxKbApplicationVo;
 import com.litongjava.tio.utils.snowflake.SnowflakeIdUtils;
 
+import nexus.io.db.activerecord.Db;
+import nexus.io.db.activerecord.Row;
+import nexus.io.kit.PgObjectUtils;
 import nexus.io.model.result.ResultVo;
 
 public class MaxKbApplicationChatService {

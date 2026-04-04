@@ -2,13 +2,13 @@ package com.litongjava.maxkb.config;
 
 import com.jfinal.template.Engine;
 import com.jfinal.template.source.ClassPathSourceFactory;
-import com.litongjava.db.activerecord.ActiveRecordPlugin;
-import com.litongjava.db.activerecord.OrderedFieldContainerFactory;
-import com.litongjava.db.activerecord.dialect.PostgreSqlDialect;
-import com.litongjava.db.hikaricp.HikariCpPlugin;
 import com.litongjava.tio.utils.environment.EnvUtils;
 
 import lombok.extern.slf4j.Slf4j;
+import nexus.io.db.activerecord.ActiveRecordPlugin;
+import nexus.io.db.activerecord.OrderedFieldContainerFactory;
+import nexus.io.db.activerecord.dialect.PostgreSqlDialect;
+import nexus.io.db.hikaricp.HikariCpPlugin;
 import nexus.io.hook.HookCan;
 
 @Slf4j

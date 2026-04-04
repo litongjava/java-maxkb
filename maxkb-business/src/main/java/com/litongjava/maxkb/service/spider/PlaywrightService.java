@@ -8,8 +8,6 @@ import java.util.concurrent.Future;
 import java.util.concurrent.locks.Lock;
 
 import com.google.common.util.concurrent.Striped;
-import com.litongjava.db.activerecord.Db;
-import com.litongjava.db.activerecord.Row;
 import com.litongjava.maxkb.playwright.PlaywrightBrowser;
 import com.litongjava.maxkb.utils.PdfUtils;
 import com.litongjava.tio.utils.http.HttpDownloadUtils;
@@ -21,6 +19,8 @@ import com.microsoft.playwright.BrowserContext;
 import com.microsoft.playwright.Page;
 
 import lombok.extern.slf4j.Slf4j;
+import nexus.io.db.activerecord.Db;
+import nexus.io.db.activerecord.Row;
 import nexus.io.model.web.WebPageContent;
 
 @Slf4j

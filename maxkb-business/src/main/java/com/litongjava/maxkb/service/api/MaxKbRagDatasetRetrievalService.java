@@ -2,8 +2,6 @@ package com.litongjava.maxkb.service.api;
 
 import java.util.List;
 
-import com.litongjava.chat.PlatformInput;
-import com.litongjava.jfinal.aop.Aop;
 import com.litongjava.maxkb.can.MaxKbSqlCan;
 import com.litongjava.maxkb.model.MaxKbDataset;
 import com.litongjava.maxkb.service.kb.KbEmbeddingService;
@@ -11,6 +9,9 @@ import com.litongjava.maxkb.service.kb.KbRetrievalService;
 import com.litongjava.maxkb.service.kb.MaxKbModelService;
 import com.litongjava.maxkb.vo.ApiRagDatasetRetrievalRequest;
 import com.litongjava.maxkb.vo.MaxKbRetrievalResult;
+
+import nexus.io.chat.PlatformInput;
+import nexus.io.jfinal.aop.Aop;
 
 public class MaxKbRagDatasetRetrievalService {
 

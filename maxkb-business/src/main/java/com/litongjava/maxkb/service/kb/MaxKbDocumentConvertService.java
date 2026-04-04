@@ -21,21 +21,21 @@ import org.apache.pdfbox.rendering.PDFRenderer;
 
 import com.google.common.util.concurrent.Striped;
 import com.jfinal.template.Engine;
-import com.litongjava.db.activerecord.Db;
-import com.litongjava.db.activerecord.Row;
 import com.litongjava.maxkb.constant.MaxKbTableNames;
 import com.litongjava.maxkb.utils.ExecutorServiceUtils;
-import com.litongjava.openai.chat.ChatResponseUsage;
-import com.litongjava.openai.chat.OpenAiChatResponse;
-import com.litongjava.openai.client.OpenAiClient;
-import com.litongjava.openai.consts.OpenAiModels;
-import com.litongjava.table.services.ApiTable;
 import com.litongjava.tio.utils.crypto.Md5Utils;
 import com.litongjava.tio.utils.hutool.FileUtil;
 
 import lombok.extern.slf4j.Slf4j;
 import nexus.io.db.TableInput;
 import nexus.io.db.TableResult;
+import nexus.io.db.activerecord.Db;
+import nexus.io.db.activerecord.Row;
+import nexus.io.openai.chat.ChatResponseUsage;
+import nexus.io.openai.chat.OpenAiChatResponse;
+import nexus.io.openai.client.OpenAiClient;
+import nexus.io.openai.consts.OpenAiModels;
+import nexus.io.table.services.ApiTable;
 
 @Slf4j
 public class MaxKbDocumentConvertService {

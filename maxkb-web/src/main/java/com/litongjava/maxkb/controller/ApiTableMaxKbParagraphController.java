@@ -8,30 +8,30 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.jfinal.kit.Kv;
-import com.litongjava.db.activerecord.Row;
-import com.litongjava.jfinal.aop.Aop;
 import com.litongjava.maxkb.model.MaxKbParagraph;
 import com.litongjava.maxkb.service.kb.MaxKbParagraphServcie;
 import com.litongjava.maxkb.vo.KbParagraph;
 import com.litongjava.maxkb.vo.Paragraph;
-import com.litongjava.table.services.ApiTable;
-import com.litongjava.table.utils.TableInputUtils;
-import com.litongjava.table.utils.TableResultUtils;
 import com.litongjava.tio.boot.admin.utils.ApiTableUtils;
-import com.litongjava.tio.boot.http.TioRequestContext;
-import com.litongjava.tio.boot.utils.TioRequestParamUtils;
-import com.litongjava.tio.http.common.HttpRequest;
-import com.litongjava.tio.http.common.HttpResponse;
 import com.litongjava.tio.utils.json.JsonUtils;
 
 import nexus.io.annotation.EnableCORS;
 import nexus.io.annotation.RequestPath;
 import nexus.io.db.TableInput;
 import nexus.io.db.TableResult;
+import nexus.io.db.activerecord.Row;
+import nexus.io.jfinal.aop.Aop;
 import nexus.io.model.body.RespBodyVo;
 import nexus.io.model.page.DbPage;
 import nexus.io.model.page.Page;
 import nexus.io.model.result.ResultVo;
+import nexus.io.table.services.ApiTable;
+import nexus.io.table.utils.TableInputUtils;
+import nexus.io.table.utils.TableResultUtils;
+import nexus.io.tio.boot.http.TioRequestContext;
+import nexus.io.tio.boot.utils.TioRequestParamUtils;
+import nexus.io.tio.http.common.HttpRequest;
+import nexus.io.tio.http.common.HttpResponse;
 
 @RequestPath("/api/table/max_kb_paragraph")
 @EnableCORS

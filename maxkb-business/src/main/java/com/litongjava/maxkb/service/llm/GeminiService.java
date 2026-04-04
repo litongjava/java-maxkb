@@ -1,13 +1,13 @@
 package com.litongjava.maxkb.service.llm;
 
-import com.litongjava.gemini.GeminiClient;
-import com.litongjava.gemini.GoogleModels;
-import com.litongjava.openai.chat.OpenAiChatRequest;
-import com.litongjava.openai.client.OpenAiClient;
-import com.litongjava.openai.consts.OpenAiConst;
 import com.litongjava.tio.utils.environment.EnvUtils;
 
 import lombok.extern.slf4j.Slf4j;
+import nexus.io.gemini.GeminiClient;
+import nexus.io.gemini.GoogleModels;
+import nexus.io.openai.chat.OpenAiChatRequest;
+import nexus.io.openai.client.OpenAiClient;
+import nexus.io.openai.consts.OpenAiConst;
 import okhttp3.Call;
 import okhttp3.Callback;
 

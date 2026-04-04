@@ -2,7 +2,6 @@ package com.litongjava.maxkb.controller;
 
 import java.util.List;
 
-import com.litongjava.jfinal.aop.Aop;
 import com.litongjava.maxkb.service.kb.MaxKbDatasetHitTestService;
 import com.litongjava.maxkb.service.kb.MaxKbDatasetService;
 import com.litongjava.maxkb.service.kb.MaxKbDocumentService;
@@ -14,8 +13,6 @@ import com.litongjava.maxkb.vo.MaxKbUpdateDocumentRequestVo;
 import com.litongjava.maxkb.vo.Paragraph;
 import com.litongjava.maxkb.vo.ParagraphBatchVo;
 import com.litongjava.maxkb.vo.ProbrolemCreateBatch;
-import com.litongjava.tio.boot.http.TioRequestContext;
-import com.litongjava.tio.http.common.HttpRequest;
 import com.litongjava.tio.utils.json.JsonUtils;
 
 import nexus.io.annotation.Delete;
@@ -23,7 +20,10 @@ import nexus.io.annotation.Get;
 import nexus.io.annotation.Post;
 import nexus.io.annotation.Put;
 import nexus.io.annotation.RequestPath;
+import nexus.io.jfinal.aop.Aop;
 import nexus.io.model.result.ResultVo;
+import nexus.io.tio.boot.http.TioRequestContext;
+import nexus.io.tio.http.common.HttpRequest;
 
 @RequestPath("/api/dataset")
 public class ApiDatasetController {

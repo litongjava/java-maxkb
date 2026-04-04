@@ -4,8 +4,9 @@ import com.litongjava.maxkb.handler.ApiRagDatasetRetrievalTitleHandler;
 import com.litongjava.maxkb.httphandler.SearxngSearchHandler;
 import com.litongjava.tio.boot.admin.config.TioAdminControllerConfiguration;
 import com.litongjava.tio.boot.admin.config.TioAdminHandlerConfiguration;
-import com.litongjava.tio.boot.server.TioBootServer;
-import com.litongjava.tio.http.server.router.HttpRequestRouter;
+
+import nexus.io.tio.boot.server.TioBootServer;
+import nexus.io.tio.http.server.router.HttpRequestRouter;
 
 public class MaxKbHandlerConfiguration {
   public void config() {

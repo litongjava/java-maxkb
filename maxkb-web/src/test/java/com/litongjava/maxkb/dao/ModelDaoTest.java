@@ -2,11 +2,12 @@ package com.litongjava.maxkb.dao;
 
 import org.junit.Test;
 
-import com.litongjava.jfinal.aop.Aop;
 import com.litongjava.maxkb.MaxKbApp;
 import com.litongjava.maxkb.vo.CredentialVo;
 import com.litongjava.maxkb.vo.ModelVo;
-import com.litongjava.tio.boot.testing.TioBootTest;
+
+import nexus.io.jfinal.aop.Aop;
+import nexus.io.tio.boot.testing.TioBootTest;
 
 public class ModelDaoTest {
 

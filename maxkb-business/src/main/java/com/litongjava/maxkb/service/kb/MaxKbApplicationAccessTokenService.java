@@ -3,9 +3,6 @@ package com.litongjava.maxkb.service.kb;
 import java.util.List;
 
 import com.jfinal.kit.Kv;
-import com.litongjava.db.activerecord.Db;
-import com.litongjava.db.activerecord.Row;
-import com.litongjava.jfinal.aop.Aop;
 import com.litongjava.maxkb.model.MaxKbApplicationAccessToken;
 import com.litongjava.maxkb.model.MaxKbApplicationPublicAccessClient;
 import com.litongjava.maxkb.service.MaxKbAuthService;
@@ -16,6 +13,9 @@ import com.litongjava.tio.utils.mcid.McIdUtils;
 import com.litongjava.tio.utils.snowflake.SnowflakeIdUtils;
 import com.litongjava.tio.utils.token.TokenManager;
 
+import nexus.io.db.activerecord.Db;
+import nexus.io.db.activerecord.Row;
+import nexus.io.jfinal.aop.Aop;
 import nexus.io.model.result.ResultVo;
 
 public class MaxKbApplicationAccessTokenService {

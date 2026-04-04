@@ -7,11 +7,6 @@ import java.util.List;
 import org.postgresql.util.PGobject;
 
 import com.jfinal.kit.Kv;
-import com.litongjava.chat.PlatformInput;
-import com.litongjava.chat.UniChatMessage;
-import com.litongjava.db.activerecord.Db;
-import com.litongjava.db.activerecord.Row;
-import com.litongjava.jfinal.aop.Aop;
 import com.litongjava.maxkb.constant.MaxKbTableNames;
 import com.litongjava.maxkb.dao.ModelDao;
 import com.litongjava.maxkb.enumeration.ModelProvider;
@@ -19,15 +14,20 @@ import com.litongjava.maxkb.enumeration.ModelType;
 import com.litongjava.maxkb.model.MaxKbModel;
 import com.litongjava.maxkb.vo.CredentialVo;
 import com.litongjava.maxkb.vo.ModelVo;
-import com.litongjava.openai.chat.OpenAiChatRequest;
-import com.litongjava.openai.client.OpenAiClient;
-import com.litongjava.openai.consts.OpenAiModels;
-import com.litongjava.openai.embedding.EmbeddingRequest;
 import com.litongjava.tio.utils.hutool.DataMaskingUtil;
 import com.litongjava.tio.utils.json.JsonUtils;
 
 import lombok.extern.slf4j.Slf4j;
+import nexus.io.chat.PlatformInput;
+import nexus.io.chat.UniChatMessage;
+import nexus.io.db.activerecord.Db;
+import nexus.io.db.activerecord.Row;
+import nexus.io.jfinal.aop.Aop;
 import nexus.io.model.result.ResultVo;
+import nexus.io.openai.chat.OpenAiChatRequest;
+import nexus.io.openai.client.OpenAiClient;
+import nexus.io.openai.consts.OpenAiModels;
+import nexus.io.openai.embedding.EmbeddingRequest;
 import okhttp3.Response;
 
 @Slf4j

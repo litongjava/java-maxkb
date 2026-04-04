@@ -2,12 +2,11 @@ package com.litongjava.maxkb.vo;
 
 import java.util.List;
 
-import com.litongjava.chat.UniChatMessage;
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
+import nexus.io.chat.UniChatMessage;
 
 @Data
 @NoArgsConstructor

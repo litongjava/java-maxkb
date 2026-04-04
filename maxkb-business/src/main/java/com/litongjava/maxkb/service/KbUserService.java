@@ -3,14 +3,9 @@ package com.litongjava.maxkb.service;
 import java.util.List;
 
 import com.jfinal.kit.Kv;
-import com.litongjava.db.activerecord.Db;
-import com.litongjava.db.activerecord.Row;
-import com.litongjava.jfinal.aop.Aop;
-import com.litongjava.kit.RowUtils;
 import com.litongjava.maxkb.constant.MaxKbTableNames;
 import com.litongjava.maxkb.vo.ResultPage;
 import com.litongjava.maxkb.vo.UserLoginReqVo;
-import com.litongjava.table.services.ApiTable;
 import com.litongjava.tio.boot.admin.utils.TioAdminEnvUtils;
 import com.litongjava.tio.utils.crypto.Md5Utils;
 import com.litongjava.tio.utils.jwt.JwtUtils;
@@ -18,8 +13,13 @@ import com.litongjava.tio.utils.token.TokenManager;
 
 import nexus.io.db.TableInput;
 import nexus.io.db.TableResult;
+import nexus.io.db.activerecord.Db;
+import nexus.io.db.activerecord.Row;
+import nexus.io.jfinal.aop.Aop;
+import nexus.io.kit.RowUtils;
 import nexus.io.model.page.Page;
 import nexus.io.model.result.ResultVo;
+import nexus.io.table.services.ApiTable;
 
 public class KbUserService {
 

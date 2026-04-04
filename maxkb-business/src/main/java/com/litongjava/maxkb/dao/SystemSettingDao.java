@@ -6,10 +6,11 @@ import java.util.Date;
 import org.postgresql.util.PGobject;
 
 import com.jfinal.kit.Kv;
-import com.litongjava.db.activerecord.Db;
-import com.litongjava.db.activerecord.Row;
 import com.litongjava.maxkb.constant.MaxKbTableNames;
 import com.litongjava.tio.utils.json.JsonUtils;
+
+import nexus.io.db.activerecord.Db;
+import nexus.io.db.activerecord.Row;
 
 public class SystemSettingDao {
 

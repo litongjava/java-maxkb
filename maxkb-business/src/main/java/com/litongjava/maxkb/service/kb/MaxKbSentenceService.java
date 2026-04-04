@@ -8,13 +8,9 @@ import java.util.concurrent.Future;
 
 import org.postgresql.util.PGobject;
 
-import com.litongjava.db.activerecord.Db;
-import com.litongjava.db.activerecord.Row;
-import com.litongjava.jfinal.aop.Aop;
 import com.litongjava.maxkb.constant.MaxKbTableNames;
 import com.litongjava.maxkb.model.MaxKbSentence;
 import com.litongjava.maxkb.utils.ExecutorServiceUtils;
-import com.litongjava.openai.token.OpenAiTokenizer;
 import com.litongjava.tio.utils.crypto.Md5Utils;
 import com.litongjava.tio.utils.snowflake.SnowflakeIdUtils;
 
@@ -23,6 +19,10 @@ import dev.langchain4j.data.document.DocumentSplitter;
 import dev.langchain4j.data.document.splitter.DocumentSplitters;
 import dev.langchain4j.data.segment.TextSegment;
 import lombok.extern.slf4j.Slf4j;
+import nexus.io.db.activerecord.Db;
+import nexus.io.db.activerecord.Row;
+import nexus.io.jfinal.aop.Aop;
+import nexus.io.openai.token.OpenAiTokenizer;
 
 @Slf4j
 public class MaxKbSentenceService {

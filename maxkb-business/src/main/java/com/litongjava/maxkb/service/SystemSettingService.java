@@ -2,8 +2,9 @@ package com.litongjava.maxkb.service;
 
 import org.postgresql.util.PGobject;
 
-import com.litongjava.jfinal.aop.Aop;
 import com.litongjava.maxkb.dao.SystemSettingDao;
+
+import nexus.io.jfinal.aop.Aop;
 
 public class SystemSettingService {
 

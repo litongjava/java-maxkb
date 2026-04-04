@@ -6,21 +6,21 @@ import java.util.concurrent.locks.Lock;
 import org.postgresql.util.PGobject;
 
 import com.google.common.util.concurrent.Striped;
-import com.litongjava.bailian.BaiLianAiModels;
-import com.litongjava.bailian.BaiLianClient;
-import com.litongjava.chat.PlatformInput;
-import com.litongjava.chat.UniEmbeddingClient;
-import com.litongjava.db.activerecord.Db;
-import com.litongjava.db.activerecord.Row;
-import com.litongjava.db.utils.PgVectorUtils;
 import com.litongjava.maxkb.constant.MaxKbTableNames;
-import com.litongjava.openai.client.OpenAiClient;
-import com.litongjava.openai.consts.OpenAiModels;
-import com.litongjava.openai.embedding.EmbeddingResponse;
 import com.litongjava.tio.utils.crypto.Md5Utils;
 import com.litongjava.tio.utils.snowflake.SnowflakeIdUtils;
 
 import lombok.extern.slf4j.Slf4j;
+import nexus.io.bailian.BaiLianAiModels;
+import nexus.io.bailian.BaiLianClient;
+import nexus.io.chat.PlatformInput;
+import nexus.io.chat.UniEmbeddingClient;
+import nexus.io.db.activerecord.Db;
+import nexus.io.db.activerecord.Row;
+import nexus.io.db.utils.PgVectorUtils;
+import nexus.io.openai.client.OpenAiClient;
+import nexus.io.openai.consts.OpenAiModels;
+import nexus.io.openai.embedding.EmbeddingResponse;
 
 @Slf4j
 public class KbEmbeddingService {

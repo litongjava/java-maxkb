@@ -2,9 +2,10 @@ package com.litongjava.maxkb.config;
 
 import com.litongjava.maxkb.inteceptor.MaxKbAuthInterceptor;
 import com.litongjava.tio.boot.admin.consts.TioBootAdminUrls;
-import com.litongjava.tio.boot.http.interceptor.HttpInteceptorConfigure;
-import com.litongjava.tio.boot.http.interceptor.HttpInterceptorModel;
-import com.litongjava.tio.boot.server.TioBootServer;
+
+import nexus.io.tio.boot.http.interceptor.HttpInteceptorConfigure;
+import nexus.io.tio.boot.http.interceptor.HttpInterceptorModel;
+import nexus.io.tio.boot.server.TioBootServer;
 
 public class MaxKbInterceptorConfiguration {
 

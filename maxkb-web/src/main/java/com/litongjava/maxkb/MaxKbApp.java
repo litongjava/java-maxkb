@@ -5,10 +5,10 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
 
 import com.litongjava.maxkb.config.boot.MaxKbBootConfig;
-import com.litongjava.tio.boot.TioApplication;
-import com.litongjava.tio.boot.server.TioBootServer;
 
 import nexus.io.annotation.AComponentScan;
+import nexus.io.tio.boot.TioApplication;
+import nexus.io.tio.boot.server.TioBootServer;
 
 @AComponentScan("com.litongjava.maxkb.controller")
 public class MaxKbApp {

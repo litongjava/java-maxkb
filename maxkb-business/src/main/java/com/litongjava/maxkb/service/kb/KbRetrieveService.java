@@ -2,11 +2,12 @@ package com.litongjava.maxkb.service.kb;
 
 import java.util.List;
 
-import com.litongjava.db.activerecord.Db;
-import com.litongjava.db.activerecord.Row;
-import com.litongjava.jfinal.aop.Aop;
 import com.litongjava.maxkb.vo.KbRetrieveInput;
-import com.litongjava.openai.consts.OpenAiModels;
+
+import nexus.io.db.activerecord.Db;
+import nexus.io.db.activerecord.Row;
+import nexus.io.jfinal.aop.Aop;
+import nexus.io.openai.consts.OpenAiModels;
 
 public class KbRetrieveService {
 

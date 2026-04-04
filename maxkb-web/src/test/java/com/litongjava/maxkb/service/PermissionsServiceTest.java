@@ -4,10 +4,11 @@ import java.util.List;
 
 import org.junit.Test;
 
-import com.litongjava.jfinal.aop.Aop;
 import com.litongjava.maxkb.config.MaxKbDbConfig;
 import com.litongjava.tio.utils.environment.EnvUtils;
 import com.litongjava.tio.utils.json.JsonUtils;
+
+import nexus.io.jfinal.aop.Aop;
 
 public class PermissionsServiceTest {
 

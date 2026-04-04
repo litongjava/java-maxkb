@@ -2,11 +2,12 @@ package com.litongjava.maxkb.dao;
 
 import java.util.Map;
 
-import com.litongjava.db.activerecord.Db;
-import com.litongjava.db.activerecord.Row;
 import com.litongjava.maxkb.constant.MaxKbTableNames;
 import com.litongjava.maxkb.vo.ModelVo;
 import com.litongjava.tio.utils.snowflake.SnowflakeIdUtils;
+
+import nexus.io.db.activerecord.Db;
+import nexus.io.db.activerecord.Row;
 
 public class ModelDao {
 

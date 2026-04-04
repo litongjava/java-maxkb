@@ -4,8 +4,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import com.litongjava.db.activerecord.Db;
 import com.litongjava.maxkb.constant.MaxKbTableNames;
+
+import nexus.io.db.activerecord.Db;
 
 public class PermissionsService {
 

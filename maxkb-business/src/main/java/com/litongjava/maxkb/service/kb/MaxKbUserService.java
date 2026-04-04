@@ -1,9 +1,10 @@
 package com.litongjava.maxkb.service.kb;
 
-import com.litongjava.db.activerecord.Db;
-import com.litongjava.ehcache.EhCacheKit;
 import com.litongjava.maxkb.model.MaxKbModel;
 import com.litongjava.maxkb.model.MaxKbUser;
+
+import nexus.io.db.activerecord.Db;
+import nexus.io.ehcache.EhCacheKit;
 
 public class MaxKbUserService {
   public String queryUsername(Long user_id) {

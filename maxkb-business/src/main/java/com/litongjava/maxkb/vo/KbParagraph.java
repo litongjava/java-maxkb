@@ -1,10 +1,9 @@
 package com.litongjava.maxkb.vo;
 
-import com.litongjava.db.annotation.ATableName;
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import nexus.io.db.annotation.ATableName;
 
 @Data
 @NoArgsConstructor

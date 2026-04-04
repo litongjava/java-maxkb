@@ -1,8 +1,9 @@
 package com.litongjava.maxkb.dao;
 
-import com.litongjava.db.activerecord.Db;
-import com.litongjava.db.activerecord.Row;
 import com.litongjava.maxkb.model.MaxKbApplication;
+
+import nexus.io.db.activerecord.Db;
+import nexus.io.db.activerecord.Row;
 
 public class MaxKbApplicationDao {
 

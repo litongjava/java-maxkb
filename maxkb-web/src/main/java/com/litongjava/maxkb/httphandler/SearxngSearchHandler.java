@@ -1,15 +1,15 @@
 package com.litongjava.maxkb.httphandler;
 
-import com.litongjava.jfinal.aop.Aop;
 import com.litongjava.maxkb.service.spider.SearxngSearchService;
-import com.litongjava.searxng.SearxngSearchParam;
-import com.litongjava.tio.boot.http.TioRequestContext;
-import com.litongjava.tio.http.common.HttpRequest;
-import com.litongjava.tio.http.common.HttpResponse;
 import com.litongjava.tio.utils.environment.EnvUtils;
 
 import lombok.extern.slf4j.Slf4j;
+import nexus.io.jfinal.aop.Aop;
 import nexus.io.model.body.RespBodyVo;
+import nexus.io.searxng.SearxngSearchParam;
+import nexus.io.tio.boot.http.TioRequestContext;
+import nexus.io.tio.http.common.HttpRequest;
+import nexus.io.tio.http.common.HttpResponse;
 
 @Slf4j
 public class SearxngSearchHandler {

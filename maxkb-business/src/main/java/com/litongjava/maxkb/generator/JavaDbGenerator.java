@@ -2,11 +2,12 @@ package com.litongjava.maxkb.generator;
 
 import javax.sql.DataSource;
 
-import com.litongjava.db.activerecord.dialect.PostgreSqlDialect;
-import com.litongjava.db.activerecord.generator.Generator;
-import com.litongjava.db.druid.DruidPlugin;
-import com.litongjava.db.hikaricp.HikariCpPlugin;
 import com.litongjava.tio.utils.environment.EnvUtils;
+
+import nexus.io.db.activerecord.dialect.PostgreSqlDialect;
+import nexus.io.db.activerecord.generator.Generator;
+import nexus.io.db.druid.DruidPlugin;
+import nexus.io.db.hikaricp.HikariCpPlugin;
 
 public class JavaDbGenerator {
   public static String modelPackageName = "com.litongjava.maxkb.model";

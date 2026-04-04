@@ -1,7 +1,6 @@
 package com.litongjava.maxkb.model.base;
 
-import com.litongjava.db.activerecord.Model;
-
+import nexus.io.db.activerecord.Model;
 import nexus.io.model.db.IBean;
 
 /**

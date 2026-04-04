@@ -4,15 +4,15 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import com.litongjava.db.activerecord.Db;
-import com.litongjava.db.activerecord.Row;
-import com.litongjava.jfinal.aop.Aop;
 import com.litongjava.maxkb.vo.MaxKbRetrieveResult;
 import com.litongjava.maxkb.vo.ParagraphSearchResultVo;
-import com.litongjava.openai.consts.OpenAiModels;
-import com.litongjava.template.SqlTemplates;
 
 import lombok.extern.slf4j.Slf4j;
+import nexus.io.db.activerecord.Db;
+import nexus.io.db.activerecord.Row;
+import nexus.io.jfinal.aop.Aop;
+import nexus.io.openai.consts.OpenAiModels;
+import nexus.io.template.SqlTemplates;
 
 @Slf4j
 public class MaxKbParagraphRetrieveService {

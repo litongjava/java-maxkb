@@ -1,7 +1,6 @@
 package com.litongjava.maxkb.config;
 
-import com.litongjava.ehcache.EhCachePlugin;
-
+import nexus.io.ehcache.EhCachePlugin;
 import nexus.io.hook.HookCan;
 
 public class MaxKbEhCacheConfig {

@@ -4,12 +4,13 @@ import java.net.URL;
 
 import org.junit.Test;
 
-import com.litongjava.openai.chat.OpenAiChatResponse;
-import com.litongjava.openai.client.OpenAiClient;
 import com.litongjava.tio.utils.hutool.FileUtil;
 import com.litongjava.tio.utils.hutool.FilenameUtils;
 import com.litongjava.tio.utils.hutool.ResourceUtil;
 import com.litongjava.tio.utils.json.JsonUtils;
+
+import nexus.io.openai.chat.OpenAiChatResponse;
+import nexus.io.openai.client.OpenAiClient;
 
 public class DatasetDocumentSplitServiceTest {
 

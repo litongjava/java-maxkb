@@ -1,11 +1,12 @@
 package com.litongjava.maxkb.config;
 
-import com.litongjava.db.activerecord.Db;
-import com.litongjava.db.activerecord.Row;
 import com.litongjava.maxkb.constant.MaxKbTableNames;
 import com.litongjava.tio.utils.environment.EnvUtils;
 import com.litongjava.tio.utils.token.ITokenStorage;
 import com.litongjava.tio.utils.token.TokenManager;
+
+import nexus.io.db.activerecord.Db;
+import nexus.io.db.activerecord.Row;
 
 public class MaxKbTokenStoreConfig {
 

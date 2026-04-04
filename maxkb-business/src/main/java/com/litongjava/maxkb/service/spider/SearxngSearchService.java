@@ -3,14 +3,13 @@ package com.litongjava.maxkb.service.spider;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.litongjava.jfinal.aop.Aop;
-import com.litongjava.searxng.SearxngResult;
-import com.litongjava.searxng.SearxngSearchClient;
-import com.litongjava.searxng.SearxngSearchParam;
-import com.litongjava.searxng.SearxngSearchResponse;
-
+import nexus.io.jfinal.aop.Aop;
 import nexus.io.model.body.RespBodyVo;
 import nexus.io.model.web.WebPageContent;
+import nexus.io.searxng.SearxngResult;
+import nexus.io.searxng.SearxngSearchClient;
+import nexus.io.searxng.SearxngSearchParam;
+import nexus.io.searxng.SearxngSearchResponse;
 
 public class SearxngSearchService {
 

@@ -3,13 +3,14 @@ package com.litongjava.maxkb.service.kb;
 import java.util.concurrent.locks.Lock;
 
 import com.google.common.util.concurrent.Striped;
-import com.litongjava.db.activerecord.Db;
 import com.litongjava.maxkb.model.MaxKbParagraphSummaryCache;
-import com.litongjava.openai.chat.OpenAiChatResponse;
-import com.litongjava.openai.client.OpenAiClient;
-import com.litongjava.template.PromptEngine;
 import com.litongjava.tio.utils.crypto.Md5Utils;
 import com.litongjava.tio.utils.snowflake.SnowflakeIdUtils;
+
+import nexus.io.db.activerecord.Db;
+import nexus.io.openai.chat.OpenAiChatResponse;
+import nexus.io.openai.client.OpenAiClient;
+import nexus.io.template.PromptEngine;
 
 public class MaxKbParagraphSummaryService {
 

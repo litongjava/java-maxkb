@@ -5,11 +5,6 @@ import java.util.List;
 
 import org.postgresql.util.PGobject;
 
-import com.litongjava.chat.UniChatMessage;
-import com.litongjava.db.activerecord.Db;
-import com.litongjava.db.activerecord.Row;
-import com.litongjava.jfinal.aop.Aop;
-import com.litongjava.kit.PgObjectUtils;
 import com.litongjava.maxkb.constant.MaxKbTableNames;
 import com.litongjava.maxkb.model.MaxKbApplicationChat;
 import com.litongjava.maxkb.model.MaxKbApplicationChatRecord;
@@ -25,18 +20,23 @@ import com.litongjava.maxkb.vo.MaxKbDatasetSettingVo;
 import com.litongjava.maxkb.vo.MaxKbModelSetting;
 import com.litongjava.maxkb.vo.MaxKbRetrieveResult;
 import com.litongjava.maxkb.vo.ParagraphSearchResultVo;
-import com.litongjava.openai.chat.OpenAiChatRequest;
-import com.litongjava.openai.client.OpenAiClient;
-import com.litongjava.openai.consts.OpenAiConst;
-import com.litongjava.openai.consts.OpenAiModels;
-import com.litongjava.tio.core.ChannelContext;
 import com.litongjava.tio.utils.environment.EnvUtils;
 import com.litongjava.tio.utils.hutool.StrUtil;
 import com.litongjava.tio.utils.json.JsonUtils;
 import com.litongjava.tio.utils.snowflake.SnowflakeIdUtils;
 
 import lombok.extern.slf4j.Slf4j;
+import nexus.io.chat.UniChatMessage;
+import nexus.io.db.activerecord.Db;
+import nexus.io.db.activerecord.Row;
+import nexus.io.jfinal.aop.Aop;
+import nexus.io.kit.PgObjectUtils;
 import nexus.io.model.result.ResultVo;
+import nexus.io.openai.chat.OpenAiChatRequest;
+import nexus.io.openai.client.OpenAiClient;
+import nexus.io.openai.consts.OpenAiConst;
+import nexus.io.openai.consts.OpenAiModels;
+import nexus.io.tio.core.ChannelContext;
 import okhttp3.Call;
 import okhttp3.Callback;
 

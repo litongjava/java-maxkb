@@ -7,10 +7,11 @@ import java.util.Base64;
 
 import org.junit.Test;
 
-import com.litongjava.jfinal.aop.Aop;
 import com.litongjava.maxkb.MaxKbApp;
-import com.litongjava.tio.boot.testing.TioBootTest;
 import com.litongjava.tio.utils.crypto.RsaUtils;
+
+import nexus.io.jfinal.aop.Aop;
+import nexus.io.tio.boot.testing.TioBootTest;
 
 public class SystemSettingDaoTest {
 

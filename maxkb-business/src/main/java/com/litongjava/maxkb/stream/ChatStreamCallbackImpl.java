@@ -5,9 +5,6 @@ import java.util.List;
 
 import org.postgresql.util.PGobject;
 
-import com.litongjava.db.activerecord.Db;
-import com.litongjava.db.activerecord.Row;
-import com.litongjava.kit.PgObjectUtils;
 import com.litongjava.maxkb.constant.MaxKbTableNames;
 import com.litongjava.maxkb.constant.SSEConstant;
 import com.litongjava.maxkb.service.ChatStreamCallCan;
@@ -16,17 +13,20 @@ import com.litongjava.maxkb.vo.MaxKbChatRecordDetail;
 import com.litongjava.maxkb.vo.MaxKbChatStep;
 import com.litongjava.maxkb.vo.MaxKbRetrieveResult;
 import com.litongjava.maxkb.vo.MaxKbStreamChatVo;
-import com.litongjava.openai.chat.ChatResponseDelta;
-import com.litongjava.openai.chat.Choice;
-import com.litongjava.openai.chat.OpenAiChatResponse;
-import com.litongjava.tio.core.ChannelContext;
-import com.litongjava.tio.core.Tio;
-import com.litongjava.tio.http.server.util.SseEmitter;
 import com.litongjava.tio.utils.json.FastJson2Utils;
 import com.litongjava.tio.utils.json.JsonUtils;
 
 import lombok.extern.slf4j.Slf4j;
+import nexus.io.db.activerecord.Db;
+import nexus.io.db.activerecord.Row;
 import nexus.io.http.common.sse.SsePacket;
+import nexus.io.kit.PgObjectUtils;
+import nexus.io.openai.chat.ChatResponseDelta;
+import nexus.io.openai.chat.Choice;
+import nexus.io.openai.chat.OpenAiChatResponse;
+import nexus.io.tio.core.ChannelContext;
+import nexus.io.tio.core.Tio;
+import nexus.io.tio.http.server.util.SseEmitter;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;

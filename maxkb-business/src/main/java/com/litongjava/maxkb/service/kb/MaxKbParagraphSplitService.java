@@ -4,21 +4,21 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.jfinal.kit.Kv;
-import com.litongjava.db.activerecord.Db;
-import com.litongjava.db.activerecord.Row;
-import com.litongjava.jfinal.aop.Aop;
 import com.litongjava.maxkb.constant.MaxKbTableNames;
 import com.litongjava.maxkb.vo.Paragraph;
 import com.litongjava.maxkb.vo.ParagraphBatchVo;
-import com.litongjava.openai.consts.OpenAiModels;
-import com.litongjava.table.services.ApiTable;
 import com.litongjava.tio.utils.crypto.Md5Utils;
 import com.litongjava.tio.utils.hutool.FilenameUtils;
 import com.litongjava.tio.utils.snowflake.SnowflakeIdUtils;
 
 import nexus.io.db.TableInput;
 import nexus.io.db.TableResult;
+import nexus.io.db.activerecord.Db;
+import nexus.io.db.activerecord.Row;
+import nexus.io.jfinal.aop.Aop;
 import nexus.io.model.result.ResultVo;
+import nexus.io.openai.consts.OpenAiModels;
+import nexus.io.table.services.ApiTable;
 
 public class MaxKbParagraphSplitService {
 

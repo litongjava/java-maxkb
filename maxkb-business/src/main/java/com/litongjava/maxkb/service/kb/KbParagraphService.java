@@ -6,15 +6,15 @@ import java.util.UUID;
 
 import org.postgresql.util.PGobject;
 
-import com.litongjava.db.activerecord.Db;
-import com.litongjava.db.activerecord.Row;
-import com.litongjava.db.utils.PgVectorUtils;
-import com.litongjava.jfinal.aop.Aop;
 import com.litongjava.maxkb.client.RumiClient;
 import com.litongjava.maxkb.vo.KbParagraph;
 import com.litongjava.tio.utils.UUIDUtils;
 
 import lombok.extern.slf4j.Slf4j;
+import nexus.io.db.activerecord.Db;
+import nexus.io.db.activerecord.Row;
+import nexus.io.db.utils.PgVectorUtils;
+import nexus.io.jfinal.aop.Aop;
 
 @Slf4j
 public class KbParagraphService {

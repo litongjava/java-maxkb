@@ -4,19 +4,19 @@ import java.util.Arrays;
 import java.util.List;
 
 import com.jfinal.kit.Kv;
-import com.litongjava.db.activerecord.Db;
-import com.litongjava.db.activerecord.Row;
-import com.litongjava.jfinal.aop.Aop;
-import com.litongjava.kit.RowUtils;
 import com.litongjava.maxkb.constant.MaxKbTableNames;
-import com.litongjava.openai.consts.OpenAiModels;
-import com.litongjava.table.services.ApiTable;
-import com.litongjava.template.SqlTemplates;
 
 import lombok.extern.slf4j.Slf4j;
 import nexus.io.db.TableInput;
 import nexus.io.db.TableResult;
+import nexus.io.db.activerecord.Db;
+import nexus.io.db.activerecord.Row;
+import nexus.io.jfinal.aop.Aop;
+import nexus.io.kit.RowUtils;
 import nexus.io.model.result.ResultVo;
+import nexus.io.openai.consts.OpenAiModels;
+import nexus.io.table.services.ApiTable;
+import nexus.io.template.SqlTemplates;
 
 @Slf4j
 public class MaxKbApplicationHitTestService {
@@ -56,7 +56,7 @@ public class MaxKbApplicationHitTestService {
       modelName = OpenAiModels.TEXT_EMBEDDING_3_LARGE;
     }
 
-    String sql = SqlTemplates.get("kb.list_database_id_by_application_id");
+    String sql = SqlTemplates.get("kb.list_datab  ase_id_by_application_id");
     List<Long> datasetIds = Db.queryListLong(sql, applicationId);
     if (datasetIds.size() < 1) {
       return ResultVo.fail("not found database of application id:", applicationId);

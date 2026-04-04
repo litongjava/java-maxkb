@@ -2,10 +2,11 @@ package com.litongjava.maxkb.embedding;
 
 import org.junit.Test;
 
-import com.litongjava.openai.client.OpenAiClient;
-import com.litongjava.openai.embedding.EmbeddingRequest;
-import com.litongjava.openai.embedding.EmbeddingResponse;
 import com.litongjava.tio.utils.json.JsonUtils;
+
+import nexus.io.openai.client.OpenAiClient;
+import nexus.io.openai.embedding.EmbeddingRequest;
+import nexus.io.openai.embedding.EmbeddingResponse;
 
 public class JinaEmbeddingTest {
 

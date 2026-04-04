@@ -3,9 +3,10 @@ package com.litongjava.maxkb.model;
 import org.junit.Test;
 
 import com.litongjava.maxkb.config.MaxKbDbConfig;
-import com.litongjava.tio.boot.testing.TioBootTest;
 import com.litongjava.tio.utils.json.JsonUtils;
 import com.litongjava.tio.utils.snowflake.SnowflakeIdUtils;
+
+import nexus.io.tio.boot.testing.TioBootTest;
 
 public class MaxKbFileTest {
 

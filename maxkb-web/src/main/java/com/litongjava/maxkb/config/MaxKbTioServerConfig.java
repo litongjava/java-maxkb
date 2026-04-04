@@ -1,7 +1,8 @@
 package com.litongjava.maxkb.config;
 
 import com.litongjava.maxkb.handler.GlobalExceptionHandler;
-import com.litongjava.tio.boot.server.TioBootServer;
+
+import nexus.io.tio.boot.server.TioBootServer;
 
 public class MaxKbTioServerConfig {
 

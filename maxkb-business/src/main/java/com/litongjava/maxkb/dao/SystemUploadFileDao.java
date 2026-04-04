@@ -1,7 +1,7 @@
 package com.litongjava.maxkb.dao;
 
-import com.litongjava.db.activerecord.Db;
-import com.litongjava.db.activerecord.Row;
+import nexus.io.db.activerecord.Db;
+import nexus.io.db.activerecord.Row;
 
 public class SystemUploadFileDao {
   public static final String tableName = "max_kb_file";

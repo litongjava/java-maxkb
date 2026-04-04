@@ -1,10 +1,10 @@
 package com.litongjava.maxkb.controller;
 
-import com.litongjava.jfinal.aop.Aop;
 import com.litongjava.maxkb.service.SystemFileService;
 import com.litongjava.maxkb.service.kb.MaxKbDocumentSplitService;
 
 import nexus.io.annotation.RequestPath;
+import nexus.io.jfinal.aop.Aop;
 import nexus.io.model.result.ResultVo;
 import nexus.io.model.upload.UploadFile;
 import nexus.io.model.upload.UploadResult;

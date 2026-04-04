@@ -4,9 +4,10 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.litongjava.db.activerecord.Db;
-import com.litongjava.db.activerecord.Row;
 import com.litongjava.maxkb.vo.MaxKbRetrievalResult;
+
+import nexus.io.db.activerecord.Db;
+import nexus.io.db.activerecord.Row;
 
 public class KbRetrievalService {
 

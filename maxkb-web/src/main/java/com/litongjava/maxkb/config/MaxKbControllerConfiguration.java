@@ -26,8 +26,9 @@ import com.litongjava.maxkb.controller.ApiTeamController;
 import com.litongjava.maxkb.controller.ApiUserController;
 import com.litongjava.maxkb.controller.ApiUserManage;
 import com.litongjava.maxkb.controller.ApiValidController;
-import com.litongjava.tio.boot.http.handler.controller.TioBootHttpControllerRouter;
-import com.litongjava.tio.boot.server.TioBootServer;
+
+import nexus.io.tio.boot.http.handler.controller.TioBootHttpControllerRouter;
+import nexus.io.tio.boot.server.TioBootServer;
 
 public class MaxKbControllerConfiguration {
 

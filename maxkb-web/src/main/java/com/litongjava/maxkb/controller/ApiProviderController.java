@@ -6,14 +6,14 @@ import java.util.List;
 
 import com.jfinal.kit.Kv;
 import com.litongjava.maxkb.enumeration.ModelProvider;
-import com.litongjava.tio.boot.http.TioRequestContext;
-import com.litongjava.tio.http.common.HttpResponse;
 import com.litongjava.tio.utils.hutool.FileUtil;
 import com.litongjava.tio.utils.hutool.ResourceUtil;
 
 import lombok.extern.slf4j.Slf4j;
 import nexus.io.annotation.RequestPath;
 import nexus.io.model.result.ResultVo;
+import nexus.io.tio.boot.http.TioRequestContext;
+import nexus.io.tio.http.common.HttpResponse;
 
 @RequestPath("/api/provider")
 @Slf4j
