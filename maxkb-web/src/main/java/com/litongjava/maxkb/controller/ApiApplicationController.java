@@ -7,25 +7,26 @@ import java.util.List;
 import java.util.Map;
 
 import com.alibaba.fastjson2.JSONObject;
-import com.litongjava.annotation.Delete;
-import com.litongjava.annotation.Get;
-import com.litongjava.annotation.Post;
-import com.litongjava.annotation.Put;
-import com.litongjava.annotation.RequestPath;
-import com.litongjava.db.TableInput;
 import com.litongjava.jfinal.aop.Aop;
 import com.litongjava.maxkb.service.kb.MaxKbApplicationAccessTokenService;
 import com.litongjava.maxkb.service.kb.MaxKbApplicationCharRecordService;
 import com.litongjava.maxkb.service.kb.MaxKbApplicationHitTestService;
 import com.litongjava.maxkb.service.kb.MaxKbApplicationService;
 import com.litongjava.maxkb.vo.MaxKbApplicationVo;
-import com.litongjava.model.result.ResultVo;
 import com.litongjava.table.constants.Operators;
 import com.litongjava.tio.boot.http.TioRequestContext;
 import com.litongjava.tio.http.common.HttpRequest;
 import com.litongjava.tio.utils.hutool.StrUtil;
 import com.litongjava.tio.utils.json.FastJson2Utils;
 import com.litongjava.tio.utils.json.JsonUtils;
+
+import nexus.io.annotation.Delete;
+import nexus.io.annotation.Get;
+import nexus.io.annotation.Post;
+import nexus.io.annotation.Put;
+import nexus.io.annotation.RequestPath;
+import nexus.io.db.TableInput;
+import nexus.io.model.result.ResultVo;
 
 @RequestPath("/api/application")
 public class ApiApplicationController {

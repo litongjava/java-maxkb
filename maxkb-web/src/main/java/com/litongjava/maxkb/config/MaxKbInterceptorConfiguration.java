@@ -1,7 +1,7 @@
 package com.litongjava.maxkb.config;
 
 import com.litongjava.maxkb.inteceptor.MaxKbAuthInterceptor;
-import com.litongjava.tio.boot.admin.costants.TioBootAdminUrls;
+import com.litongjava.tio.boot.admin.consts.TioBootAdminUrls;
 import com.litongjava.tio.boot.http.interceptor.HttpInteceptorConfigure;
 import com.litongjava.tio.boot.http.interceptor.HttpInterceptorModel;
 import com.litongjava.tio.boot.server.TioBootServer;

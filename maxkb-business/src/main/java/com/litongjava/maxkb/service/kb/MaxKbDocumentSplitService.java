@@ -7,8 +7,6 @@ import java.util.concurrent.ExecutionException;
 
 import com.jfinal.kit.Kv;
 import com.litongjava.jfinal.aop.Aop;
-import com.litongjava.model.result.ResultVo;
-import com.litongjava.model.upload.UploadResult;
 import com.litongjava.openai.token.OpenAiTokenizer;
 import com.litongjava.tio.utils.environment.EnvUtils;
 
@@ -17,6 +15,8 @@ import dev.langchain4j.data.document.DocumentSplitter;
 import dev.langchain4j.data.document.splitter.DocumentSplitters;
 import dev.langchain4j.data.segment.TextSegment;
 import lombok.extern.slf4j.Slf4j;
+import nexus.io.model.result.ResultVo;
+import nexus.io.model.upload.UploadResult;
 
 /**
  * MaxKbDocumentSplitService

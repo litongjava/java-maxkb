@@ -21,8 +21,6 @@ import org.apache.pdfbox.rendering.PDFRenderer;
 
 import com.google.common.util.concurrent.Striped;
 import com.jfinal.template.Engine;
-import com.litongjava.db.TableInput;
-import com.litongjava.db.TableResult;
 import com.litongjava.db.activerecord.Db;
 import com.litongjava.db.activerecord.Row;
 import com.litongjava.maxkb.constant.MaxKbTableNames;
@@ -36,6 +34,8 @@ import com.litongjava.tio.utils.crypto.Md5Utils;
 import com.litongjava.tio.utils.hutool.FileUtil;
 
 import lombok.extern.slf4j.Slf4j;
+import nexus.io.db.TableInput;
+import nexus.io.db.TableResult;
 
 @Slf4j
 public class MaxKbDocumentConvertService {

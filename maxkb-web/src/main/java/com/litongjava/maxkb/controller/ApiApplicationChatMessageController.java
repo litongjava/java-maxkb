@@ -1,11 +1,8 @@
 package com.litongjava.maxkb.controller;
 
-import com.litongjava.annotation.Post;
-import com.litongjava.annotation.RequestPath;
 import com.litongjava.jfinal.aop.Aop;
 import com.litongjava.maxkb.service.kb.MaxKbApplicationChatMessageService;
 import com.litongjava.maxkb.vo.MaxKbChatRequestVo;
-import com.litongjava.model.result.ResultVo;
 import com.litongjava.tio.boot.http.TioRequestContext;
 import com.litongjava.tio.core.Tio;
 import com.litongjava.tio.http.common.HeaderName;
@@ -15,6 +12,10 @@ import com.litongjava.tio.http.common.HttpResponse;
 import com.litongjava.tio.http.server.util.CORSUtils;
 import com.litongjava.tio.server.ServerChannelContext;
 import com.litongjava.tio.utils.json.JsonUtils;
+
+import nexus.io.annotation.Post;
+import nexus.io.annotation.RequestPath;
+import nexus.io.model.result.ResultVo;
 
 @RequestPath("/api/application/chat_message")
 public class ApiApplicationChatMessageController {

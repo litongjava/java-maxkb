@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.jfinal.kit.Kv;
-import com.litongjava.db.TableInput;
-import com.litongjava.db.TableResult;
 import com.litongjava.db.activerecord.Db;
 import com.litongjava.db.activerecord.Row;
 import com.litongjava.jfinal.aop.Aop;
@@ -15,10 +13,13 @@ import com.litongjava.maxkb.dao.MaxKbDatasetDao;
 import com.litongjava.maxkb.model.MaxKbDataset;
 import com.litongjava.maxkb.vo.KbDatasetModel;
 import com.litongjava.maxkb.vo.ResultPage;
-import com.litongjava.model.page.Page;
-import com.litongjava.model.result.ResultVo;
 import com.litongjava.table.constants.Operators;
 import com.litongjava.table.services.ApiTable;
+
+import nexus.io.db.TableInput;
+import nexus.io.db.TableResult;
+import nexus.io.model.page.Page;
+import nexus.io.model.result.ResultVo;
 
 public class MaxKbDatasetService {
 

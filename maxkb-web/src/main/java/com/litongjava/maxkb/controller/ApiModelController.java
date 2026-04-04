@@ -1,18 +1,19 @@
 package com.litongjava.maxkb.controller;
 
-import com.litongjava.annotation.Delete;
-import com.litongjava.annotation.EnableCORS;
-import com.litongjava.annotation.Get;
-import com.litongjava.annotation.Post;
-import com.litongjava.annotation.Put;
-import com.litongjava.annotation.RequestPath;
 import com.litongjava.jfinal.aop.Aop;
 import com.litongjava.maxkb.service.kb.MaxKbModelService;
 import com.litongjava.maxkb.vo.ModelVo;
-import com.litongjava.model.result.ResultVo;
 import com.litongjava.tio.boot.http.TioRequestContext;
 import com.litongjava.tio.http.common.HttpRequest;
 import com.litongjava.tio.utils.json.FastJson2Utils;
+
+import nexus.io.annotation.Delete;
+import nexus.io.annotation.EnableCORS;
+import nexus.io.annotation.Get;
+import nexus.io.annotation.Post;
+import nexus.io.annotation.Put;
+import nexus.io.annotation.RequestPath;
+import nexus.io.model.result.ResultVo;
 
 @RequestPath("/api/model")
 @EnableCORS

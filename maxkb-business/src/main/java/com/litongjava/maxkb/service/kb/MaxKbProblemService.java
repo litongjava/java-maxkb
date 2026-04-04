@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.jfinal.kit.Kv;
-import com.litongjava.db.TableInput;
-import com.litongjava.db.TableResult;
 import com.litongjava.db.activerecord.Db;
 import com.litongjava.db.activerecord.Row;
 import com.litongjava.kit.RowUtils;
@@ -13,10 +11,13 @@ import com.litongjava.maxkb.constant.MaxKbTableNames;
 import com.litongjava.maxkb.vo.MaxKbParagraphId;
 import com.litongjava.maxkb.vo.ProbrolemCreateBatch;
 import com.litongjava.maxkb.vo.ResultPage;
-import com.litongjava.model.page.Page;
-import com.litongjava.model.result.ResultVo;
 import com.litongjava.table.services.ApiTable;
 import com.litongjava.tio.utils.snowflake.SnowflakeIdUtils;
+
+import nexus.io.db.TableInput;
+import nexus.io.db.TableResult;
+import nexus.io.model.page.Page;
+import nexus.io.model.result.ResultVo;
 
 public class MaxKbProblemService {
 

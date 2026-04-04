@@ -9,13 +9,14 @@ import java.nio.file.Paths;
 import com.litongjava.db.activerecord.Row;
 import com.litongjava.jfinal.aop.Aop;
 import com.litongjava.maxkb.dao.SystemUploadFileDao;
-import com.litongjava.model.upload.UploadFile;
-import com.litongjava.model.upload.UploadResult;
 import com.litongjava.tio.utils.crypto.Md5Utils;
 import com.litongjava.tio.utils.environment.EnvUtils;
 import com.litongjava.tio.utils.hutool.FileUtil;
 import com.litongjava.tio.utils.hutool.FilenameUtils;
 import com.litongjava.tio.utils.snowflake.SnowflakeIdUtils;
+
+import nexus.io.model.upload.UploadFile;
+import nexus.io.model.upload.UploadResult;
 
 public class SystemFileService {
 

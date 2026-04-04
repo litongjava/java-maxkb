@@ -21,12 +21,12 @@ import com.litongjava.openai.chat.Choice;
 import com.litongjava.openai.chat.OpenAiChatResponse;
 import com.litongjava.tio.core.ChannelContext;
 import com.litongjava.tio.core.Tio;
-import com.litongjava.tio.http.common.sse.SsePacket;
 import com.litongjava.tio.http.server.util.SseEmitter;
 import com.litongjava.tio.utils.json.FastJson2Utils;
 import com.litongjava.tio.utils.json.JsonUtils;
 
 import lombok.extern.slf4j.Slf4j;
+import nexus.io.http.common.sse.SsePacket;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;

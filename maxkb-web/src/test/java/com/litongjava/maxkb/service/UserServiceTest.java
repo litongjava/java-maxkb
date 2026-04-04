@@ -4,9 +4,10 @@ import org.junit.Test;
 
 import com.litongjava.jfinal.aop.Aop;
 import com.litongjava.maxkb.config.MaxKbDbConfig;
-import com.litongjava.model.result.ResultVo;
 import com.litongjava.tio.utils.environment.EnvUtils;
 import com.litongjava.tio.utils.json.JsonUtils;
+
+import nexus.io.model.result.ResultVo;
 
 public class UserServiceTest {
 

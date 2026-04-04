@@ -1,10 +1,11 @@
 package com.litongjava.maxkb.handler;
 
-import com.litongjava.model.result.ResultVo;
 import com.litongjava.tio.boot.exception.TioBootExceptionHandler;
 import com.litongjava.tio.core.ChannelContext;
 import com.litongjava.tio.http.common.HttpRequest;
 import com.litongjava.tio.websocket.common.WebSocketRequest;
+
+import nexus.io.model.result.ResultVo;
 
 public class GlobalExceptionHandler implements TioBootExceptionHandler {
 

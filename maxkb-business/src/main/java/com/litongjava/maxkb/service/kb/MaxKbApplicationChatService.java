@@ -8,8 +8,9 @@ import com.litongjava.kit.PgObjectUtils;
 import com.litongjava.maxkb.model.MaxKbApplicationChat;
 import com.litongjava.maxkb.model.MaxKbApplicationTempSetting;
 import com.litongjava.maxkb.vo.MaxKbApplicationVo;
-import com.litongjava.model.result.ResultVo;
 import com.litongjava.tio.utils.snowflake.SnowflakeIdUtils;
+
+import nexus.io.model.result.ResultVo;
 
 public class MaxKbApplicationChatService {
 

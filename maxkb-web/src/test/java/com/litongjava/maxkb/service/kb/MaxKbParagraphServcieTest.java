@@ -5,9 +5,10 @@ import org.junit.Test;
 import com.litongjava.jfinal.aop.Aop;
 import com.litongjava.maxkb.config.boot.MaxKbBootConfig;
 import com.litongjava.maxkb.vo.Paragraph;
-import com.litongjava.model.result.ResultVo;
 import com.litongjava.tio.boot.testing.TioBootTest;
 import com.litongjava.tio.utils.json.JsonUtils;
+
+import nexus.io.model.result.ResultVo;
 
 public class MaxKbParagraphServcieTest {
 

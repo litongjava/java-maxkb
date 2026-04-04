@@ -1,8 +1,9 @@
 package com.litongjava.maxkb.config;
 
-import com.litongjava.hook.HookCan;
 import com.litongjava.maxkb.playwright.PlaywrightBrowser;
 import com.litongjava.tio.utils.environment.EnvUtils;
+
+import nexus.io.hook.HookCan;
 
 public class MaxKbPlaywrightConfig {
 

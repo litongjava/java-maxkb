@@ -6,10 +6,11 @@ import java.util.List;
 import com.jfinal.kit.Kv;
 import com.litongjava.jfinal.aop.Aop;
 import com.litongjava.maxkb.service.llm.GeminiService;
-import com.litongjava.model.web.WebPageContent;
 import com.litongjava.template.PromptEngine;
 import com.litongjava.tio.utils.json.JsonUtils;
 import com.litongjava.tio.utils.tag.TagUtils;
+
+import nexus.io.model.web.WebPageContent;
 
 // @Slf4j
 public class AiRankerService {

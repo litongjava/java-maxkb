@@ -1,7 +1,7 @@
 package com.litongjava.maxkb.controller;
 
-import com.litongjava.annotation.RequestPath;
-import com.litongjava.model.result.ResultVo;
+import nexus.io.annotation.RequestPath;
+import nexus.io.model.result.ResultVo;
 
 @RequestPath("/api/auth/OIDC")
 public class ApiAuthOIDCController {

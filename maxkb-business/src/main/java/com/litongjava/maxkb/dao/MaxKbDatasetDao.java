@@ -1,12 +1,13 @@
 package com.litongjava.maxkb.dao;
 
 import com.jfinal.kit.Kv;
-import com.litongjava.db.TableInput;
-import com.litongjava.db.TableResult;
 import com.litongjava.db.activerecord.Row;
 import com.litongjava.maxkb.constant.MaxKbTableNames;
 import com.litongjava.maxkb.vo.KbDatasetModel;
 import com.litongjava.table.services.ApiTable;
+
+import nexus.io.db.TableInput;
+import nexus.io.db.TableResult;
 
 public class MaxKbDatasetDao {
 

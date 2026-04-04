@@ -1,6 +1,5 @@
 package com.litongjava.maxkb.config.boot;
 
-import com.litongjava.context.BootConfiguration;
 import com.litongjava.maxkb.config.MaxKbDbConfig;
 import com.litongjava.maxkb.config.MaxKbEhCacheConfig;
 import com.litongjava.maxkb.config.MaxKbEnjoyEngineConfig;
@@ -11,6 +10,8 @@ import com.litongjava.maxkb.config.MaxKbPlaywrightConfig;
 import com.litongjava.maxkb.config.MaxKbQuartzConfig;
 import com.litongjava.maxkb.config.MaxKbTioServerConfig;
 import com.litongjava.maxkb.config.MaxKbTokenStoreConfig;
+
+import nexus.io.context.BootConfiguration;
 
 public class MaxKbBootConfig implements BootConfiguration {
 

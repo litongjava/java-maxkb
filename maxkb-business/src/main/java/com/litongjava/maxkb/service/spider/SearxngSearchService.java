@@ -4,12 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.litongjava.jfinal.aop.Aop;
-import com.litongjava.model.body.RespBodyVo;
-import com.litongjava.model.web.WebPageContent;
 import com.litongjava.searxng.SearxngResult;
 import com.litongjava.searxng.SearxngSearchClient;
 import com.litongjava.searxng.SearxngSearchParam;
 import com.litongjava.searxng.SearxngSearchResponse;
+
+import nexus.io.model.body.RespBodyVo;
+import nexus.io.model.web.WebPageContent;
 
 public class SearxngSearchService {
 

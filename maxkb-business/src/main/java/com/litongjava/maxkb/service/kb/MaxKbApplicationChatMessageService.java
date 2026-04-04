@@ -25,7 +25,6 @@ import com.litongjava.maxkb.vo.MaxKbDatasetSettingVo;
 import com.litongjava.maxkb.vo.MaxKbModelSetting;
 import com.litongjava.maxkb.vo.MaxKbRetrieveResult;
 import com.litongjava.maxkb.vo.ParagraphSearchResultVo;
-import com.litongjava.model.result.ResultVo;
 import com.litongjava.openai.chat.OpenAiChatRequest;
 import com.litongjava.openai.client.OpenAiClient;
 import com.litongjava.openai.consts.OpenAiConst;
@@ -37,6 +36,7 @@ import com.litongjava.tio.utils.json.JsonUtils;
 import com.litongjava.tio.utils.snowflake.SnowflakeIdUtils;
 
 import lombok.extern.slf4j.Slf4j;
+import nexus.io.model.result.ResultVo;
 import okhttp3.Call;
 import okhttp3.Callback;
 

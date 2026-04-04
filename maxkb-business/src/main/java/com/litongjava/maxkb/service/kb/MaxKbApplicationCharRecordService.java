@@ -13,9 +13,10 @@ import com.litongjava.db.activerecord.Row;
 import com.litongjava.maxkb.constant.MaxKbTableNames;
 import com.litongjava.maxkb.vo.MaxKbChatRecordDetail;
 import com.litongjava.maxkb.vo.ParagraphSearchResultVo;
-import com.litongjava.model.result.ResultVo;
 import com.litongjava.tio.utils.hutool.StrUtil;
 import com.litongjava.tio.utils.json.JsonUtils;
+
+import nexus.io.model.result.ResultVo;
 
 public class MaxKbApplicationCharRecordService {
 

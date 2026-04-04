@@ -6,9 +6,10 @@ import com.litongjava.jfinal.aop.Aop;
 import com.litongjava.maxkb.config.MaxKbDbConfig;
 import com.litongjava.maxkb.service.kb.MaxKbApplicationChatMessageService;
 import com.litongjava.maxkb.vo.MaxKbChatRequestVo;
-import com.litongjava.model.result.ResultVo;
 import com.litongjava.tio.boot.testing.TioBootTest;
 import com.litongjava.tio.utils.json.JsonUtils;
+
+import nexus.io.model.result.ResultVo;
 
 public class MaxKbApplicationChatMessageServiceTest {
 

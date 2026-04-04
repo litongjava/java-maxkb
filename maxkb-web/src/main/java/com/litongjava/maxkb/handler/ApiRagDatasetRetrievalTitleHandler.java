@@ -6,7 +6,6 @@ import com.litongjava.jfinal.aop.Aop;
 import com.litongjava.maxkb.service.api.MaxKbRagDatasetRetrievalService;
 import com.litongjava.maxkb.vo.ApiRagDatasetRetrievalRequest;
 import com.litongjava.maxkb.vo.MaxKbRetrievalResult;
-import com.litongjava.model.result.ResultVo;
 import com.litongjava.tio.boot.http.TioRequestContext;
 import com.litongjava.tio.http.common.HttpRequest;
 import com.litongjava.tio.http.common.HttpResponse;
@@ -15,6 +14,7 @@ import com.litongjava.tio.utils.hutool.StrUtil;
 import com.litongjava.tio.utils.json.JsonUtils;
 
 import lombok.extern.slf4j.Slf4j;
+import nexus.io.model.result.ResultVo;
 
 @Slf4j
 public class ApiRagDatasetRetrievalTitleHandler {

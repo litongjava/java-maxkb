@@ -1,8 +1,9 @@
 package com.litongjava.maxkb.controller;
 
 import com.jfinal.kit.Kv;
-import com.litongjava.annotation.RequestPath;
-import com.litongjava.model.result.ResultVo;
+
+import nexus.io.annotation.RequestPath;
+import nexus.io.model.result.ResultVo;
 
 @RequestPath("/api/profile")
 public class ApiProfileController {
