@@ -3,7 +3,7 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
-    <groupId>com.litongjava</groupId>
+    <groupId>nexus.io</groupId>
     <artifactId>java-maxkb</artifactId>
     <version>1.0.4</version>
   </parent>
@@ -26,9 +26,9 @@
 
   <dependencies>
     <dependency>
-      <groupId>com.litongjava</groupId>
+      <groupId>nexus.io</groupId>
       <artifactId>tio-boot-admin-web</artifactId>
-      <version>2.1.0</version>
+      <version>2.1.2</version>
     </dependency>
 
     <dependency>
