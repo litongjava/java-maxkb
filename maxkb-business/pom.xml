@@ -12,23 +12,13 @@
   <name>maxkb-business</name>
 
   <properties>
-    <!-- 项目属性 -->
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <!-- 版本属性 -->
-    <lombok-version>1.18.30</lombok-version>
-    <fastjson2.version>2.0.52</fastjson2.version>
-
-    <hotswap-classloader.version>1.2.6</hotswap-classloader.version>
-    <tio-boot.version>2.0.6</tio-boot.version>
-    <jfinal-aop.version>1.3.8</jfinal-aop.version>
-
   </properties>
 
   <dependencies>
     <dependency>
       <groupId>nexus.io</groupId>
       <artifactId>tio-boot-admin-web</artifactId>
-      <version>2.1.2</version>
+      <version>${tio-boot.version}</version>
     </dependency>
 
     <dependency>
