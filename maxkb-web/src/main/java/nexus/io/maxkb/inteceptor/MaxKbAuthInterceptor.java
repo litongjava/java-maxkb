@@ -35,9 +35,17 @@ public class MaxKbAuthInterceptor implements HttpRequestInterceptor {
       Pattern.compile("/api/application/\\d+/chat/\\d+/context(/compact)?"),
       Pattern.compile("/api/application/\\d+/chat/client/\\d+(/\\d+)?"),
       Pattern.compile("/api/application/\\d+/chat/\\d+/chat_record/\\d+/\\d+"),
-      Pattern.compile("/api/application/\\d+/chat/\\d+/chat_record/\\d+(/vote)?")};
+      Pattern.compile("/api/application/\\d+/chat/\\d+/chat_record/\\d+(/vote)?"),
+      Pattern.compile("/api/application/\\d+/document/\\d+/preview")};
 
   private static final Pattern RESOURCE_PATH = Pattern.compile("^/api/(dataset|application|model)/(\\d+)(/.*)?$");
+
+  /**
+   * 文档全文预览与下载原文件：预览链接不需要登录，按分享链接对待，
+   * 能否看到内容由服务层按「文档是否属于该应用关联的知识库」判断。
+   */
+  private static final Pattern DOCUMENT_PREVIEW_PATH = Pattern
+      .compile("/api/application/\\d+/document/\\d+/(preview_content|file)");
 
   /** Paths that carry an application id directly under /api/application. */
   private static final Pattern APPLICATION_PATH = Pattern.compile("^/api/application/(\\d+)(/.*)?$");
@@ -93,6 +101,16 @@ public class MaxKbAuthInterceptor implements HttpRequestInterceptor {
 
     MaxKbAuthService authService = Aop.get(MaxKbAuthService.class);
     Long userId = authService.getIdByToken(authorization);
+    String path = requestLine.getPath();
+
+    // 文档预览按分享链接处理：没有登录令牌也放行，登录与否得到的结果一致。
+    // 带了有效令牌时仍然记下身份，方便日志与审计。
+    if (isDocumentPreviewPath(path)) {
+      if (userId != null) {
+        TioRequestContext.setUserId(userId);
+      }
+      return null;
+    }
 
     if (userId == null) {
       HttpResponse response = TioRequestContext.getResponse();
@@ -117,7 +135,6 @@ public class MaxKbAuthInterceptor implements HttpRequestInterceptor {
       }
     }
 
-    String path = requestLine.getPath();
     if (requiresAdministrator(path) && (!member || !"ADMIN".equalsIgnoreCase(account.getStr("role")))) {
       return deny(HttpResponseStatus.C403);
     }
@@ -188,6 +205,11 @@ public class MaxKbAuthInterceptor implements HttpRequestInterceptor {
       }
     }
     return false;
+  }
+
+  /** 文档预览与下载原文件的路径，这两个路径不要求登录。 */
+  private boolean isDocumentPreviewPath(String path) {
+    return DOCUMENT_PREVIEW_PATH.matcher(path).matches();
   }
 
   private boolean requiresAdministrator(String path) {

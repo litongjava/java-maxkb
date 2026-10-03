@@ -66,6 +66,11 @@ public class MaxKbApplicationChatMessageService {
     if (!ApplicationAccess.canChat(caller, application_id)) {
       return ResultVo.fail("应用已停用或无权访问");
     }
+    // 分享页访客按公开访问链接上配置的当日次数限制
+    String refuseReason = ApplicationAccess.refuseReason(caller, application_id);
+    if (refuseReason != null) {
+      return ResultVo.fail(refuseReason);
+    }
     Integer chat_type = record.getInt("chat_type");
     log.info("application_id:{},chat_type:{}", application_id, chat_type);
 
@@ -126,6 +131,7 @@ public class MaxKbApplicationChatMessageService {
           event -> nexus.io.tio.http.server.util.SseEmitter.pushSSEChunk(channelContext, "agent_status", event.toJSONString()));
       maxKbSearchStep.setContext(context.metadata());
       chatWichApplication(channelContext, quesiton, applicationVo, chatId, messageId, maxKbSearchStep, context.messages());
+      ApplicationAccess.countQuestion(caller, application_id);
       started = true;
 
       return ResultVo.ok("");

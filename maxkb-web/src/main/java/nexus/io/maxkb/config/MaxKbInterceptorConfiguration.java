@@ -22,6 +22,9 @@ public class MaxKbInterceptorConfiguration {
 
     model.addAllowUrls("/api/profile", "/api/application/authentication");
 
+    // 浮窗脚本由第三方页面直接引入，没有本地登录令牌
+    model.addAllowUrls("/api/application/embed");
+
     model.addAllowUrls("/api/v1/search", "/api/display/info", "/api/auth/types", "/api/qr_type");
     //
     HttpInteceptorConfigure configure = new HttpInteceptorConfigure();

@@ -8,8 +8,8 @@ import nexus.io.model.result.ResultVo;
 public class ApiDisplayController {
 
   public ResultVo info() {
-    String title = "MaxKB";
-    String slogan = "欢迎使用 MaxKB 智能知识库问答系统";
+    String title = "MossKB";
+    String slogan = "欢迎使用 MossKB 智能知识库问答系统";
     String userManualUrl = "https://maxkb.cn/docs/";
     String forumUrl = "https://bbs.fit2cloud.com/c/mk/11";
     String projectUrl = "https://github.com/1Panel-dev/MaxKB";

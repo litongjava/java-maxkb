@@ -11,6 +11,7 @@ import nexus.io.db.TableInput;
 import nexus.io.jfinal.aop.Aop;
 import nexus.io.maxkb.service.kb.MaxKbApplicationAccessTokenService;
 import nexus.io.maxkb.service.kb.MaxKbApplicationCharRecordService;
+import nexus.io.maxkb.service.kb.MaxKbApplicationEmbedService;
 import nexus.io.maxkb.service.kb.MaxKbApplicationHitTestService;
 import nexus.io.maxkb.service.kb.MaxKbApplicationService;
 import nexus.io.maxkb.service.kb.MaxKbApplicationStatisticsService;
@@ -19,6 +20,8 @@ import nexus.io.model.result.ResultVo;
 import nexus.io.table.constants.Operators;
 import nexus.io.tio.boot.http.TioRequestContext;
 import nexus.io.tio.http.common.HttpRequest;
+import nexus.io.tio.http.common.HttpResponse;
+import nexus.io.tio.http.server.util.Resps;
 import nexus.io.tio.utils.hutool.StrUtil;
 import nexus.io.tio.utils.json.FastJson2Utils;
 import nexus.io.tio.utils.json.JsonUtils;
@@ -96,6 +99,28 @@ public class ApiApplicationController {
         body(request));
   }
 
+  @Get("/{applicationId}/document/{documentId}/preview")
+  public ResultVo previewDocument(Long applicationId, Long documentId, HttpRequest request) {
+    Long clientId = TioRequestContext.getUserIdLong();
+    return Aop.get(nexus.io.maxkb.service.kb.MaxKbDocumentService.class).preview(clientId, applicationId, documentId,
+        request.getLong("paragraph_id"));
+  }
+
+  /** 文档全文预览：按文件类型返回预览方式与正文，无原文件时退回分段正文；预览链接不需要登录。 */
+  @Get("/{applicationId}/document/{documentId}/preview_content")
+  public ResultVo previewDocumentContent(Long applicationId, Long documentId) {
+    return Aop.get(nexus.io.maxkb.service.kb.MaxKbDocumentPreviewService.class).content(applicationId, documentId);
+  }
+
+  /** 文档原文件：默认按 inline 输出用于在线预览，download=true 时按附件下载。 */
+  @Get("/{applicationId}/document/{documentId}/file")
+  public HttpResponse previewDocumentFile(Long applicationId, Long documentId, HttpRequest request) {
+    String download = request.getParam("download");
+    boolean asAttachment = "true".equalsIgnoreCase(download) || "1".equals(download);
+    return Aop.get(nexus.io.maxkb.service.kb.MaxKbDocumentPreviewService.class).file(applicationId, documentId,
+        asAttachment, request);
+  }
+
   @Get("/{applicationId}/statistics/chat_record_aggregate_trend")
   public ResultVo statisticsOfCharRecordAggreagteTrend(Long applicationId, String start_time, String end_time) {
     return Aop.get(MaxKbApplicationStatisticsService.class).chatRecordAggregateTrend(TioRequestContext.getUserIdLong(),
@@ -155,9 +180,20 @@ public class ApiApplicationController {
     return Aop.get(MaxKbApplicationHitTestService.class).hitTest(userId, applicationId, query_text, similarity, top_number, search_mode);
   }
 
+  /**
+   * 浮窗嵌入：返回一段脚本，第三方页面引入后在右下角挂出对话入口。
+   * 脚本按站点地址拼出对话页地址，并带上编排声明的接口入参。
+   */
+  @Get("/embed")
+  public HttpResponse embed(HttpRequest request) {
+    String protocol = request.getParam("protocol");
+    String host = request.getParam("host");
+    Long token = longParam(request, "token");
+    return Resps.js(request, Aop.get(MaxKbApplicationEmbedService.class).script(protocol, host, token, request.getParam()));
+  }
+
   @Post("/authentication")
-  public ResultVo authentication(HttpRequest request) {
-    String authorization = request.getAuthorization();
+  public ResultVo authentication(HttpRequest request) {    String authorization = request.getAuthorization();
     String bodyString = request.getBodyString();
     if (StrUtil.isBlank(bodyString)) {
       return ResultVo.fail();
@@ -179,6 +215,19 @@ public class ApiApplicationController {
   private JSONObject body(HttpRequest request) {
     String bodyString = request.getBodyString();
     return StrUtil.isBlank(bodyString) ? new JSONObject() : FastJson2Utils.parseObject(bodyString);
+  }
+
+  /** 查询串里的整型参数：缺省或不是数字时返回 null，由调用方给出默认行为。 */
+  private Long longParam(HttpRequest request, String name) {
+    String value = request.getParam(name);
+    if (StrUtil.isBlank(value)) {
+      return null;
+    }
+    try {
+      return Long.valueOf(value.trim());
+    } catch (NumberFormatException e) {
+      return null;
+    }
   }
 
 }

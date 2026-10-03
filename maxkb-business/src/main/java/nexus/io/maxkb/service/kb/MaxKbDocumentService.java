@@ -1,5 +1,6 @@
 package nexus.io.maxkb.service.kb;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.jfinal.kit.Kv;
@@ -19,6 +20,46 @@ import nexus.io.table.services.ApiTable;
 
 @Slf4j
 public class MaxKbDocumentService {
+
+  /** 预览一次最多返回的分段数，避免超长文档把整篇正文发给浏览器。 */
+  private static final int PREVIEW_PARAGRAPH_LIMIT = 1000;
+
+  /** 预览一次最多返回的正文字符数，达到上限后只保留前面的分段。 */
+  private static final int PREVIEW_CHAR_LIMIT = 200_000;
+
+  /**
+   * 文档必须同时属于该应用关联的知识库，访客才看不到未关联文档的内容。
+   */
+  private static final String FIND_APPLICATION_DOCUMENT = """
+      select d.id,
+             d.name,
+             d.type,
+             d.dataset_id,
+             d.char_length,
+             d.paragraph_count,
+             s.name as dataset_name
+        from max_kb_document d
+        join max_kb_application_dataset_mapping m on m.dataset_id = d.dataset_id
+   left join max_kb_dataset s on s.id = d.dataset_id
+       where m.application_id = ?
+         and d.id = ?
+       limit 1
+      """;
+
+  /**
+   * 分段没有单独的顺序列，主键由雪花算法递增生成，按主键升序即导入顺序。
+   */
+  private static final String FIND_PREVIEW_PARAGRAPHS = """
+      select id,
+             title,
+             content,
+             is_active
+        from max_kb_paragraph
+       where document_id = ?
+         and deleted = 0
+       order by id
+       limit ?
+      """;
 
   public ResultVo page(Long userId, Long datasetId, Integer pageNo, Integer pageSize) {
     TableInput tableInput = new TableInput();
@@ -57,6 +98,73 @@ public class MaxKbDocumentService {
 
     Row data = ApiTable.get(MaxKbTableNames.max_kb_document, tableInput).getData();
     return ResultVo.ok(data.toKv());
+  }
+
+  /**
+   * 对话来源里的文档预览：按应用开放，返回该文档的全部有效分段。
+   *
+   * @param clientId      请求身份，应用所有者或分享链接访客
+   * @param applicationId 应用 id，用于校验文档所属知识库是否与该应用关联
+   * @param documentId    文档 id
+   * @param paragraphId   本次回答命中的分段 id，仅回传给前端做高亮定位
+   */
+  public ResultVo preview(Long clientId, Long applicationId, Long documentId, Long paragraphId) {
+    if (applicationId == null || documentId == null) {
+      return ResultVo.fail("缺少应用或文档标识");
+    }
+    if (!ApplicationAccess.owns(clientId, applicationId) && !ApplicationAccess.canChat(clientId, applicationId)) {
+      return ResultVo.fail("应用不存在或无权访问");
+    }
+    Row document = Db.findFirst(FIND_APPLICATION_DOCUMENT, applicationId, documentId);
+    if (document == null) {
+      return ResultVo.fail("文档不存在或不属于该应用的知识库");
+    }
+
+    // 多取一条用于判断是否被分段数上限截断。
+    List<Row> records = Db.find(FIND_PREVIEW_PARAGRAPHS, documentId, PREVIEW_PARAGRAPH_LIMIT + 1);
+    List<Kv> paragraphs = new ArrayList<>();
+    boolean truncated = records.size() > PREVIEW_PARAGRAPH_LIMIT;
+    int charLength = 0;
+    for (Row record : records) {
+      if (paragraphs.size() >= PREVIEW_PARAGRAPH_LIMIT || charLength >= PREVIEW_CHAR_LIMIT) {
+        truncated = true;
+        break;
+      }
+      String content = record.getStr("content");
+      paragraphs.add(Kv.by("id", record.getLong("id"))
+          //
+          .set("title", record.getStr("title"))
+          //
+          .set("content", content)
+          //
+          .set("is_active", record.getBoolean("is_active")));
+      if (content != null) {
+        charLength += content.length();
+      }
+    }
+
+    Kv data = Kv.by("document_id", document.getLong("id"))
+        //
+        .set("document_name", document.getStr("name"))
+        //
+        .set("document_type", document.getStr("type"))
+        //
+        .set("dataset_id", document.getLong("dataset_id"))
+        //
+        .set("dataset_name", document.getStr("dataset_name"))
+        //
+        .set("paragraph_count", document.getInt("paragraph_count"))
+        //
+        .set("preview_paragraph_count", paragraphs.size())
+        //
+        .set("char_length", document.getInt("char_length"))
+        //
+        .set("hit_paragraph_id", paragraphId)
+        //
+        .set("truncated", truncated)
+        //
+        .set("paragraphs", paragraphs);
+    return ResultVo.ok(data);
   }
 
   public ResultVo delete(Long userId, Long datasetId, Long documentId) {
