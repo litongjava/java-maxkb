@@ -1,0 +1,214 @@
+diff --git a/src/main/java/nexus/io/chat/UniChatClient.java b/src/main/java/nexus/io/chat/UniChatClient.java
+index 0de573c3f7db97b3f16e2cb90527e21088005223..9ac8ecc1efbc4aa693241ebdb7a7cea794b1c0a5 100644
+--- a/src/main/java/nexus/io/chat/UniChatClient.java
++++ b/src/main/java/nexus/io/chat/UniChatClient.java
+@@ -346,6 +346,18 @@ public class UniChatClient {
+   }
+ 
+   public static UniChatResponse useOpenAi(String prefixUrl, String apiKey, UniChatRequest uniChatRequest) {
++    OpenAiChatRequest openAiChatRequestVo = toOpenAiRequest(uniChatRequest);
++    String apiPrefixUrl = uniChatRequest.getApiPrefixUrl();
++    OpenAiChatResponse chatResponse = OpenAiClient.chatCompletions(apiPrefixUrl != null ? apiPrefixUrl : prefixUrl, apiKey, openAiChatRequestVo);
++    if (chatResponse == null || chatResponse.getChoices() == null || chatResponse.getChoices().isEmpty()
++        || chatResponse.getChoices().get(0) == null || chatResponse.getChoices().get(0).getMessage() == null) {
++      return null;
++    }
++    return new UniChatResponse(chatResponse.getModel(), chatResponse.getChoices().get(0).getMessage(), chatResponse.getUsage(), chatResponse.getRawResponse());
++  }
++
++  /** Convert without modifying the caller's messages; shared by generation and streaming. */
++  public static OpenAiChatRequest toOpenAiRequest(UniChatRequest uniChatRequest) {
+     List<UniChatMessage> messages = uniChatRequest.getMessages();
+     List<OpenAiChatMessage> openAiChatMesages = new ArrayList<>();
+ 
+@@ -370,6 +382,7 @@ public class UniChatClient {
+         }
+ 
+         OpenAiChatMessage openAiMsg = new OpenAiChatMessage(next);
++        openAiMsg.setRole(role);
+         openAiChatMesages.add(openAiMsg);
+       }
+     }
+@@ -378,6 +391,8 @@ public class UniChatClient {
+     openAiChatRequestVo.setMessages(openAiChatMesages);
+ 
+     openAiChatRequestVo.setModel(uniChatRequest.getModel());
++    openAiChatRequestVo.setThinking(uniChatRequest.getThinking());
++    openAiChatRequestVo.setStream(uniChatRequest.getStream());
+     Float temperature = uniChatRequest.getTemperature();
+     if (temperature != null) {
+       openAiChatRequestVo.setTemperature(temperature);
+@@ -405,37 +420,17 @@ public class UniChatClient {
+     openAiChatRequestVo.setProvider(provider);
+     openAiChatRequestVo.setTools(uniChatRequest.getTools());
+ 
+-    String apiPrefixUrl = uniChatRequest.getApiPrefixUrl();
+-    OpenAiChatResponse chatResponse = null;
+-    if (apiPrefixUrl != null) {
+-      chatResponse = OpenAiClient.chatCompletions(apiPrefixUrl, apiKey, openAiChatRequestVo);
+-    } else {
+-      chatResponse = OpenAiClient.chatCompletions(prefixUrl, apiKey, openAiChatRequestVo);
+-    }
++    return openAiChatRequestVo;
++  }
+ 
+-    if (chatResponse == null) {
+-      return null;
++  /** Raw HTTP callback for OpenAI-compatible endpoints, retaining cancellation through Call. */
++  public static okhttp3.Call streamOpenAi(UniChatRequest request, okhttp3.Callback callback) {
++    if (request.getApiPrefixUrl() == null || request.getApiKey() == null) {
++      throw new IllegalArgumentException("Explicit API URL and key are required");
+     }
+-    ChatResponseUsage usage = chatResponse.getUsage();
+-    String model = chatResponse.getModel();
+-    List<Choice> choices = chatResponse.getChoices();
+-    String rawResponse = chatResponse.getRawResponse();
+-    if (choices == null) {
+-      log.error("raw response:{}", rawResponse);
+-      return null;
+-    }
+-    Choice choice = choices.get(0);
+-    if (choice == null) {
+-      log.error("raw response:{}", rawResponse);
+-      return null;
+-    }
+-    ChatResponseMessage message = choice.getMessage();
+-    if (message == null) {
+-      log.error("raw response:{}", rawResponse);
+-      return null;
+-    }
+-
+-    return new UniChatResponse(model, message, usage, rawResponse);
++    OpenAiChatRequest body = toOpenAiRequest(request);
++    body.setStream(true);
++    return OpenAiClient.chatCompletions(request.getApiPrefixUrl(), request.getApiKey(), body, callback);
+   }
+ 
+   public static UniChatResponse useClaude(String key, UniChatRequest uniChatRequest) {
+@@ -791,27 +786,7 @@ public class UniChatClient {
+ 
+   public static EventSource useOpenAi(String prefixUrl, String apiKey, UniChatRequest uniChatRequest,
+       EventSourceListener listener) {
+-    List<UniChatMessage> messages = uniChatRequest.getMessages();
+-    Iterator<UniChatMessage> iterator = messages.iterator();
+-    while (iterator.hasNext()) {
+-      UniChatMessage next = iterator.next();
+-      if (next.getRole().equals("model")) {
+-        next.setRole("assistant");
+-      }
+-    }
+-    if (uniChatRequest.isUseSystemPrompt()) {
+-      String systemPrompt = uniChatRequest.getSystemPrompt();
+-      if (systemPrompt != null) {
+-        messages.add(0, new UniChatMessage("system", systemPrompt));
+-      }
+-    }
+-    OpenAiChatRequest openaiChatRequest = new OpenAiChatRequest();
+-    openaiChatRequest.setModel(uniChatRequest.getModel());
+-    openaiChatRequest.setTemperature(uniChatRequest.getTemperature());
+-    openaiChatRequest.setChatMessages(messages);
+-    openaiChatRequest.setMax_tokens(uniChatRequest.getMax_tokens());
+-    openaiChatRequest.setStream(uniChatRequest.getStream());
+-
++    OpenAiChatRequest openaiChatRequest = toOpenAiRequest(uniChatRequest);
+     String apiPrefixUrl = uniChatRequest.getApiPrefixUrl();
+     EventSource eventSource = null;
+     if (apiPrefixUrl != null) {
+diff --git a/src/main/java/nexus/io/chat/UniChatRequest.java b/src/main/java/nexus/io/chat/UniChatRequest.java
+index e83c9ee5c35e3eedae4787b9b4349265dcbcf768..3199e2a09b2d4b79c442f33d52abb9ea87bc9e9b 100644
+--- a/src/main/java/nexus/io/chat/UniChatRequest.java
++++ b/src/main/java/nexus/io/chat/UniChatRequest.java
+@@ -27,6 +27,16 @@ public class UniChatRequest {
+   private String cachedId;
+   private Integer max_tokens;
+   private Boolean enable_thinking;
++  private java.util.Map<String, String> thinking;
++
++  public java.util.Map<String, String> getThinking() {
++    return thinking;
++  }
++
++  public UniChatRequest setThinking(java.util.Map<String, String> thinking) {
++    this.thinking = thinking;
++    return this;
++  }
+   private UniThinkingConfig thinkingConfig;
+   // ChatResponseFormatType
+   private String responseFormat;
+diff --git a/src/main/java/nexus/io/openai/chat/OpenAiChatRequest.java b/src/main/java/nexus/io/openai/chat/OpenAiChatRequest.java
+index 837c7cfb09824ecfd861ce35ffe0a12d753637a4..e44aa375cdccc86aec331572182ae7251877e916 100644
+--- a/src/main/java/nexus/io/openai/chat/OpenAiChatRequest.java
++++ b/src/main/java/nexus/io/openai/chat/OpenAiChatRequest.java
+@@ -33,6 +33,7 @@ public class OpenAiChatRequest {
+   private Boolean stream;
+   private ChatStreamOptions stream_options;
+   private Boolean enable_thinking;
++  private java.util.Map<String, String> thinking;
+ 
+   // https://inference-docs.cerebras.ai/resources/openrouter-cerebras
+   private ChatProvider provider;
+diff --git a/src/test/java/com/litongjava/chat/UniChatCompatibilityTest.java b/src/test/java/com/litongjava/chat/UniChatCompatibilityTest.java
+new file mode 100644
+index 0000000000000000000000000000000000000000..3a8ecaa004fabeb8da1841d2a547afa546da3ef0
+--- /dev/null
++++ b/src/test/java/com/litongjava/chat/UniChatCompatibilityTest.java
+@@ -0,0 +1,59 @@
++package com.litongjava.chat;
++
++import static org.junit.Assert.*;
++import java.net.InetSocketAddress;
++import java.nio.charset.StandardCharsets;
++import java.util.Arrays;
++import java.util.Collections;
++import java.util.concurrent.atomic.AtomicReference;
++import org.junit.Test;
++import com.sun.net.httpserver.HttpServer;
++import com.alibaba.fastjson2.JSON;
++import com.alibaba.fastjson2.JSONObject;
++import nexus.io.chat.UniChatClient;
++import nexus.io.chat.UniChatMessage;
++import nexus.io.chat.UniChatRequest;
++import nexus.io.consts.ModelPlatformName;
++
++public class UniChatCompatibilityTest {
++  @Test public void giteeGeneratePreservesThinkingFormatAndOutputLimit() throws Exception {
++    HttpServer server = HttpServer.create(new InetSocketAddress("127.0.0.1", 0), 0);
++    AtomicReference<JSONObject> sent = new AtomicReference<>();
++    server.createContext("/v1/chat/completions", exchange -> {
++      java.io.ByteArrayOutputStream buffer = new java.io.ByteArrayOutputStream();
++      byte[] chunk = new byte[4096];
++      int count;
++      while ((count = exchange.getRequestBody().read(chunk)) != -1) {
++        buffer.write(chunk, 0, count);
++      }
++      sent.set(JSON.parseObject(new String(buffer.toByteArray(), StandardCharsets.UTF_8)));
++      byte[] response = "{\"model\":\"test\",\"choices\":[{\"finish_reason\":\"stop\",\"message\":{\"role\":\"assistant\",\"content\":\"ok\"}}]}".getBytes(StandardCharsets.UTF_8);
++      exchange.getResponseHeaders().add("Content-Type", "application/json");
++      exchange.sendResponseHeaders(200, response.length);
++      exchange.getResponseBody().write(response);
++      exchange.close();
++    });
++    server.start();
++    try {
++      UniChatRequest request = new UniChatRequest(ModelPlatformName.GITEE, "test");
++      request.setApiPrefixUrl("http://127.0.0.1:" + server.getAddress().getPort() + "/v1").setApiKey("local-test")
++          .setSystemPrompt("system").setMessages(Arrays.asList(new UniChatMessage("user", "question")))
++          .setMax_tokens(900).setThinking(Collections.singletonMap("type", "disabled")).setResponseFormat("json_object");
++      assertEquals("ok", UniChatClient.generate(request).getMessage().getContent());
++      assertEquals("disabled", sent.get().getJSONObject("thinking").getString("type"));
++      assertEquals("json_object", sent.get().getJSONObject("response_format").getString("type"));
++      assertEquals(900, sent.get().getIntValue("max_tokens"));
++    } finally {
++      server.stop(0);
++    }
++  }
++
++  @Test public void conversionCanBeRepeatedWithoutMutatingHistory() {
++    UniChatMessage message = new UniChatMessage("model", "earlier answer");
++    UniChatRequest request = new UniChatRequest(Arrays.asList(message)).setSystemPrompt("rules");
++    assertEquals(2, UniChatClient.toOpenAiRequest(request).getMessages().size());
++    assertEquals("assistant", UniChatClient.toOpenAiRequest(request).getMessages().get(1).getRole());
++    assertEquals(1, request.getMessages().size());
++    assertEquals("model", message.getRole());
++  }
++}

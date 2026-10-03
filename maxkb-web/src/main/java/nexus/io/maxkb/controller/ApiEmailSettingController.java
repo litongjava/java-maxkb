@@ -7,7 +7,7 @@ import nexus.io.model.result.ResultVo;
 @RequestPath("/api/email_setting")
 public class ApiEmailSettingController {
 
-  @Get
+  @Get("")
   public ResultVo index() {
     return ResultVo.ok();
   }

@@ -7,10 +7,10 @@ import nexus.io.model.result.ResultVo;
 @RequestPath("/api/qr_type")
 public class ApiQrTypeController {
 
-  @Get
+  @Get("")
   public ResultVo index() {
     //{ "code": 200, "data": ["wecom", "dingtalk"] }
-    String[] data = { "wecom", "dingtalk" };
+    String[] data = {};
     return ResultVo.ok(data);
   }
 }

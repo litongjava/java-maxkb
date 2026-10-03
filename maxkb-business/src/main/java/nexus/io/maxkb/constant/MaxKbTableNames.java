@@ -18,4 +18,6 @@ public interface MaxKbTableNames {
   String max_kb_problem = "max_kb_problem";
   String max_kb_problem_paragraph_mapping = "max_kb_problem_paragraph_mapping";
   String max_kb_application_chat_record = "max_kb_application_chat_record";
+  String max_kb_application_api_key = "max_kb_application_api_key";
+  String max_kb_user_api_key = "max_kb_user_api_key";
 }

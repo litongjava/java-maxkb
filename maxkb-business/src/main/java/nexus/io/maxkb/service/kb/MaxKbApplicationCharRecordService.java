@@ -21,11 +21,17 @@ import nexus.io.tio.utils.json.JsonUtils;
 public class MaxKbApplicationCharRecordService {
 
   public ResultVo get(Long userId, Long applicationId, Long chatId, Long recordId) {
+    if (!ApplicationAccess.canReadChat(userId, applicationId, chatId)) {
+      return ResultVo.fail("会话不存在或无权访问");
+    }
     Row queryRecord = Row.by("id", recordId).set("chat_id", chatId);
     Row record = Db.findFirst(MaxKbTableNames.max_kb_application_chat_record, queryRecord);
     if (record != null) {
       Object object = record.get("details");
       record.remove("details");
+      // BIGINT[] 经 JDBC 返回为 java.sql.Array，统一成数组交给界面
+      Object improveParagraphIds = record.get("improve_paragraph_id_list");
+      record.remove("improve_paragraph_id_list");
       MaxKbChatRecordDetail detail = null;
       if (object instanceof PGobject) {
         PGobject pgObject1 = (PGobject) object;
@@ -41,7 +47,15 @@ public class MaxKbApplicationCharRecordService {
       }
 
       Kv kv = record.toKv();
+      String answer = record.getStr("answer_text");
+      kv.set("answer_text_list", java.util.List.of(answer == null ? "" : answer));
+      kv.set("improve_paragraph_id_list", ChatLogArrays.toLongList(improveParagraphIds));
+      kv.set("create_time", java.util.Objects.toString(record.getObject("create_time")));
+      kv.set("update_time", java.util.Objects.toString(record.getObject("update_time")));
       if (detail != null) {
+        kv.set("agent_trace", detail.getSearch_step().getIterations());
+        kv.set("agent_stop_reason", detail.getSearch_step().getStop_reason());
+        kv.set("context_info", detail.getSearch_step().getContext());
         List<ParagraphSearchResultVo> paragraph_list = detail.getSearch_step().getParagraph_list();
         List<Kv> dataset_list = new ArrayList<>();
         Set<Long> seenIds = new HashSet<>();

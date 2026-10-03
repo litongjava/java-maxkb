@@ -56,10 +56,8 @@ public class ChatStreamCallbackImpl implements Callback {
   @Override
   public void onResponse(Call call, Response response) throws IOException {
     if (!response.isSuccessful()) {
-      String message = "chatgpt response an unsuccessful message:" + response.body().string();
-      log.error(message);
-      SsePacket ssePacket = new SsePacket(SSEConstant.error, message);
-      Tio.send(channelContext, ssePacket);
+      sendError("推理服务返回 HTTP " + response.code());
+      response.close();
       cleanup(chatId);
       SseEmitter.closeChunkConnection(channelContext);
       return;
@@ -69,7 +67,7 @@ public class ChatStreamCallbackImpl implements Callback {
       if (responseBody == null) {
         String message = "response body is null";
         log.error(message);
-        SseEmitter.pushSSEChunk(channelContext, "error", message);
+        sendError(message);
         cleanup(chatId);
         return;
       }
@@ -88,11 +86,15 @@ public class ChatStreamCallbackImpl implements Callback {
           //
           .set("details", pgobject);
       Db.update(MaxKbTableNames.max_kb_application_chat_record, record);
+      // Persist before the end event, so an immediate follow-up sees this answer.
+      MaxKbStreamChatVo end = new MaxKbStreamChatVo();
+      end.setContent("").setChat_id(chatId).setId(messageId).setChat_record_id(messageId.toString());
+      end.setOperate(true).setIs_end(true).setNode_is_end(true);
+      SseEmitter.pushSSEChunk(channelContext, JsonUtils.toJson(end));
 
     } catch (Exception e) {
-      String message = "chatgpt response an unsuccessful message:" + e.getMessage();
-      SsePacket ssePacket = new SsePacket(SSEConstant.error, message);
-      Tio.send(channelContext, ssePacket);
+      log.error("Streaming answer failed", e);
+      sendError("回答生成失败，请稍后重试");
     } finally {
       cleanup(chatId);
       SseEmitter.closeChunkConnection(channelContext);
@@ -102,8 +104,7 @@ public class ChatStreamCallbackImpl implements Callback {
 
   @Override
   public void onFailure(Call call, IOException e) {
-    String message = "error: " + e.getMessage();
-    SseEmitter.pushSSEChunk(channelContext, "error", message);
+    sendError("推理服务连接失败，请稍后重试");
     cleanup(chatId);
     SseEmitter.closeChunkConnection(channelContext);
   }
@@ -120,7 +121,7 @@ public class ChatStreamCallbackImpl implements Callback {
       }
 
       // 因为原始数据是data:开头
-      if (line.length() > 6) {
+      if (line.startsWith("data: ") && !line.equals("data: [DONE]")) {
         processResponseChunk(chatId, messageId, channelContext, completionContent, line);
       }
     }
@@ -147,30 +148,25 @@ public class ChatStreamCallbackImpl implements Callback {
     if (data.endsWith("}")) {
       OpenAiChatResponse chatResponse = FastJson2Utils.parse(data, OpenAiChatResponse.class);
       List<Choice> choices = chatResponse.getChoices();
-      if (choices.size() > 0) {
+      if (choices != null && !choices.isEmpty() && choices.get(0).getDelta() != null) {
         ChatResponseDelta delta = choices.get(0).getDelta();
         String part = delta.getContent();
         if (part != null && part.length() > 0) {
           completionContent.append(part);
           MaxKbStreamChatVo maxKbStreamChatVo = new MaxKbStreamChatVo();
           maxKbStreamChatVo.setContent(part);
-          maxKbStreamChatVo.setChat_id(chatId).setId(messageId);
+          maxKbStreamChatVo.setChat_id(chatId).setId(messageId).setChat_record_id(messageId.toString());
           maxKbStreamChatVo.setOperate(true).setIs_end(false);
 
           String message = JsonUtils.toJson(maxKbStreamChatVo);
           SseEmitter.pushSSEChunk(channelContext, message);
         }
       }
-    } else {
-      // [done]
-      MaxKbStreamChatVo maxKbStreamChatVo = new MaxKbStreamChatVo();
-      maxKbStreamChatVo.setContent("");
-      maxKbStreamChatVo.setChat_id(chatId).setId(messageId);
-      maxKbStreamChatVo.setOperate(true).setIs_end(true);
-      String message = JsonUtils.toJson(maxKbStreamChatVo);
-      SseEmitter.pushSSEChunk(channelContext, message);
-      log.info("data not end with }:{}", line);
     }
+  }
+
+  private void sendError(String message) {
+    SseEmitter.pushSSEChunk(channelContext, "error", JsonUtils.toJson(com.jfinal.kit.Kv.by("code", 500).set("message", message)));
   }
 
   private String functionCall(StringBuffer fnCallName, StringBuffer fnCallArgs) {
@@ -180,5 +176,6 @@ public class ChatStreamCallbackImpl implements Callback {
 
   public void cleanup(Long chatId) {
     ChatStreamCallCan.remove(chatId);
+    nexus.io.maxkb.service.kb.ChatExecution.end(chatId);
   }
 }

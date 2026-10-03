@@ -27,4 +27,5 @@ public class ModelVo {
   private Long id;
   private String name, model_type, model_name, permission_type, provider;
   private CredentialVo credential;
+  private java.util.List<Object> model_params_form;
 }

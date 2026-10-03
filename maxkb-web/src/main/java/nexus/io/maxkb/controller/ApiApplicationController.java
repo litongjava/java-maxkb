@@ -1,11 +1,5 @@
 package nexus.io.maxkb.controller;
 
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import com.alibaba.fastjson2.JSONObject;
 
 import nexus.io.annotation.Delete;
@@ -19,6 +13,7 @@ import nexus.io.maxkb.service.kb.MaxKbApplicationAccessTokenService;
 import nexus.io.maxkb.service.kb.MaxKbApplicationCharRecordService;
 import nexus.io.maxkb.service.kb.MaxKbApplicationHitTestService;
 import nexus.io.maxkb.service.kb.MaxKbApplicationService;
+import nexus.io.maxkb.service.kb.MaxKbApplicationStatisticsService;
 import nexus.io.maxkb.vo.MaxKbApplicationVo;
 import nexus.io.model.result.ResultVo;
 import nexus.io.table.constants.Operators;
@@ -31,7 +26,12 @@ import nexus.io.tio.utils.json.JsonUtils;
 @RequestPath("/api/application")
 public class ApiApplicationController {
 
-  @Post
+  @Get("/{applicationId}/chat/open")
+  public ResultVo openPublished(Long applicationId) {
+    return Aop.get(nexus.io.maxkb.service.kb.MaxKbApplicationChatService.class).openPublished(applicationId);
+  }
+
+  @Post("")
   public ResultVo create(MaxKbApplicationVo application) {
     Long userId = TioRequestContext.getUserIdLong();
     return Aop.get(MaxKbApplicationService.class).create(userId, application);
@@ -60,7 +60,7 @@ public class ApiApplicationController {
     return Aop.get(MaxKbApplicationService.class).get(userId, applicationId);
   }
 
-  @Get
+  @Get("")
   public ResultVo list() {
     Long userId = TioRequestContext.getUserIdLong();
     return Aop.get(MaxKbApplicationService.class).list(userId);
@@ -70,6 +70,10 @@ public class ApiApplicationController {
   public ResultVo page(Integer pageNo, Integer pageSize, String name) {
     TableInput tableInput = new TableInput();
     tableInput.setPageNo(pageNo).setPageSize(pageSize);
+    Long owner = TioRequestContext.getUserIdLong();
+    if (!Long.valueOf(1L).equals(owner)) {
+      tableInput.set("user_id", owner);
+    }
     //tableInput.setSearchKey(name);
     tableInput.set("name", name);
     tableInput.set("name_op", Operators.CT);
@@ -79,36 +83,41 @@ public class ApiApplicationController {
 
   @Get("/{applicationId}/access_token")
   public ResultVo getAccessToken(Long applicationId) {
+    if (!nexus.io.maxkb.service.kb.ApplicationAccess.owns(TioRequestContext.getUserIdLong(), applicationId)) {
+      return ResultVo.fail("无权访问应用");
+    }
     return Aop.get(MaxKbApplicationAccessTokenService.class).getById(applicationId);
+  }
+
+  /** 公开访问链接配置：启停、重置短令牌、访问次数、白名单与对话语言。 */
+  @Put("/{applicationId}/access_token")
+  public ResultVo updateAccessToken(Long applicationId, HttpRequest request) {
+    return Aop.get(MaxKbApplicationAccessTokenService.class).update(TioRequestContext.getUserIdLong(), applicationId,
+        body(request));
   }
 
   @Get("/{applicationId}/statistics/chat_record_aggregate_trend")
   public ResultVo statisticsOfCharRecordAggreagteTrend(Long applicationId, String start_time, String end_time) {
-    // Parse start and end dates
-    LocalDate startDate = LocalDate.parse(start_time);
-    LocalDate endDate = LocalDate.parse(end_time);
+    return Aop.get(MaxKbApplicationStatisticsService.class).chatRecordAggregateTrend(TioRequestContext.getUserIdLong(),
+        applicationId, start_time, end_time);
+  }
 
-    // Initialize list to hold data for each day
-    List<Map<String, Object>> dataList = new ArrayList<>();
+  @Get("/{applicationId}/statistics/chat_record_aggregate")
+  public ResultVo statisticsOfCharRecordAggreagte(Long applicationId, String start_time, String end_time) {
+    return Aop.get(MaxKbApplicationStatisticsService.class).chatRecordAggregate(TioRequestContext.getUserIdLong(),
+        applicationId, start_time, end_time);
+  }
 
-    // Loop through the date range
-    LocalDate currentDate = startDate;
-    while (!currentDate.isAfter(endDate)) {
-      // Fetch or compute statistics for each day
-      Map<String, Object> dailyData = new HashMap<>();
-      dailyData.put("star_num", 0); // Replace with actual data retrieval
-      dailyData.put("trample_num", 0);
-      dailyData.put("tokens_num", 0);
-      dailyData.put("chat_record_count", 0);
-      dailyData.put("customer_num", 0);
-      dailyData.put("day", currentDate.toString());
-      dailyData.put("customer_added_count", 0);
+  @Get("/{applicationId}/statistics/customer_count")
+  public ResultVo statisticsOfCustomerCount(Long applicationId, String start_time, String end_time) {
+    return Aop.get(MaxKbApplicationStatisticsService.class).customerCount(TioRequestContext.getUserIdLong(),
+        applicationId, start_time, end_time);
+  }
 
-      dataList.add(dailyData);
-      // Move to the next day
-      currentDate = currentDate.plusDays(1);
-    }
-    return ResultVo.ok(dataList);
+  @Get("/{applicationId}/statistics/customer_count_trend")
+  public ResultVo statisticsOfCustomerCountTrend(Long applicationId, String start_time, String end_time) {
+    return Aop.get(MaxKbApplicationStatisticsService.class).customerCountTrend(TioRequestContext.getUserIdLong(),
+        applicationId, start_time, end_time);
   }
 
   @Get("/{applicationId}/model")
@@ -165,6 +174,11 @@ public class ApiApplicationController {
     
     Long clientId = TioRequestContext.getUserIdLong();
     return Aop.get(MaxKbApplicationService.class).profile(clientId);
+  }
+
+  private JSONObject body(HttpRequest request) {
+    String bodyString = request.getBodyString();
+    return StrUtil.isBlank(bodyString) ? new JSONObject() : FastJson2Utils.parseObject(bodyString);
   }
 
 }

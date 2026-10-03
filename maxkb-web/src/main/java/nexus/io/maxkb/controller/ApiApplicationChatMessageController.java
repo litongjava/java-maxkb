@@ -33,7 +33,16 @@ public class ApiApplicationChatMessageController {
     // 手动发送消息到客户端,因为已经设置了sse的请求头,所以客户端的连接不会关闭
     Tio.bSend(channelContext, httpResponse);
     httpResponse.setSend(false);
-    ResultVo resultVo = Aop.get(MaxKbApplicationChatMessageService.class).ask(channelContext, chatId, maxKbChatRequestVo);
-    return httpResponse.setJson(resultVo);
+    try {
+      ResultVo result = Aop.get(MaxKbApplicationChatMessageService.class).ask(channelContext, chatId, maxKbChatRequestVo);
+      if (result.getCode() != 200) {
+        nexus.io.tio.http.server.util.SseEmitter.pushSSEChunk(channelContext, "error", JsonUtils.toJson(result));
+        nexus.io.tio.http.server.util.SseEmitter.closeChunkConnection(channelContext);
+      }
+    } catch (Exception e) {
+      nexus.io.tio.http.server.util.SseEmitter.pushSSEChunk(channelContext, "error", JsonUtils.toJson(ResultVo.fail(e.getMessage())));
+      nexus.io.tio.http.server.util.SseEmitter.closeChunkConnection(channelContext);
+    }
+    return httpResponse;
   }
 }

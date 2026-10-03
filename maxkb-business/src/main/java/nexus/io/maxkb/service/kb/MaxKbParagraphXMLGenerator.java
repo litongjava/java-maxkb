@@ -27,7 +27,7 @@ public class MaxKbParagraphXMLGenerator {
 
       String contents = list.stream().map(ParagraphSearchResultVo::getContent).map(MaxKbParagraphXMLGenerator::escapeXml).collect(Collectors.joining("\r\n"));
 
-      data.append("<document_name>").append(documentNames).append("</document_name>");
+      data.append("<document_name>").append(escapeXml(documentNames)).append("</document_name>");
       data.append("<contents>").append(contents).append("</contents>");
 
       data.append("</record>");

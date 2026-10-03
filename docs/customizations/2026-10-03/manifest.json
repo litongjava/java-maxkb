@@ -1,0 +1,140 @@
+{
+  "base": "847755b1c2bba658a2062e0f47dd97fa8ae37247",
+  "base_description": "Current fork merge baseline; not certified as an official upstream commit",
+  "head_at_export": "3e570dc6eafc6566cc7c1127215eb22eca05840b",
+  "verified": "git apply --check, apply and normalized content comparison in disposable directory",
+  "files": [
+    {
+      "file": "ui/.gitignore",
+      "sha256_lf": "23fe3f6f4f95e68ddc7f936aeef623d077e7766cda186163365a0ae065182d68"
+    },
+    {
+      "file": "ui/package.json",
+      "sha256_lf": "afc0ada460e2c848161ae09d96a5802f53a9d004a4dc60a4fccbdf6ff9560f94"
+    },
+    {
+      "file": "ui/src/api/application.ts",
+      "sha256_lf": "d533b3243be7ce3f03317eb5640a1153575b6632c0b38d9c11e658cc19b0273a"
+    },
+    {
+      "file": "ui/src/api/type/application.ts",
+      "sha256_lf": "686984ac3b504a2e7590fe19304b8591371e7fbbd9f21773b904873e0887b62f"
+    },
+    {
+      "file": "ui/src/components/ai-chat/AgentProgress.vue",
+      "sha256_lf": "7e9dcc97c61626b20bce566b58b732e501845de40b5ad8c26db91820c7986004"
+    },
+    {
+      "file": "ui/src/components/ai-chat/component/answer-content/index.vue",
+      "sha256_lf": "ec11d30cdc60bb5d3d157e80458dfbca7619493cf08b9c8e260afd873c356a8d"
+    },
+    {
+      "file": "ui/src/components/ai-chat/index.vue",
+      "sha256_lf": "e386735c44c069e0562f72fc1fd6b7c8e5c8aed56f374960373eb8843d01c231"
+    },
+    {
+      "file": "ui/src/components/codemirror-editor/index.vue",
+      "sha256_lf": "ceefd00cd8b70c67a4770ed0a9a7b14d7e6986073340f27ec16589cc3b1e0da8"
+    },
+    {
+      "file": "ui/src/components/dynamics-form/items/JsonInput.vue",
+      "sha256_lf": "7edd293bc1789c0c43e76232b088f0e08c7c6d58120a66efb4228ba31ed365e4"
+    },
+    {
+      "file": "ui/src/components/dynamics-form/items/table/TableCheckbox.vue",
+      "sha256_lf": "689c3aca2d6c9661cca871bab7f64de1c784bacdddd00d2e77c2bb173cadec0b"
+    },
+    {
+      "file": "ui/src/components/dynamics-form/items/table/TableRadio.vue",
+      "sha256_lf": "ae049e31a9d85667348d34b8d57cdc0e4e4bdba7b854a5aeaaf2e5c0c0060ad8"
+    },
+    {
+      "file": "ui/src/components/markdown/MdEditor.vue",
+      "sha256_lf": "221ee26ad77faa1197a2e0e2174f7942aff9d1dc71ce29148d89839046c18c0f"
+    },
+    {
+      "file": "ui/src/components/markdown/MdPreview.vue",
+      "sha256_lf": "d31c23948b2c5fe1063628c76b51b2d00e82f77d7f5e3aa1f659f750af7788c2"
+    },
+    {
+      "file": "ui/src/request/index.ts",
+      "sha256_lf": "7a3100bd45950a10ba70b6532eb49a0991f3b17c65a522ff30f82b64bd3edf26"
+    },
+    {
+      "file": "ui/src/router/index.ts",
+      "sha256_lf": "25e2cc74c6f6242e70b601148dfa9a0a30f782d4edd61a31b46e6060f8bc0ae9"
+    },
+    {
+      "file": "ui/src/stores/modules/application.ts",
+      "sha256_lf": "9477825a41f6efe7324397d065c9ce5ed368399bd7a6905923c00033d7513919"
+    },
+    {
+      "file": "ui/src/stores/modules/user.ts",
+      "sha256_lf": "5b3916ad7da67d3a8a87231ea70be24ac03ca21e47028f7f82813a13f4d671c5"
+    },
+    {
+      "file": "ui/src/utils/application.ts",
+      "sha256_lf": "29a5ccceef29fb7f6b74e0c8ab1e969559abe2e634dac84f377d00a4a35cd77b"
+    },
+    {
+      "file": "ui/src/utils/utils.ts",
+      "sha256_lf": "0b0db9bb0ed896889795278bb95649c5586f5c902311240df3d5aca8d54b5ca2"
+    },
+    {
+      "file": "ui/src/views/application-workflow/component/DropdownMenu.vue",
+      "sha256_lf": "2766b719f0c8490a17064ddc385ba8a07a4dc12c8516d5c3e17e4c339933a871"
+    },
+    {
+      "file": "ui/src/views/application/component/CreateApplicationDialog.vue",
+      "sha256_lf": "baac30b19586edce7a32f01a7777d7b455ff9c916e576c7cc9bef43ccea5fdf1"
+    },
+    {
+      "file": "ui/src/views/application/index.vue",
+      "sha256_lf": "750fa37ae05f20026340b6137580c196c6b92ed5457f0ed4f902994a4d9676d3"
+    },
+    {
+      "file": "ui/src/views/dataset/UploadDocumentDataset.vue",
+      "sha256_lf": "77c4f267c009061c813e87627ec616f8f14c9abcc9f01bc8fdfbe5dc3786c2c7"
+    },
+    {
+      "file": "ui/src/views/dataset/component/UploadComponent.vue",
+      "sha256_lf": "dfd320b36163464bb41d9fd55561fc8b4d703c0335e695cab931a3e615407c31"
+    },
+    {
+      "file": "ui/src/views/document/index.vue",
+      "sha256_lf": "09f763829ac41db81f97358ce302e366fb2805625cf6be96fd604ef21d68dfcd"
+    },
+    {
+      "file": "ui/src/views/hit-test/index.vue",
+      "sha256_lf": "5956375602cd5e1fa834d271c33441224a57e837a5239dd9b3cb8c611802c46b"
+    },
+    {
+      "file": "ui/src/views/log/index.vue",
+      "sha256_lf": "d55b4d2e794f4cd1521f508ccafbc79c72bf6602f080200ceae8d679d133f205"
+    },
+    {
+      "file": "ui/src/views/login/index.vue",
+      "sha256_lf": "a4346ab737d9b4832ddda73e4ce317d6f57a1310e452cecb1e7f9132fa786263"
+    },
+    {
+      "file": "ui/src/views/problem/index.vue",
+      "sha256_lf": "fedaf98dd8121f18167083dd4b360729352535c8155eff5102a4de9a8e45334b"
+    },
+    {
+      "file": "ui/tsconfig.app.json",
+      "sha256_lf": "e5572b59375751e03f232b11375a148042e153ef3d230e87cba39d132fd46cf1"
+    },
+    {
+      "file": "ui/tsconfig.vitest.json",
+      "sha256_lf": "829a7afac1a2c56d366955d5c4477cd3621965154a6252ea64576107c7c86edf"
+    },
+    {
+      "file": "ui/vite.config.ts",
+      "sha256_lf": "20d870de21b4816b81b2f3a2a1419e419ca830ed95fdf1435579d674e5ad21a9"
+    },
+    {
+      "file": "ui/yarn.lock",
+      "sha256_lf": "24cc24051424ed4cbf66927c3b5d1433439f3613b88ea3d3e7308823a6c28ae6"
+    }
+  ]
+}

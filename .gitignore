@@ -164,3 +164,6 @@ app-test.properties
 .deploy.toml
 my.txt
 secrets.txt
+
+# Local OCR outputs may contain document contents and expiring provider URLs.
+/output/ocr-benchmark/

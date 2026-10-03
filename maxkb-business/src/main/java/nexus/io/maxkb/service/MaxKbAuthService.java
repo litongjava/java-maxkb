@@ -16,7 +16,7 @@ public class MaxKbAuthService {
    * @return
    */
   public Long getIdByToken(String authorization) {
-    log.info("authorization:{}", authorization);
+
     if (StrUtil.isBlank(authorization)) {
       return null;
     }

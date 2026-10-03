@@ -72,6 +72,15 @@ public abstract class BaseMaxKbApplicationAccessToken<M extends BaseMaxKbApplica
 		return getBoolean("show_source");
 	}
 	
+	public M setLanguage(java.lang.String language) {
+		set("language", language);
+		return (M)this;
+	}
+	
+	public java.lang.String getLanguage() {
+		return getStr("language");
+	}
+	
 	public M setRemark(java.lang.String remark) {
 		set("remark", remark);
 		return (M)this;

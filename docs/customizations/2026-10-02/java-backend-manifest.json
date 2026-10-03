@@ -1,0 +1,335 @@
+{
+  "base": "d464fc3f20bf0c470736403d4553e146a2be177e",
+  "scope": "current local source differences, includes retained earlier changes",
+  "verified": true,
+  "files": [
+    {
+      "file": "maxkb-business/src/main/java/nexus/io/maxkb/service/KbUserService.java",
+      "sha256_lf": "e10a8fd24f3f546db16a13daae7b9fcc760559e24541e9513a66bf41171f5a1e"
+    },
+    {
+      "file": "maxkb-business/src/main/java/nexus/io/maxkb/service/MaxKbAuthService.java",
+      "sha256_lf": "c159f2965e91c3b056d3abddf7d84380f0924ffd35c9b4befa5beca718611942"
+    },
+    {
+      "file": "maxkb-business/src/main/java/nexus/io/maxkb/service/PermissionsService.java",
+      "sha256_lf": "85c03d8c2919d38b52ddd6d0fb8c0d687ba4cf5fa477450695d598857076ff70"
+    },
+    {
+      "file": "maxkb-business/src/main/java/nexus/io/maxkb/service/UserManagementService.java",
+      "sha256_lf": "6d3c82ba4b80e8c7a0d5e2584637d19ed5501536950a6db8d8eafa71ef6ebce0"
+    },
+    {
+      "file": "maxkb-business/src/main/java/nexus/io/maxkb/service/UserPassword.java",
+      "sha256_lf": "58b434b832da9a5822c29daa57c6330b692d86bbb954a4b724876dfc7944a4ca"
+    },
+    {
+      "file": "maxkb-business/src/main/java/nexus/io/maxkb/service/kb/ApplicationAccess.java",
+      "sha256_lf": "c3ccbd29f82497b63005c6734811404b3b2788c599efd20b89c0ac6439309754"
+    },
+    {
+      "file": "maxkb-business/src/main/java/nexus/io/maxkb/service/kb/ChatExecution.java",
+      "sha256_lf": "4439e98da25cf24d1cc0b14933e02eed2609ecdd41a05c9daa7cd7808808e32d"
+    },
+    {
+      "file": "maxkb-business/src/main/java/nexus/io/maxkb/service/kb/ContextBudget.java",
+      "sha256_lf": "64913434480c193412ca6c3e8c29f06caae9bbb33b0278f2f909a22357c4e764"
+    },
+    {
+      "file": "maxkb-business/src/main/java/nexus/io/maxkb/service/kb/ConversationContextService.java",
+      "sha256_lf": "f3e5e959951262005b46d0c57dde1f0a9d31aee4829f9ee2df4aa6300c486743"
+    },
+    {
+      "file": "maxkb-business/src/main/java/nexus/io/maxkb/service/kb/DatasetAccess.java",
+      "sha256_lf": "151590698adc4b976f8946b4a0a472c21f69ed66f86c10abef3604dbd27b7715"
+    },
+    {
+      "file": "maxkb-business/src/main/java/nexus/io/maxkb/service/kb/DocumentParsingService.java",
+      "sha256_lf": "33dc0bc194dc827df2e22ee16def4024989a3a211f2c8301dbb2eb1a4f2f6887"
+    },
+    {
+      "file": "maxkb-business/src/main/java/nexus/io/maxkb/service/kb/IsolatedPythonExecutor.java",
+      "sha256_lf": "b5677cb310f9a23fcf1d0ab6a8f561279a819aab50741604c78dd821daff7ff3"
+    },
+    {
+      "file": "maxkb-business/src/main/java/nexus/io/maxkb/service/kb/IterativeRetrievalService.java",
+      "sha256_lf": "08348dd239a87ea0e73d41cf6cd5fc0b8a5654421011794fee2f32de5f83f08a"
+    },
+    {
+      "file": "maxkb-business/src/main/java/nexus/io/maxkb/service/kb/KbEmbeddingService.java",
+      "sha256_lf": "d5ad7c18340bb82b1ecc72cfd39fdd268fc6e673ac5ec6ed7c736bb29bda13c0"
+    },
+    {
+      "file": "maxkb-business/src/main/java/nexus/io/maxkb/service/kb/KnowledgeModelService.java",
+      "sha256_lf": "02c72371a61b6c826387cddb9bbb6eefd4863104ac075fa7d9c3e0c9fe7c9220"
+    },
+    {
+      "file": "maxkb-business/src/main/java/nexus/io/maxkb/service/kb/MaxKbApplicationAccessTokenService.java",
+      "sha256_lf": "bdaad4e248d19dd6144051822c387976a1dbf1213c693d1f5f90d6ac85cfc625"
+    },
+    {
+      "file": "maxkb-business/src/main/java/nexus/io/maxkb/service/kb/MaxKbApplicationCharRecordService.java",
+      "sha256_lf": "60c47041a7aa33889b96e206c44a5a96844f9e1d5685d24dada0c81b4efcf47c"
+    },
+    {
+      "file": "maxkb-business/src/main/java/nexus/io/maxkb/service/kb/MaxKbApplicationChatMessageService.java",
+      "sha256_lf": "b7b993172a3f15cdf4580a24df22273800bfd095c78ce70e02088c2b32d63f28"
+    },
+    {
+      "file": "maxkb-business/src/main/java/nexus/io/maxkb/service/kb/MaxKbApplicationChatService.java",
+      "sha256_lf": "74bfb03abe49ec26884af0aa1e7bcfe24dc626fe0b37b8fb14add5fedccbd0c0"
+    },
+    {
+      "file": "maxkb-business/src/main/java/nexus/io/maxkb/service/kb/MaxKbApplicationHitTestService.java",
+      "sha256_lf": "2a92e8de216b6330bd8bfae5e235d71fb27fbee790fbbade22cd1d274aac1cff"
+    },
+    {
+      "file": "maxkb-business/src/main/java/nexus/io/maxkb/service/kb/MaxKbApplicationService.java",
+      "sha256_lf": "29079dcb72dfc9a10fcde81603c6755b17a578b7049facfbe4f328b98a9ebc73"
+    },
+    {
+      "file": "maxkb-business/src/main/java/nexus/io/maxkb/service/kb/MaxKbChatHistoryService.java",
+      "sha256_lf": "a8801edbe9940c12b6754cda522d46e9a3af90ef4b4c24d9f648f64cbe133c0c"
+    },
+    {
+      "file": "maxkb-business/src/main/java/nexus/io/maxkb/service/kb/MaxKbDatasetHitTestService.java",
+      "sha256_lf": "fa162920a3100218fe83b25cd03e6f596a0ff0d4da8fcd941009d61b38191b0f"
+    },
+    {
+      "file": "maxkb-business/src/main/java/nexus/io/maxkb/service/kb/MaxKbDatasetService.java",
+      "sha256_lf": "694c8610274e22021a5c960a6ecd2fd58ba049f655236c10abc48d05adfa6d64"
+    },
+    {
+      "file": "maxkb-business/src/main/java/nexus/io/maxkb/service/kb/MaxKbDocumentService.java",
+      "sha256_lf": "8ac65e330fd3adb536b200e9c0a9d7a5d22878e60e2b795f9ac47be288563f88"
+    },
+    {
+      "file": "maxkb-business/src/main/java/nexus/io/maxkb/service/kb/MaxKbDocumentSplitService.java",
+      "sha256_lf": "790ef50bc52759a384078e2f25d95a6f053aa88f17ff468f34685829f16b6de8"
+    },
+    {
+      "file": "maxkb-business/src/main/java/nexus/io/maxkb/service/kb/MaxKbModelService.java",
+      "sha256_lf": "090294a175dfd5e40664b913fabeeda05da81e8363266c35c7b2321bd488635a"
+    },
+    {
+      "file": "maxkb-business/src/main/java/nexus/io/maxkb/service/kb/MaxKbParagraphRetrieveService.java",
+      "sha256_lf": "b2608cc78c267974d77dbc0a24742d3c7e6ba314dc41747cd0398ad0680d9500"
+    },
+    {
+      "file": "maxkb-business/src/main/java/nexus/io/maxkb/service/kb/MaxKbParagraphServcie.java",
+      "sha256_lf": "bf7e6a2dece4880715ffae66483c12be2afcd9b216bcc2dee8fe4aa67009d678"
+    },
+    {
+      "file": "maxkb-business/src/main/java/nexus/io/maxkb/service/kb/MaxKbParagraphSplitService.java",
+      "sha256_lf": "1e95bf4528a4bbf1f0cdde545c52643927ad2f37d7295fd78c39d908ba9ef8c4"
+    },
+    {
+      "file": "maxkb-business/src/main/java/nexus/io/maxkb/service/kb/MaxKbParagraphXMLGenerator.java",
+      "sha256_lf": "546b24456979650ef3a3f3f84c9c9cd49540dd045fd5ecf1cc6a391477708d34"
+    },
+    {
+      "file": "maxkb-business/src/main/java/nexus/io/maxkb/service/kb/MaxKbProblemService.java",
+      "sha256_lf": "9d1e4ebbf47912b3d0c057b837f6a4c552b69fb08c2bb661ae5c9303210e400c"
+    },
+    {
+      "file": "maxkb-business/src/main/java/nexus/io/maxkb/service/kb/ModelAccess.java",
+      "sha256_lf": "8444df99d836ef8804dc9bc16d230af6a87c9321f3277c8f5d68cc5d59bae8f6"
+    },
+    {
+      "file": "maxkb-business/src/main/java/nexus/io/maxkb/service/kb/PythonFunctionService.java",
+      "sha256_lf": "beea7c15324b4160167b2c92455a8cdbc743537dc3d253492a9ef7ca44581f6e"
+    },
+    {
+      "file": "maxkb-business/src/main/java/nexus/io/maxkb/stream/ChatStreamCallbackImpl.java",
+      "sha256_lf": "7027f4dfdbd8329122ac27b2aedbd4de6420f2cad40d9ce8840e90fd429fd85f"
+    },
+    {
+      "file": "maxkb-business/src/main/java/nexus/io/maxkb/vo/MaxKbRetrieveResult.java",
+      "sha256_lf": "df1533e7739aebd19755a47d75ca41bcaa904b0931d3894838893011f8454ebf"
+    },
+    {
+      "file": "maxkb-business/src/main/java/nexus/io/maxkb/vo/MaxKbStreamChatVo.java",
+      "sha256_lf": "1aaa4d6f1f3c0843b28481e7168fd9aae5851f0f36b280d3c1df83be59e27d99"
+    },
+    {
+      "file": "maxkb-business/src/main/java/nexus/io/maxkb/vo/MaxKbUpdateDocumentRequestVo.java",
+      "sha256_lf": "8e2d3645fd2f89a598c4a616f2213172fbebc513f26c3bcf23a4ed839b692f08"
+    },
+    {
+      "file": "maxkb-business/src/main/java/nexus/io/maxkb/vo/Paragraph.java",
+      "sha256_lf": "8925114ce972bba46b5a0a60be69114050cdfb6035579eeca1e30261ea5e5a39"
+    },
+    {
+      "file": "maxkb-business/src/main/resources/python/runner.py",
+      "sha256_lf": "18225beea96366c88bb9fe793f0d588e57a6cd2df8b5208c8270633da8dea622"
+    },
+    {
+      "file": "maxkb-business/src/test/java/nexus/io/maxkb/ocr/DocumentOcrBenchmarkTest.java",
+      "sha256_lf": "98a882f96b7be4f61fda5ef7a4a7deca08634115b9e7908f3f8d644f82e62212"
+    },
+    {
+      "file": "maxkb-business/src/test/java/nexus/io/maxkb/service/UserPasswordTest.java",
+      "sha256_lf": "3131593434cdcd416ed6924fb768f79a2be595f45e041a4c7cdc1b73f9805b68"
+    },
+    {
+      "file": "maxkb-business/src/test/java/nexus/io/maxkb/service/kb/ConversationContextServiceTest.java",
+      "sha256_lf": "5e4a47057adc1733e26ca16dfa9a6c9eb2d1663d9fe0715f0c3c3dfe1d502267"
+    },
+    {
+      "file": "maxkb-business/src/test/java/nexus/io/maxkb/service/kb/DocumentParsingServiceTest.java",
+      "sha256_lf": "dd320c8271e82dad9df1ae78c05416d3dcbc21e5b343f90bbb30015b6409dfda"
+    },
+    {
+      "file": "maxkb-business/src/test/java/nexus/io/maxkb/service/kb/GiteeAuxiliaryModelTest.java",
+      "sha256_lf": "31c2c13bf6b4a77ad55dc605f50a77de0b50a839bff616aa12ce509c3c3509d3"
+    },
+    {
+      "file": "maxkb-business/src/test/java/nexus/io/maxkb/service/kb/IsolatedPythonExecutorTest.java",
+      "sha256_lf": "4c723bab5fdde1404a5e7b3b323d9fd2843f307e2e9c5a69a39f4bae6370b332"
+    },
+    {
+      "file": "maxkb-business/src/test/java/nexus/io/maxkb/service/kb/IterativeRetrievalServiceTest.java",
+      "sha256_lf": "677ae3634df5a818edcf466561697751f4932e43ac84c94054d40a8b78dfa9ca"
+    },
+    {
+      "file": "maxkb-business/src/test/resources/ocr/henan-2021-18-reference.json",
+      "sha256_lf": "02a114e0120f9a7e1b9c7d1b64cf24b3986fb4db55d9233e7f0a307f99a81765"
+    },
+    {
+      "file": "maxkb-business/src/test/scripts/evaluate_ocr.py",
+      "sha256_lf": "309f435db331697ef0be07267b974db4c5a32960defa1f46154dda9e88404f3d"
+    },
+    {
+      "file": "maxkb-business/src/test/scripts/extract_ocr_reference_text.py",
+      "sha256_lf": "7a2fe9ab43aba87b87fa22fdd212d3da75a7f7767ca244256bb3692434b6db4b"
+    },
+    {
+      "file": "maxkb-business/src/test/scripts/run-ocr-benchmark.ps1",
+      "sha256_lf": "6b2969dd9cf4661e214c0837ac5d024f8ed584d85f07456afe05bf3ae3e16d52"
+    },
+    {
+      "file": "maxkb-web/src/main/java/nexus/io/maxkb/MaxKbApp.java",
+      "sha256_lf": "6f0b5dd3bdec8a905fe379d762fa4ac1e0aa6221afba0e954cd70d8dc96546db"
+    },
+    {
+      "file": "maxkb-web/src/main/java/nexus/io/maxkb/config/MaxKbInterceptorConfiguration.java",
+      "sha256_lf": "98600f1d63c54398e567badcf630a52a3e7b699f042bd08f7bb627e1283ff3a1"
+    },
+    {
+      "file": "maxkb-web/src/main/java/nexus/io/maxkb/controller/ApiApplicationChatMessageController.java",
+      "sha256_lf": "90821613e7cd687fb001c609935c789d1a386d0b30c5a0f397e766a7c8cdd877"
+    },
+    {
+      "file": "maxkb-web/src/main/java/nexus/io/maxkb/controller/ApiApplicationController.java",
+      "sha256_lf": "dfc28fbb57a4182fb1bc2f6dd19ed9eefaec820f11588b2dfc0a3f3c6f43f5c0"
+    },
+    {
+      "file": "maxkb-web/src/main/java/nexus/io/maxkb/controller/ApiAuthTypesController.java",
+      "sha256_lf": "c3047aeba54c746af959108827fc25f588648857c36e500df80ac65fb08b6bef"
+    },
+    {
+      "file": "maxkb-web/src/main/java/nexus/io/maxkb/controller/ApiChatContextController.java",
+      "sha256_lf": "d33bb18e4fc30a1f5fa75ce9c79fdace67fbf4ab83c9196646f34d520497bdb1"
+    },
+    {
+      "file": "maxkb-web/src/main/java/nexus/io/maxkb/controller/ApiChatHistoryController.java",
+      "sha256_lf": "81c5c79e1d9d5a650bcf3df8564a794df98e5b95553f9d53a5fc42e2cfb8d6e2"
+    },
+    {
+      "file": "maxkb-web/src/main/java/nexus/io/maxkb/controller/ApiDatasetController.java",
+      "sha256_lf": "2e80d9da6ffd0511016b606010bc8ba9d6b3bd47ba962ecef43acbeacc6d46a8"
+    },
+    {
+      "file": "maxkb-web/src/main/java/nexus/io/maxkb/controller/ApiDatasetDocumentController.java",
+      "sha256_lf": "33600067be3e84e38d15444883f5ed72f95e1044970ee465d3776c804b94280d"
+    },
+    {
+      "file": "maxkb-web/src/main/java/nexus/io/maxkb/controller/ApiEmailSettingController.java",
+      "sha256_lf": "468493de26585115384e528d0ce29a9e3be44eec1d47c195e8c3b8de851b4bb1"
+    },
+    {
+      "file": "maxkb-web/src/main/java/nexus/io/maxkb/controller/ApiFunctionLibController.java",
+      "sha256_lf": "1ba66d2fe34b9c1175c447e61e53102db4fda181dbbff6200e63b19ed4d577b3"
+    },
+    {
+      "file": "maxkb-web/src/main/java/nexus/io/maxkb/controller/ApiModelController.java",
+      "sha256_lf": "e17c73d20f7a7295fe842dccc8039233224d04797e5598cd5c8f742a2946c7fa"
+    },
+    {
+      "file": "maxkb-web/src/main/java/nexus/io/maxkb/controller/ApiProfileController.java",
+      "sha256_lf": "f107f3071ccc134eaa9f4c23fa68dcaf06806f1d3634fff2365f74a54d797af4"
+    },
+    {
+      "file": "maxkb-web/src/main/java/nexus/io/maxkb/controller/ApiQrTypeController.java",
+      "sha256_lf": "721c82a56013c28e11e42f6cdcbb5b1b50b2652a90e726803e2f51843652a708"
+    },
+    {
+      "file": "maxkb-web/src/main/java/nexus/io/maxkb/controller/ApiUserManage.java",
+      "sha256_lf": "483bc3712c4e8b82ff444924781301df436efe165283fab137a789e0fc6f5819"
+    },
+    {
+      "file": "maxkb-web/src/main/java/nexus/io/maxkb/controller/ApiValidController.java",
+      "sha256_lf": "a2c67dea3345bccc057e277946b418ebb899c75af9b92a4983515fbbb0b07fc3"
+    },
+    {
+      "file": "maxkb-web/src/main/java/nexus/io/maxkb/inteceptor/MaxKbAuthInterceptor.java",
+      "sha256_lf": "a74c232b30b0bf54d09ae48ee6eeed8afd994b4ae51c0d72b425ba242466f172"
+    },
+    {
+      "file": "scripts/002-gitee-models.sql",
+      "sha256_lf": "f6e6296e56ec5a83899d86aff19d12b3585cff20359d74f7452f8d7365e84797"
+    },
+    {
+      "file": "scripts/003-filename-capacity.sql",
+      "sha256_lf": "94134c6155a576269579c7b50e0f6ade074bb8469d035a50383ad4ef4d87b99d"
+    },
+    {
+      "file": "scripts/004-keyword-search.sql",
+      "sha256_lf": "fc27e97b9a61877f7f59d59a69c8c0bd2cd3271bc44b9f208800ed458d18a10b"
+    },
+    {
+      "file": "scripts/005-agent-context.sql",
+      "sha256_lf": "0a07b4760d48968ae8327bc946e819a2346b8e1e465cf9822a2de26945d12731"
+    },
+    {
+      "file": "scripts/006-python-functions.sql",
+      "sha256_lf": "6ee34d205577e9863aa961a55d4c58a0d49d1441b666f959d22db680d6416865"
+    },
+    {
+      "file": "scripts/007-user-sessions.sql",
+      "sha256_lf": "b8dd4127a83295042f2adfc48fed8ca29d76c71605f97460e0c2aa9096bd76f8"
+    },
+    {
+      "file": "scripts/Apply-FrontendCustomizations.ps1",
+      "sha256_lf": "b1d47a838e152801075793b8a436a74ad3d86729d592f00295c85507123fdc4b"
+    },
+    {
+      "file": "scripts/Export-FrontendCustomizations.py",
+      "sha256_lf": "7c72694ee3a1bcd9b42a3acd0c31039c39c93f97afee35a75097f13c8b593314"
+    },
+    {
+      "file": "scripts/Initialize-Database.ps1",
+      "sha256_lf": "d049ca0162b8f7e280ac3f3ed3c84fe2d45045b6aea80e8e2ff4e1a5f6ac9131"
+    },
+    {
+      "file": "scripts/Setup-PythonSandbox.ps1",
+      "sha256_lf": "a63137ccd3e06311b49fc57a66b1523fd04bb463c24f21e419582a0f6b07ce25"
+    },
+    {
+      "file": "scripts/Start-Local.ps1",
+      "sha256_lf": "e7c3576596d78b23e16faaae98a7557cd2f6ded3a3fd2fe05cc341e2aa53d7b6"
+    },
+    {
+      "file": "scripts/Test-PythonSandbox.ps1",
+      "sha256_lf": "66bf46df1dacc042622067258b51702ef0eeffcd798ab855194a909666034733"
+    },
+    {
+      "file": "scripts/init-db.sql",
+      "sha256_lf": "042fb1a52d674ec3b7553b0e86958cefdc35d7b8a595ba9abfbd689028d61394"
+    },
+    {
+      "file": "scripts/setup-python-sandbox.sh",
+      "sha256_lf": "701878a57ff5cb26c5a6c99aa1eb675e4499cafe8dba2426fdfdac3e02a3aff8"
+    }
+  ]
+}

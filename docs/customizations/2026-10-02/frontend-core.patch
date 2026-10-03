@@ -1,0 +1,750 @@
+diff --git a/ui/.gitignore b/ui/.gitignore
+index 38adffa64e8300a31b749218081149e1fe3deaaa..c3287e5a2d907511ac7242307869caa13417068e 100644
+--- a/ui/.gitignore
++++ b/ui/.gitignore
+@@ -13,6 +13,7 @@ dist
+ dist-ssr
+ coverage
+ *.local
++.local/
+ 
+ /cypress/videos/
+ /cypress/screenshots/
+diff --git a/ui/package.json b/ui/package.json
+index cee7a41c8fde26e07318ec5e4e843e1b04d2cd25..5a35ca1b6655acc5b0e3c9bf1db542c78aef5987 100644
+--- a/ui/package.json
++++ b/ui/package.json
+@@ -14,12 +14,15 @@
+   },
+   "dependencies": {
+     "@antv/layout": "^0.3.1",
++    "@codemirror/lang-json": "^6.0.2",
++    "@codemirror/lang-python": "^6.2.1",
+     "@codemirror/theme-one-dark": "^6.1.2",
+     "@ctrl/tinycolor": "^4.1.0",
+     "@logicflow/core": "^1.2.27",
+     "@logicflow/extension": "^1.2.27",
+     "@types/sortablejs": "^1.15.8",
+     "@vavt/cm-extension": "^1.6.0",
++    "@vue/shared": "^3.5.43",
+     "@vueuse/core": "^10.9.0",
+     "@wecom/jssdk": "^2.1.0",
+     "axios": "^1.8.3",
+diff --git a/ui/src/api/application.ts b/ui/src/api/application.ts
+index efd4a4985a8a176c54bba8828944ea2a6f7c16c6..184b2f1bc78b0467d4cd4d48b53a0dc382bd9551 100644
+--- a/ui/src/api/application.ts
++++ b/ui/src/api/application.ts
+@@ -187,7 +187,8 @@ const getChatOpen: (application_id: String) => Promise<Result<any>> = (applicati
+  * data
+  */
+ const postChatMessage: (chat_id: string, data: any) => Promise<any> = (chat_id, data) => {
+-  return postStream(`/api${prefix}/chat_message/${chat_id}`, data)
++  const server=import.meta.env.VITE_API_BASE_URL || '/api';
++  return postStream(`${server}${prefix}/chat_message/${chat_id}`, data)
+ }
+ 
+ /**
+diff --git a/ui/src/api/type/application.ts b/ui/src/api/type/application.ts
+index c423f11105a841be97f98439ab29f637fbb5cdb9..5e32106cd14408c81ac693df192d7c608d33ceba 100644
+--- a/ui/src/api/type/application.ts
++++ b/ui/src/api/type/application.ts
+@@ -41,6 +41,10 @@ interface Chunk {
+   child_node: any
+ }
+ interface chatType {
++  agent_status?: any
++  agent_trace?: any[]
++  agent_stop_reason?: string
++  context_info?: any
+   id: string
+   problem_text: string
+   answer_text: string
+diff --git a/ui/src/components/ai-chat/component/answer-content/index.vue b/ui/src/components/ai-chat/component/answer-content/index.vue
+index 26cd8a0d06f4cdaa8ef4bd3920afe569f2596392..642758702101a35365bf08516b90f0e09ebc456e 100644
+--- a/ui/src/components/ai-chat/component/answer-content/index.vue
++++ b/ui/src/components/ai-chat/component/answer-content/index.vue
+@@ -13,6 +13,8 @@
+         }"
+       >
+         <el-card shadow="always" class="mb-8 border-r-8" style="--el-card-padding: 6px 16px">
++          <AgentProgress v-if="index === 0" :status="chatRecord.agent_status" :trace="chatRecord.agent_trace"
++            :context="chatRecord.context_info" :stop="chatRecord.agent_stop_reason" :done="chatRecord.write_ed" />
+           <MdRenderer
+             v-if="
+               (chatRecord.write_ed === undefined || chatRecord.write_ed === true) &&
+@@ -70,6 +72,7 @@
+ </template>
+ <script setup lang="ts">
+ import KnowledgeSource from '@/components/ai-chat/KnowledgeSource.vue'
++import AgentProgress from '@/components/ai-chat/AgentProgress.vue'
+ import MdRenderer from '@/components/markdown/MdRenderer.vue'
+ import OperationButton from '@/components/ai-chat/component/operation-button/index.vue'
+ import { type chatType } from '@/api/type/application'
+diff --git a/ui/src/components/ai-chat/index.vue b/ui/src/components/ai-chat/index.vue
+index a3e3d3d36cf50dddbaf06d9d83ad0388fe964cc6..525b65a30200782a603c71421a8a7607e460a8ce 100644
+--- a/ui/src/components/ai-chat/index.vue
++++ b/ui/src/components/ai-chat/index.vue
+@@ -342,6 +342,7 @@ function getChartOpenId(chat?: any, problem?: string, re_chat?: boolean, other_p
+  */
+ const getWrite = (chat: any, reader: any, stream: boolean) => {
+   let tempResult = ''
++  const decoder = new TextDecoder('utf-8')
+   /**
+    *
+    * @param done  是否结束
+@@ -353,11 +354,10 @@ const getWrite = (chat: any, reader: any, stream: boolean) => {
+         ChatManagement.close(chat.id)
+         return
+       }
+-      const decoder = new TextDecoder('utf-8')
+       let str = decoder.decode(value, { stream: true })
+       // 这里解释一下 start 因为数据流返回流并不是按照后端chunk返回 我们希望得到的chunk是data:{xxx}\n\n 但是它获取到的可能是 data:{ -> xxx}\n\n 总而言之就是 fetch不能保证每个chunk都说以data:开始 \n\n结束
+       tempResult += str
+-      const split = tempResult.match(/data:.*}\n\n/g)
++      const split = tempResult.match(/(?:event:[^\n]*\r?\n)?data:[^\n]*\r?\n\r?\n/g)
+       if (split) {
+         str = split.join('')
+         tempResult = tempResult.replace(str, '')
+@@ -365,10 +365,18 @@ const getWrite = (chat: any, reader: any, stream: boolean) => {
+         return reader.read().then(write_stream)
+       }
+       // 这里解释一下 end
+-      if (str && str.startsWith('data:')) {
++      if (str) {
+         if (split) {
+           for (const index in split) {
+-            const chunk = JSON?.parse(split[index].replace('data:', ''))
++            const event = split[index]
++            const chunk = JSON.parse(event.slice(event.indexOf('data:') + 5).trim())
++            if (/^event:\s*agent_status/.test(event)) {
++              chat.agent_status = chunk
++              continue
++            }
++            if (event.startsWith('event:error') || event.startsWith('event: error') || (chunk.code && chunk.code !== 200)) {
++              return Promise.reject(new Error(chunk.message || '回答生成失败'))
++            }
+             chat.chat_id = chunk.chat_id
+             chat.record_id = chunk.chat_record_id
+             if (!chunk.is_end) {
+@@ -404,8 +412,7 @@ const getWrite = (chat: any, reader: any, stream: boolean) => {
+       return
+     }
+     if (value) {
+-      const decoder = new TextDecoder('utf-8')
+-      tempResult += decoder.decode(value)
++      tempResult += decoder.decode(value, { stream: true })
+     }
+     return reader.read().then(write_json)
+   }
+@@ -513,7 +520,7 @@ function chatMessage(chat?: any, problem?: string, re_chat?: boolean, other_para
+         if (props.chatId === 'new') {
+           emit('refresh', chartOpenId.value)
+         }
+-        return (id || props.applicationDetails?.show_source) && getSourceDetail(chat)
++        return getSourceDetail(chat)
+       })
+       .finally(() => {
+         ChatManagement.close(chat.id)
+diff --git a/ui/src/components/codemirror-editor/index.vue b/ui/src/components/codemirror-editor/index.vue
+index 52fc72367b82271eff6bb3455eda2bf842f4bfc9..8df61f6dfc69a283b4e41624ea2abc8d31eedf1e 100644
+--- a/ui/src/components/codemirror-editor/index.vue
++++ b/ui/src/components/codemirror-editor/index.vue
+@@ -7,7 +7,7 @@
+       :style="codemirrorStyle"
+       :tab-size="4"
+       :autofocus="true"
+-      v-bind="$attrs"
++      v-bind="forwardedAttrs()"
+     />
+ 
+     <div class="codemirror-editor__footer">
+@@ -39,6 +39,9 @@
+ </template>
+ 
+ <script setup lang="ts">
++import { useAttrs } from 'vue'
++const componentAttrs = useAttrs()
++const forwardedAttrs = (): Record<string, unknown> => ({ ...componentAttrs })
+ import { ref, computed, watch } from 'vue'
+ import { Codemirror } from 'vue-codemirror'
+ import { python } from '@codemirror/lang-python'
+diff --git a/ui/src/components/dynamics-form/items/JsonInput.vue b/ui/src/components/dynamics-form/items/JsonInput.vue
+index 19b68a901d3ec35634914263a49a69958b9967b1..c128e4ecb30007eaa2529d43cf572ce65a5d2783 100644
+--- a/ui/src/components/dynamics-form/items/JsonInput.vue
++++ b/ui/src/components/dynamics-form/items/JsonInput.vue
+@@ -1,7 +1,7 @@
+ <template>
+   <div style="width: 100%" class="function-CodemirrorEditor">
+     <Codemirror
+-      v-bind="$attrs"
++      v-bind="forwardedAttrs()"
+       ref="cmRef"
+       v-model="model_value"
+       :extensions="extensions"
+@@ -47,6 +47,9 @@
+   </div>
+ </template>
+ <script setup lang="ts">
++import { useAttrs } from 'vue'
++const componentAttrs = useAttrs()
++const forwardedAttrs = (): Record<string, unknown> => ({ ...componentAttrs })
+ import { json, jsonParseLinter } from '@codemirror/lang-json'
+ import { oneDark } from '@codemirror/theme-one-dark'
+ import { Codemirror } from 'vue-codemirror'
+diff --git a/ui/src/components/dynamics-form/items/table/TableCheckbox.vue b/ui/src/components/dynamics-form/items/table/TableCheckbox.vue
+index 8285689f14986b2c7ee832c010b2b28522512995..fe1f3ecf5013aa4c778fe6401c438825387b82c8 100644
+--- a/ui/src/components/dynamics-form/items/table/TableCheckbox.vue
++++ b/ui/src/components/dynamics-form/items/table/TableCheckbox.vue
+@@ -53,6 +53,7 @@
+   </div>
+ </template>
+ <script setup lang="ts">
++import type { TableInstance } from 'element-plus'
+ import type { FormField } from '@/components/dynamics-form/type'
+ import { computed, ref, watch } from 'vue'
+ import { Search } from '@element-plus/icons-vue'
+@@ -78,7 +79,7 @@ const evalF: (text: string, row: any) => string = (text: string, row: any) => {
+ }
+ const emit = defineEmits(['update:modelValue', 'change'])
+ 
+-const multipleTableRef = ref<InstanceType<typeof ElTable>>()
++const multipleTableRef = ref<TableInstance>()
+ 
+ const _data = computed({
+   get() {
+diff --git a/ui/src/components/dynamics-form/items/table/TableRadio.vue b/ui/src/components/dynamics-form/items/table/TableRadio.vue
+index 1bc055b3b0e989e5bd95b068ba6a71eead63b5a0..4082423a4dae6b3d1872ead52f1103ae8bd7cbf7 100644
+--- a/ui/src/components/dynamics-form/items/table/TableRadio.vue
++++ b/ui/src/components/dynamics-form/items/table/TableRadio.vue
+@@ -57,6 +57,7 @@
+   </div>
+ </template>
+ <script setup lang="ts">
++import type { TableInstance } from 'element-plus'
+ import type { FormField } from '@/components/dynamics-form/type'
+ import { computed, ref, watch } from 'vue'
+ import { Search } from '@element-plus/icons-vue'
+@@ -82,7 +83,7 @@ const evalF = (text: string, row: any) => {
+ }
+ const emit = defineEmits(['update:modelValue', 'change'])
+ 
+-const singleTableRef = ref<InstanceType<typeof ElTable>>()
++const singleTableRef = ref<TableInstance>()
+ 
+ const _data = computed({
+   get() {
+diff --git a/ui/src/components/markdown/MdEditor.vue b/ui/src/components/markdown/MdEditor.vue
+index 6a621a04ed6c46efaf2caab9f21164c1a869ee76..641608389117cc22c01faaa68080e582cddb27d8 100644
+--- a/ui/src/components/markdown/MdEditor.vue
++++ b/ui/src/components/markdown/MdEditor.vue
+@@ -1,5 +1,5 @@
+ <template>
+-  <MdEditor :language="language" noIconfont noPrettier v-bind="$attrs">
++  <MdEditor :language="language" noIconfont noPrettier v-bind="forwardedAttrs()">
+     <template #defFooters>
+       <slot name="defFooters"> </slot>
+     </template>
+@@ -7,6 +7,9 @@
+ </template>
+ 
+ <script setup lang="ts">
++import { useAttrs } from 'vue'
++const componentAttrs = useAttrs()
++const forwardedAttrs = (): Record<string, unknown> => ({ ...componentAttrs })
+ import { computed } from 'vue'
+ import { MdEditor, config } from 'md-editor-v3'
+ import { getBrowserLang } from '@/locales/index'
+diff --git a/ui/src/components/markdown/MdPreview.vue b/ui/src/components/markdown/MdPreview.vue
+index 0d8c3ab15fc19f27a34fa06b7943c3a15b9d0bfa..7d128b5e68530eeed4ce41513b1e176f2a6bd2f8 100644
+--- a/ui/src/components/markdown/MdPreview.vue
++++ b/ui/src/components/markdown/MdPreview.vue
+@@ -1,8 +1,11 @@
+ <template>
+-  <MdPreview :language="language" noIconfont noPrettier :codeFoldable="false" v-bind="$attrs" />
++  <MdPreview :language="language" noIconfont noPrettier :codeFoldable="false" v-bind="forwardedAttrs()" />
+ </template>
+ 
+ <script setup lang="ts">
++import { useAttrs } from 'vue'
++const componentAttrs = useAttrs()
++const forwardedAttrs = (): Record<string, unknown> => ({ ...componentAttrs })
+ import { computed } from 'vue'
+ import { MdPreview, config } from 'md-editor-v3'
+ import { getBrowserLang } from '@/locales/index'
+diff --git a/ui/src/request/index.ts b/ui/src/request/index.ts
+index 72588d2c6f21d42f31d07073193eef1c8e59f314..0784e3e72fb9e087b1acbe941943f9315386af7e 100644
+--- a/ui/src/request/index.ts
++++ b/ui/src/request/index.ts
+@@ -9,7 +9,7 @@ import router from '@/router'
+ import { ref, type WritableComputedRef } from 'vue'
+ 
+ const axiosConfig = {
+-  baseURL: '/api',
++  baseURL: import.meta.env.VITE_API_BASE_URL || '/api',
+   withCredentials: false,
+   timeout: 600000,
+   headers: {}
+diff --git a/ui/src/router/index.ts b/ui/src/router/index.ts
+index 360523cb100959a5f024665f8f43fbed96a6bce8..e2a3b99742a4661cd454b6c4cde104bccf9c1bfb 100644
+--- a/ui/src/router/index.ts
++++ b/ui/src/router/index.ts
+@@ -2,17 +2,17 @@ import { hasPermission } from '@/utils/permission/index'
+ import NProgress from 'nprogress'
+ import {
+   createRouter,
+-  createWebHistory,
++  createWebHashHistory,
+   type NavigationGuardNext,
+   type RouteLocationNormalized,
+-  type RouteRecordRaw,
+-  type RouteRecordName
++  type RouteRecordName,
++  type RouteRecordRaw
+ } from 'vue-router'
+ import useStore from '@/stores'
+ import { routes } from '@/router/routes'
+ NProgress.configure({ showSpinner: false, speed: 500, minimum: 0.3 })
+ const router = createRouter({
+-  history: createWebHistory(import.meta.env.BASE_URL),
++  history: createWebHashHistory(import.meta.env.BASE_URL),
+   routes: routes
+ })
+ 
+diff --git a/ui/src/stores/modules/application.ts b/ui/src/stores/modules/application.ts
+index d3de13782ae96674eb780dbcad9173650cf4cdfa..f0a95a19904bc43186361edd1006238f5a727bdf 100644
+--- a/ui/src/stores/modules/application.ts
++++ b/ui/src/stores/modules/application.ts
+@@ -7,7 +7,7 @@ import useUserStore from './user'
+ const useApplicationStore = defineStore({
+   id: 'application',
+   state: () => ({
+-    location: `${window.location.origin}/ui/chat/`
++    location: `${window.location.origin}/ui/#/chat/`
+   }),
+   actions: {
+     async asyncGetAllApplication() {
+diff --git a/ui/src/stores/modules/user.ts b/ui/src/stores/modules/user.ts
+index a5f0eae3a603142a542bdfc085d09a3720328f6c..b41dc6f72445d4fbec46d26eade31bf0f61ea00b 100644
+--- a/ui/src/stores/modules/user.ts
++++ b/ui/src/stores/modules/user.ts
+@@ -16,6 +16,7 @@ export interface userStateTypes {
+   userAccessToken?: string
+   XPACK_LICENSE_IS_VALID: false
+   isXPack: false
++  captchaEnabled: boolean
+   themeInfo: any
+ }
+ 
+@@ -29,6 +30,7 @@ const useUserStore = defineStore({
+     userAccessToken: '',
+     XPACK_LICENSE_IS_VALID: false,
+     isXPack: false,
++    captchaEnabled: true,
+     themeInfo: null
+   }),
+   actions: {
+@@ -97,6 +99,7 @@ const useUserStore = defineStore({
+       return new Promise((resolve, reject) => {
+         UserApi.getProfile()
+           .then(async (ok) => {
++            this.captchaEnabled = ok.data?.captcha_enabled !== false
+             this.version = ok.data?.version || '-'
+             this.isXPack = ok.data?.IS_XPACK
+             this.XPACK_LICENSE_IS_VALID = ok.data?.XPACK_LICENSE_IS_VALID
+diff --git a/ui/src/utils/application.ts b/ui/src/utils/application.ts
+index fd7d0a201bc9f66688408b0ced935107f844d9b2..5a19757532731fa7d3a85f7e3d7358d646157fce 100644
+--- a/ui/src/utils/application.ts
++++ b/ui/src/utils/application.ts
+@@ -8,3 +8,7 @@ export function isAppIcon(url: String | undefined) {
+ export function isWorkFlow(type: string | undefined) {
+   return type === 'WORK_FLOW'
+ }
++
++export function isDepartment(type: string | undefined) {
++  return type === 'DEPARTMENT'
++}
+diff --git a/ui/src/utils/utils.ts b/ui/src/utils/utils.ts
+index 44e68895c7f2b0f015dcad0cf15c72f5e8cef2c0..15941fed4c62daa3c25fdd944c581cb04ea51aaa 100644
+--- a/ui/src/utils/utils.ts
++++ b/ui/src/utils/utils.ts
+@@ -10,14 +10,24 @@ export function numberFormat(num: number) {
+ }
+ 
+ export function filesize(size: number) {
+-  if (!size) return ''
++  if (!size) {
++    return ''
++  }
+   /* byte */
+   const num = 1024.0
+ 
+-  if (size < num) return size + 'B'
+-  if (size < Math.pow(num, 2)) return (size / num).toFixed(2) + 'K' //kb
+-  if (size < Math.pow(num, 3)) return (size / Math.pow(num, 2)).toFixed(2) + 'M' //M
+-  if (size < Math.pow(num, 4)) return (size / Math.pow(num, 3)).toFixed(2) + 'G' //G
++  if (size < num) {
++    return size + 'B'
++  }
++  if (size < Math.pow(num, 2)) {
++    return (size / num).toFixed(2) + 'K'
++  }
++  if (size < Math.pow(num, 3)) {
++    return (size / Math.pow(num, 2)).toFixed(2) + 'M'
++  }
++  if (size < Math.pow(num, 4)) {
++    return (size / Math.pow(num, 3)).toFixed(2) + 'G'
++  }
+   return (size / Math.pow(num, 4)).toFixed(2) + 'T' //T
+ }
+ 
+@@ -40,13 +50,13 @@ export function fileType(name: string) {
+   获得文件对应图片
+ */
+ const typeList: any = {
+-  txt: ['txt', 'pdf', 'docx', 'md', 'html', 'zip', 'xlsx', 'xls', 'csv'],
++  txt: ['txt', 'log', 'pdf', 'doc', 'docx', 'md', 'html', 'zip', 'xlsx', 'xls', 'csv', 'png', 'jpg', 'jpeg', 'tif', 'tiff'],
+   table: ['xlsx', 'xls', 'csv'],
+   QA: ['xlsx', 'csv', 'xls', 'zip']
+ }
+ 
+ export function getImgUrl(name: string) {
+-  const list = Object.values(typeList).flat()
++  const list = ['txt', 'pdf', 'doc', 'docx', 'md', 'html', 'zip', 'xlsx', 'xls', 'csv']
+ 
+   const type = list.includes(fileType(name).toLowerCase()) ? fileType(name).toLowerCase() : 'unknown'
+   return new URL(`../assets/fileType/${type}-icon.svg`, import.meta.url).href
+diff --git a/ui/src/views/application-workflow/component/DropdownMenu.vue b/ui/src/views/application-workflow/component/DropdownMenu.vue
+index 1a7c49b99f6fe51076d4951f68c8a4068ce6cb1f..f5a377b2880bb477d8fcae9a6851773e1e2a824d 100644
+--- a/ui/src/views/application-workflow/component/DropdownMenu.vue
++++ b/ui/src/views/application-workflow/component/DropdownMenu.vue
+@@ -113,7 +113,7 @@
+                   <el-tag type="warning" v-if="isWorkFlow(item.type)" style="height: 22px">
+                     {{ $t('views.application.workflow') }}</el-tag
+                   >
+-                  <el-tag class="blue-tag" v-else style="height: 22px">{{
++                  <el-tag type="warning" v-else-if="isDepartment(item.type)">部门机构</el-tag><el-tag class="blue-tag" v-else style="height: 22px">{{
+                     $t('views.application.simple')
+                   }}</el-tag>
+                 </div>
+@@ -133,7 +133,7 @@ import { ref, onMounted, computed } from 'vue'
+ import { menuNodes, functionLibNode, functionNode, applicationNode } from '@/workflow/common/data'
+ import { iconComponent } from '@/workflow/icons/utils'
+ import applicationApi from '@/api/application'
+-import { isWorkFlow, isAppIcon } from '@/utils/application'
++import { isWorkFlow, isAppIcon, isDepartment } from '@/utils/application'
+ const search_text = ref<string>('')
+ const props = defineProps({
+   show: {
+diff --git a/ui/src/views/application/component/CreateApplicationDialog.vue b/ui/src/views/application/component/CreateApplicationDialog.vue
+index 7415753c1afef25beffe952b990f4f69d605cda2..28735ee43498374258b81dcd5736bd94adf07948 100644
+--- a/ui/src/views/application/component/CreateApplicationDialog.vue
++++ b/ui/src/views/application/component/CreateApplicationDialog.vue
+@@ -57,6 +57,18 @@
+                 </el-radio>
+               </el-card>
+             </el-col>
++            <el-col :span="12">
++              <el-card
++                  shadow="never"
++                  class="mb-16"
++                  :class="isWorkFlow(applicationForm.type) ? 'active' : ''"
++              >
++                <el-radio value="DEPARTMENT" size="large">
++                  <p class="mb-4">部门机构</p>
++                  <el-text type="info">适合特定的知识领域场景</el-text>
++                </el-radio>
++              </el-card>
++            </el-col>
+           </el-row>
+         </el-radio-group>
+       </el-form-item>
+diff --git a/ui/src/views/application/index.vue b/ui/src/views/application/index.vue
+index a59743501121e339a5137440e78f5cd3729e5a6d..0325a7c1559960adc3cba286729fcb91dc73ec31 100644
+--- a/ui/src/views/application/index.vue
++++ b/ui/src/views/application/index.vue
+@@ -108,7 +108,7 @@
+                 <el-tag type="warning" v-if="isWorkFlow(item.type)" style="height: 22px">
+                   {{ $t('views.application.workflow') }}
+                 </el-tag>
+-                <el-tag class="blue-tag" v-else style="height: 22px">
++                <el-tag type="warning" v-else-if="isDepartment(item.type)">部门机构</el-tag><el-tag class="blue-tag" v-else style="height: 22px">
+                   {{ $t('views.application.simple') }}
+                 </el-tag>
+               </div>
+@@ -174,7 +174,7 @@ import applicationApi from '@/api/application'
+ import CreateApplicationDialog from './component/CreateApplicationDialog.vue'
+ import CopyApplicationDialog from './component/CopyApplicationDialog.vue'
+ import { MsgSuccess, MsgConfirm, MsgAlert, MsgError } from '@/utils/message'
+-import { isAppIcon } from '@/utils/application'
++import { isAppIcon, isDepartment } from '@/utils/application'
+ import { useRouter } from 'vue-router'
+ import { isWorkFlow } from '@/utils/application'
+ import { ValidType, ValidCount } from '@/enums/common'
+diff --git a/ui/src/views/dataset/UploadDocumentDataset.vue b/ui/src/views/dataset/UploadDocumentDataset.vue
+index 513701b51031c006981ee8c6c688edc608425c9a..68b73f987f1925675fd0a8944eafae33eecf118b 100644
+--- a/ui/src/views/dataset/UploadDocumentDataset.vue
++++ b/ui/src/views/dataset/UploadDocumentDataset.vue
+@@ -136,6 +136,7 @@ function submit() {
+       })
+     }
+     documents.push({
++      id: item.id,
+       name: item.name,
+       paragraphs: item.content
+     })
+diff --git a/ui/src/views/dataset/component/UploadComponent.vue b/ui/src/views/dataset/component/UploadComponent.vue
+index 1b6c3cf3b2092cb799ad03e9f9b7ce83305dfce9..71a17f4105ab2ff0632203315ba7fac18b4f862b 100644
+--- a/ui/src/views/dataset/component/UploadComponent.vue
++++ b/ui/src/views/dataset/component/UploadComponent.vue
+@@ -143,7 +143,7 @@
+         action="#"
+         :auto-upload="false"
+         :show-file-list="false"
+-        accept=".txt, .md, .log, .docx, .pdf, .html,.zip,.xlsx,.xls,.csv"
++        accept=".txt,.md,.log,.doc,.docx,.pdf,.html,.zip,.xlsx,.xls,.csv,.png,.jpg,.jpeg,.tif,.tiff"
+         :limit="50"
+         :on-exceed="onExceed"
+         :on-change="fileHandleChange"
+@@ -164,7 +164,7 @@
+             <p>
+               {{
+                 $t('views.document.upload.formats')
+-              }}TXT、Markdown、PDF、DOCX、HTML、XLS、XLSX、CSV、ZIP
++              }}TXT、Markdown、PDF、DOC、DOCX、HTML、XLS、XLSX、CSV、ZIP、PNG、JPEG、TIFF
+             </p>
+           </div>
+         </div>
+@@ -286,7 +286,9 @@ const handlePreview = (bool: boolean) => {
+   表单校验
+ */
+ function validate() {
+-  if (!FormRef.value) return
++  if (!FormRef.value) {
++    return
++  }
+   return FormRef.value.validate((valid: any) => {
+     return valid
+   })
+diff --git a/ui/src/views/document/index.vue b/ui/src/views/document/index.vue
+index 9f9803589558ff087d45c16104fbc8f843d0d5bd..42ba3ff295d681500b683a61cf8d84bf7d6ea1c6 100644
+--- a/ui/src/views/document/index.vue
++++ b/ui/src/views/document/index.vue
+@@ -484,6 +484,7 @@
+   </LayoutContainer>
+ </template>
+ <script setup lang="ts">
++import type { TableInstance } from 'element-plus'
+ import { ref, onMounted, onBeforeUnmount, computed } from 'vue'
+ import { useRouter, useRoute, onBeforeRouteLeave, onBeforeRouteUpdate } from 'vue-router'
+ import { ElTable } from 'element-plus'
+@@ -549,7 +550,7 @@ const paginationConfig = ref({
+ })
+ 
+ const ImportDocumentDialogRef = ref()
+-const multipleTableRef = ref<InstanceType<typeof ElTable>>()
++const multipleTableRef = ref<TableInstance>()
+ const multipleSelection = ref<any[]>([])
+ const title = ref('')
+ 
+diff --git a/ui/src/views/hit-test/index.vue b/ui/src/views/hit-test/index.vue
+index 088275aed9df8b7a73da44e289aec9836dd398cd..7392850d90c16a0b855120632247791d5ee5afa8 100644
+--- a/ui/src/views/hit-test/index.vue
++++ b/ui/src/views/hit-test/index.vue
+@@ -240,8 +240,8 @@ const paragraphDetail = ref<any[]>([])
+ const title = ref('')
+ const inputValue = ref('')
+ const formInline = ref({
+-  similarity: 0.6,
+-  top_number: 5,
++  similarity: 0.0,
++  top_number: 10,
+   search_mode: 'embedding'
+ })
+ 
+diff --git a/ui/src/views/log/index.vue b/ui/src/views/log/index.vue
+index 476c6dec8a33537a574ee2d91840cff8f706594f..64f50e7e737ebcd859cb4d3908b0795d4c3a2b97 100644
+--- a/ui/src/views/log/index.vue
++++ b/ui/src/views/log/index.vue
+@@ -286,6 +286,7 @@
+   </LayoutContainer>
+ </template>
+ <script setup lang="ts">
++import type { TableInstance } from 'element-plus'
+ import { ref, type Ref, onMounted, reactive, computed } from 'vue'
+ import { useRoute } from 'vue-router'
+ import { cloneDeep } from 'lodash'
+@@ -338,7 +339,7 @@ const daterange = ref({
+   end_time: ''
+ })
+ 
+-const multipleTableRef = ref<InstanceType<typeof ElTable>>()
++const multipleTableRef = ref<TableInstance>()
+ const multipleSelection = ref<any[]>([])
+ 
+ const ChatRecordRef = ref()
+@@ -608,7 +609,9 @@ function getDataset() {
+ }
+ 
+ const submitForm = async (formEl: FormInstance | undefined) => {
+-  if (!formEl) return
++  if (!formEl) {
++    return
++  }
+   const arr: string[] = []
+   multipleSelection.value.map((v) => {
+     if (v) {
+diff --git a/ui/src/views/login/index.vue b/ui/src/views/login/index.vue
+index cb1684ac47a81361bcd49113aa3577527c8fc25d..58c6da8a354cec094ccd5a2b1f02c96d4d8c20aa 100644
+--- a/ui/src/views/login/index.vue
++++ b/ui/src/views/login/index.vue
+@@ -35,7 +35,7 @@
+             </el-form-item>
+           </div>
+           <div class="mb-24">
+-            <el-form-item prop="captcha">
++            <el-form-item prop="captcha" v-if="user.captchaEnabled">
+               <div class="flex-between w-full">
+                 <el-input
+                   size="large"
+@@ -279,6 +279,9 @@ const login = () => {
+ onBeforeMount(() => {
+   loading.value = true
+   user.asyncGetProfile().then((res) => {
++    if (user.captchaEnabled) {
++      makeCode()
++    }
+     if (user.isEnterprise()) {
+       user
+         .getAuthType()
+@@ -320,7 +323,6 @@ onBeforeMount(() => {
+ declare const window: any
+ 
+ onMounted(() => {
+-  makeCode()
+   const route = useRoute()
+   const currentUrl = ref(route.fullPath)
+   const params = new URLSearchParams(currentUrl.value.split('?')[1])
+diff --git a/ui/src/views/problem/index.vue b/ui/src/views/problem/index.vue
+index dd34c1def4e889d8efcdca6360d580d1d3680912..6c6a7104eed46c490e07f9f7cc7eaee08bc36f32 100644
+--- a/ui/src/views/problem/index.vue
++++ b/ui/src/views/problem/index.vue
+@@ -111,6 +111,7 @@
+   </LayoutContainer>
+ </template>
+ <script setup lang="ts">
++import type { TableInstance } from 'element-plus'
+ import { ref, onMounted, reactive, onBeforeUnmount, computed } from 'vue'
+ import { useRouter, useRoute } from 'vue-router'
+ import { ElTable } from 'element-plus'
+@@ -157,7 +158,7 @@ const problemIndexMap = computed<Dict<number>>(() => {
+     .reduce((pre, next) => ({ ...pre, ...next }), {})
+ })
+ 
+-const multipleTableRef = ref<InstanceType<typeof ElTable>>()
++const multipleTableRef = ref<TableInstance>()
+ const multipleSelection = ref<any[]>([])
+ 
+ function relateProblem(row?: any) {
+diff --git a/ui/tsconfig.app.json b/ui/tsconfig.app.json
+index 86013947d5cac9ef1d374629fc8cb79374b27007..325da222d811de22afdb74aaa4c9f5194c77709e 100644
+--- a/ui/tsconfig.app.json
++++ b/ui/tsconfig.app.json
+@@ -4,6 +4,7 @@
+   "exclude": ["src/**/__tests__/*"],
+   "compilerOptions": {
+     "composite": true,
++    "lib": ["ES2021", "DOM", "DOM.Iterable"],
+     "moduleResolution": "node",
+     "baseUrl": ".",
+     "target": "esnext", // 使用ES最新语法
+diff --git a/ui/tsconfig.vitest.json b/ui/tsconfig.vitest.json
+index 940b2dfc5dc843133a47b3711a6003d5485ce38d..fcabc5883c3412acd34ce6a4cc5b02f987364953 100644
+--- a/ui/tsconfig.vitest.json
++++ b/ui/tsconfig.vitest.json
+@@ -5,7 +5,7 @@
+     "composite": true,
+     "target": "esnext", // 使用ES最新语法
+     "module": "esnext", // 使用ES模块语法
+-    "lib": [],
++    "lib": ["ES2021", "DOM", "DOM.Iterable"],
+     "types": ["node", "jsdom"]
+   }
+ }
+diff --git a/ui/vite.config.ts b/ui/vite.config.ts
+index f34b0363e1df86059cfa2757cd2afa12e5b921a0..e175d70e1662a76e3a299056eab4c934ccdaa066 100644
+--- a/ui/vite.config.ts
++++ b/ui/vite.config.ts
+@@ -12,17 +12,17 @@ export default defineConfig(({ mode }) => {
+   const prefix = process.env.VITE_DYNAMIC_PREFIX || ENV.VITE_BASE_PATH
+   const proxyConf: Record<string, string | ProxyOptions> = {}
+   proxyConf['/api'] = {
+-    target: 'http://127.0.0.1:8080',
++    target: ENV.VITE_PROXY_TARGET || 'http://127.0.0.1:10060',
+     changeOrigin: true,
+     rewrite: (path) => path.replace(ENV.VITE_BASE_PATH, '/')
+   }
+   proxyConf['/doc'] = {
+-    target: 'http://127.0.0.1:8080',
++    target: ENV.VITE_PROXY_TARGET || 'http://127.0.0.1:10060',
+     changeOrigin: true,
+     rewrite: (path) => path.replace(ENV.VITE_BASE_PATH, '/')
+   }
+   proxyConf['/static'] = {
+-    target: 'http://127.0.0.1:8080',
++    target: ENV.VITE_PROXY_TARGET || 'http://127.0.0.1:10060',
+     changeOrigin: true,
+     rewrite: (path) => path.replace(ENV.VITE_BASE_PATH, '/')
+   }
+diff --git a/ui/src/components/ai-chat/AgentProgress.vue b/ui/src/components/ai-chat/AgentProgress.vue
+new file mode 100644
+index 0000000000000000000000000000000000000000..579c691e0a883e0c645c7eec29e73a846a9423ff
+--- /dev/null
++++ b/ui/src/components/ai-chat/AgentProgress.vue
+@@ -0,0 +1,47 @@
++<template>
++  <div v-if="status || trace?.length || context?.compacted_rounds" class="agent-progress">
++    <p v-if="!done && status" role="status">{{ progressText }}</p>
++    <details v-if="trace?.length">
++      <summary>检索过程 · {{ trace.length }} 轮 · {{ stopLabel }}</summary>
++      <div v-for="step in trace" :key="step.round" class="round">
++        <strong>第 {{ step.round }} 轮</strong>
++        <p v-for="query in step.queries" :key="query">检索：{{ query }}</p>
++        <p>新增 {{ step.new_paragraph_ids?.length || 0 }} 个片段；{{ step.sufficient ? '资料充分' : '仍有资料缺口' }}</p>
++        <p v-if="step.missing">{{ step.missing }}</p>
++      </div>
++    </details>
++    <small v-if="context?.compacted_rounds">上下文：已压缩 {{ context.compacted_rounds }} 轮，保留近期 {{ context.recent_rounds }} 轮原文</small>
++  </div>
++</template>
++<script setup lang="ts">
++import { computed } from 'vue'
++const props = defineProps<{ status?: any; trace?: any[]; context?: any; stop?: string; done?: boolean }>()
++const labels: Record<string, string> = {
++  sufficient: '资料充分', max_rounds: '达到检索轮次上限', no_new_evidence: '未发现新增资料',
++  duplicate_query: '查询重复', evidence_budget: '达到资料容量上限', no_followup_query: '无后续查询',
++  no_datasets: '未关联知识库', assessment_error: '资料核验未完成'
++}
++const stopLabel = computed(() => labels[props.stop || ''] || '已完成')
++const progressText = computed(() => {
++  if (props.status?.phase === 'context') {
++    return '正在读取会话上下文…'
++  }
++  if (props.status?.phase === 'compacting') {
++    return 'Compacting context · 上下文 token 超出预算，正在压缩…'
++  }
++  if (props.status?.phase === 'retrieving') {
++    return `第 ${props.status.round} 轮检索：${props.status.query}`
++  }
++  if (props.status?.phase === 'assessed') {
++    return props.status.sufficient ? '资料已充分，准备回答…' : `继续查找资料：${props.status.missing}`
++  }
++  return '正在根据检索资料生成回答…'
++})
++</script>
++<style scoped>
++.agent-progress { margin: 10px 0; font-size: 13px; color: var(--el-text-color-secondary); }
++summary { cursor: pointer; }
++.round { border-left: 2px solid var(--el-border-color); padding-left: 12px; margin: 12px 0; }
++p { margin: 6px 0; overflow-wrap: anywhere; }
++small { display: block; margin-top: 8px; }
++</style>

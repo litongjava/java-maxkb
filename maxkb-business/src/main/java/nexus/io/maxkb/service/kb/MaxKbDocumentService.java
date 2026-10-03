@@ -60,6 +60,9 @@ public class MaxKbDocumentService {
   }
 
   public ResultVo delete(Long userId, Long datasetId, Long documentId) {
+    if (!DatasetAccess.ownsDocument(userId, datasetId, documentId)) {
+      return ResultVo.fail("文档不存在或无权访问");
+    }
     Row row = Row.by("id", documentId).set("user_id", userId).set("dataset_id", datasetId);
     Db.delete(MaxKbTableNames.max_kb_document, row);
     row = Row.by("document_id", documentId).set("dataset_id", datasetId);
@@ -68,8 +71,23 @@ public class MaxKbDocumentService {
   }
 
   public ResultVo update(Long userId, Long datasetId, Long documentId, MaxKbUpdateDocumentRequestVo vo) {
-    log.info("update vo:{}", vo);
-    Row row = Row.by("id", documentId).set("user_id", userId).set("dataset_id", datasetId).set("name", vo.getName());
+    if (!DatasetAccess.ownsDocument(userId, datasetId, documentId)) {
+      return ResultVo.fail("文档不存在或无权访问");
+    }
+    Row row = Row.by("id", documentId);
+    if (vo.getName() != null) {
+      row.set("name", vo.getName());
+    }
+    if (vo.getIs_active() != null) {
+      row.set("is_active", vo.getIs_active());
+    }
+    if (vo.getHit_handling_method() != null) {
+      row.set("hit_handling_method", vo.getHit_handling_method());
+    }
+    if (vo.getDirectly_return_similarity() != null) {
+      row.set("directly_return_similarity", vo.getDirectly_return_similarity());
+    }
+    row.set("update_time", new java.util.Date());
     Db.update(MaxKbTableNames.max_kb_document, row);
     return ResultVo.ok();
   }

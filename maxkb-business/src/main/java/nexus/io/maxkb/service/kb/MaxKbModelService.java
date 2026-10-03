@@ -16,17 +16,11 @@ import nexus.io.db.activerecord.Row;
 import nexus.io.jfinal.aop.Aop;
 import nexus.io.maxkb.constant.MaxKbTableNames;
 import nexus.io.maxkb.dao.ModelDao;
-import nexus.io.maxkb.enumeration.ModelProvider;
-import nexus.io.maxkb.enumeration.ModelType;
 import nexus.io.maxkb.model.MaxKbModel;
 import nexus.io.maxkb.vo.CredentialVo;
 import nexus.io.maxkb.vo.ModelVo;
 import nexus.io.model.result.ResultVo;
-import nexus.io.openai.chat.OpenAiChatRequest;
 import nexus.io.openai.client.OpenAiClient;
-import nexus.io.openai.consts.OpenAiModels;
-import nexus.io.openai.embedding.EmbeddingRequest;
-import nexus.io.tio.utils.hutool.DataMaskingUtil;
 import nexus.io.tio.utils.json.JsonUtils;
 import okhttp3.Response;
 
@@ -38,6 +32,10 @@ public class MaxKbModelService {
    * @return
    */
   public ResultVo list(String name) {
+    return list(name, null);
+  }
+
+  public ResultVo list(String name, String modelType) {
     MaxKbUserService maxKbUserService = Aop.get(MaxKbUserService.class);
 
     String[] jsonFields = new String[] { "meta" };
@@ -48,14 +46,20 @@ public class MaxKbModelService {
       List<Row> list = Db.findWithJsonField(sql, jsonFields);
       List<Kv> kvs = new ArrayList<>();
       for (Row r : list) {
+        if (!ModelAccess.canUse(nexus.io.tio.boot.http.TioRequestContext.getUserIdLong(), r.getLong("id"))) {
+          continue;
+        }
+        if (modelType != null && !modelType.equals(r.getStr("model_type"))) {
+          continue;
+        }
         Kv kv = r.toKv();
         kv.set("id", kv.get("id").toString());
         kv.set("user_id", kv.get("user_id").toString());
-        PGobject meta = kv.getAs("meta");
-        if (meta == null || meta.isNull()) {
-          kv.set("meta", "{}");
-        } else {
-          kv.set("meta", JsonUtils.parseObject(meta.getValue()));
+        Object meta = kv.get("meta");
+        if (meta instanceof PGobject) {
+          kv.set("meta", JsonUtils.parseObject(((PGobject) meta).getValue()));
+        } else if (meta == null) {
+          kv.set("meta", Kv.create());
         }
 
         String username = maxKbUserService.queryUsername(kv.getLong("user_id"));
@@ -72,6 +76,12 @@ public class MaxKbModelService {
     List<Kv> kvs = new ArrayList<>();
     List<Row> list = Db.findWithJsonField(sql, jsonFields, name);
     for (Row record : list) {
+      if (!ModelAccess.canUse(nexus.io.tio.boot.http.TioRequestContext.getUserIdLong(), record.getLong("id"))) {
+        continue;
+      }
+      if (modelType != null && !modelType.equals(record.getStr("model_type"))) {
+        continue;
+      }
       Kv kv = record.toKv();
       String username = maxKbUserService.queryUsername(kv.getLong("user_id"));
       kv.set("username", username);
@@ -86,71 +96,108 @@ public class MaxKbModelService {
    * @return
    */
   public ResultVo save(Long userId, ModelVo modelVo) {
+    if (modelVo.getId() != null && !ModelAccess.owns(userId, modelVo.getId())) {
+      return ResultVo.fail("无权修改模型");
+    }
     String name = modelVo.getName();
-    log.info("name:{}", name);
+    if (name == null || name.isBlank() || name.length() > 64) {
+      return ResultVo.fail(400, "模型名称须为 1 至 64 个字符");
+    }
     if (modelVo.getId() == null && Db.exists(MaxKbTableNames.max_kb_model, "name", name)) {
       return ResultVo.fail(400, "模型名称【" + name + "】已存在");
     }
 
-    String model_type = modelVo.getModel_type();
-    String provider = modelVo.getProvider();
-
-    if (ModelProvider.model_openai_provider.getName().equals(provider)) {
-      if (ModelType.EMBEDDING.getName().equals(model_type)) {
-        EmbeddingRequest embeddingRequestVo = new EmbeddingRequest();
-        embeddingRequestVo.input("Hi").model(OpenAiModels.TEXT_EMBEDDING_3_SMALL);
-
-        String api_base = modelVo.getCredential().getApi_base();
-        String api_key = modelVo.getCredential().getApi_key();
-
-        String bodyString = JsonUtils.toJson(embeddingRequestVo);
-        // send request
-        try (Response response = OpenAiClient.embeddings(api_base, api_key, bodyString)) {
-          if (!response.isSuccessful()) {
-            // get response string
-            String string = response.body().string();
-            return ResultVo.fail(400, "校验失败,请检查参数是否正确:" + string);
-          }
-        } catch (IOException e) {
-          e.printStackTrace();
-          return ResultVo.fail(500, e.getMessage());
+    try {
+      ModelCatalogService catalog = Aop.get(ModelCatalogService.class);
+      Row provider = catalog.provider(modelVo.getProvider());
+      if (provider == null) {
+        return ResultVo.fail(400, "供应商不存在或已停用");
+      }
+      if (!List.of("LLM", "EMBEDDING").contains(modelVo.getModel_type()) || !List.of("PRIVATE", "PUBLIC").contains(modelVo.getPermission_type())) {
+        return ResultVo.fail(400, "模型类型或权限参数无效");
+      }
+      modelVo.setModel_name(ModelCatalogService.modelId(modelVo.getModel_name()));
+      CredentialVo credential = modelVo.getCredential();
+      if (credential == null) {
+        return ResultVo.fail(400, "请填写模型凭据");
+      }
+      if (credential.getApi_base() == null || credential.getApi_base().isBlank()) {
+        credential.setApi_base(provider.getStr("api_base"));
+      }
+      credential.setApi_base(ModelCatalogService.baseUrl(credential.getApi_base()));
+      String key = credential.getApi_key();
+      if (modelVo.getId() != null && (key == null || key.isBlank() || key.contains("*"))) {
+        CredentialVo previous = ModelCatalogService.credential(Db.findById(MaxKbTableNames.max_kb_model, modelVo.getId()));
+        if (!credential.getApi_base().equals(ModelCatalogService.baseUrl(previous.getApi_base()))) {
+          return ResultVo.fail(400, "修改 API 域名时必须重新填写该平台的 API Key");
         }
-      } else {
-        if (ModelType.LLM.getName().equals(model_type)) {
-          String api_base = modelVo.getCredential().getApi_base();
-          String api_key = modelVo.getCredential().getApi_key();
-
-          // messages
-          List<UniChatMessage> messages = new ArrayList<>();
-          UniChatMessage message = new UniChatMessage().role("user").content("hi");
-          messages.add(message);
-
-          OpenAiChatRequest OpenAiChatRequest = new OpenAiChatRequest();
-          OpenAiChatRequest.setStream(false);
-          OpenAiChatRequest.setModel(OpenAiModels.GPT_4O_MINI);
-          OpenAiChatRequest.fromMessages(messages);
-
-          String bodyString = JsonUtils.toJson(OpenAiChatRequest);
-          // send request
-          try (Response response = OpenAiClient.chatCompletions(api_base, api_key, bodyString)) {
-            if (!response.isSuccessful()) {
-              // get response string
-              String string = response.body().string();
-              return ResultVo.fail(500, "校验失败,请检查参数是否正确:" + string);
-            }
-          } catch (IOException e) {
-            e.printStackTrace();
-            return ResultVo.fail(500, e.getMessage());
-          }
+        credential.setApi_key(previous.getApi_key());
+      }
+      if (credential.getApi_key() == null || credential.getApi_key().isBlank() || credential.getApi_key().contains("*")) {
+        return ResultVo.fail(400, "请填写该平台的 API Key");
+      }
+      if (modelVo.getId() != null) {
+        Row previous = Db.findById(MaxKbTableNames.max_kb_model, modelVo.getId());
+        CredentialVo oldCredential = ModelCatalogService.credential(previous);
+        if ("EMBEDDING".equals(previous.getStr("model_type"))
+            && (!modelVo.getModel_name().equals(previous.getStr("model_name")) || !modelVo.getModel_type().equals(previous.getStr("model_type"))
+                || !credential.getApi_base().equals(ModelCatalogService.baseUrl(oldCredential.getApi_base())))
+            && Db.queryLong("select count(*) from max_kb_dataset where embedding_mode_id=?", modelVo.getId()) > 0) {
+          return ResultVo.fail(400, "被知识库使用的向量模型不能直接更换模型 ID 或 API 地址，请新建模型和知识库");
         }
       }
+      try {
+        validateModel(modelVo);
+      } catch (Exception e) {
+        return ResultVo.fail(400, "模型校验失败，请检查模型 ID、API 地址、密钥、额度；向量模型须支持 1024 维");
+      }
+    } catch (IllegalArgumentException e) {
+      return ResultVo.fail(400, e.getMessage());
+    } catch (Exception e) {
+      return ResultVo.fail(400, "模型校验失败，请检查模型 ID、API 地址、密钥及平台额度");
     }
 
     Aop.get(ModelDao.class).saveOrUpdate(userId, modelVo);
     return ResultVo.ok();
   }
 
+  static void validateModel(ModelVo model) throws IOException {
+    CredentialVo credential = model.getCredential();
+    if ("EMBEDDING".equals(model.getModel_type())) {
+      com.alibaba.fastjson2.JSONObject input = new com.alibaba.fastjson2.JSONObject();
+      input.put("model", model.getModel_name());
+      input.put("input", List.of("模型连接测试"));
+      input.put("dimensions", 1024);
+      try (Response response = OpenAiClient.embeddings(credential.getApi_base(), credential.getApi_key(), input.toJSONString())) {
+        if (!response.isSuccessful() || response.body() == null) {
+          throw new IllegalArgumentException("向量模型校验失败，HTTP " + response.code());
+        }
+        float[] vector = com.alibaba.fastjson2.JSON.parseObject(response.body().string()).getJSONArray("data").getJSONObject(0).getObject("embedding", float[].class);
+        if (vector == null || vector.length != 1024) {
+          throw new IllegalArgumentException("当前知识库需要 1024 维向量，请选用支持 dimensions=1024 的模型");
+        }
+        for (float value : vector) {
+          if (!Float.isFinite(value)) {
+            throw new IllegalArgumentException("向量模型返回无效数据");
+          }
+        }
+      }
+    } else {
+      nexus.io.chat.UniChatRequest request = new nexus.io.chat.UniChatRequest();
+      request.setModel(model.getModel_name()).setApiPrefixUrl(credential.getApi_base()).setApiKey(credential.getApi_key())
+          .setStream(false).setMessages(List.of(new UniChatMessage("user", "Reply OK")));
+      nexus.io.chat.UniChatResponse response = nexus.io.chat.UniChatClient.generate(request);
+      if (response == null || response.getRawData() == null) {
+        throw new IllegalArgumentException("模型未返回有效响应");
+      }
+    }
+  }
+
   public ResultVo delete(Long id) {
+    if (Db.queryLong("select count(*) from max_kb_dataset where embedding_mode_id=?", id) > 0
+        || Db.queryLong("select count(*) from max_kb_application where model_id=?", id) > 0) {
+      return ResultVo.fail(400, "该模型仍被应用或知识库使用");
+    }
     boolean ok = Aop.get(ModelDao.class).deleteById(id);
     if (ok) {
       return ResultVo.ok();
@@ -161,15 +208,16 @@ public class MaxKbModelService {
 
   public ResultVo get(Long id) {
     Row record = Db.findById(MaxKbTableNames.max_kb_model, id);
-    Object credential = record.getColumns().remove("credential");
-    Kv kv = record.toKv();
-    if (credential instanceof String) {
-      String credentialStr = (String) credential;
-      CredentialVo crdentianlVo = JsonUtils.parse(credentialStr, CredentialVo.class);
-      String api_key = crdentianlVo.getApi_key();
-      crdentianlVo.setApi_key(DataMaskingUtil.maskApiKey(api_key));
-      kv.set("credential", crdentianlVo);
+    if (record == null) {
+      return ResultVo.fail(404, "模型不存在");
     }
+    CredentialVo credential = ModelCatalogService.credential(record);
+    record.getColumns().remove("credential");
+    Kv kv = record.toKv();
+    credential.setApi_key("********");
+    kv.set("credential", credential);
+    kv.set("id", String.valueOf(id));
+    kv.set("model_params_form", com.alibaba.fastjson2.JSON.parseArray(record.getStr("model_params_form")));
     return ResultVo.ok(kv);
   }
 

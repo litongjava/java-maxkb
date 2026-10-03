@@ -63,6 +63,21 @@ public class MaxKbDatasetService {
   }
 
   public ResultVo save(Long userId, KbDatasetModel kbDatasetModel) {
+    if (kbDatasetModel.getId() != null && !DatasetAccess.owns(userId, kbDatasetModel.getId())) {
+      return ResultVo.fail("知识库不存在或无权访问");
+    }
+    Long embeddingId = kbDatasetModel.getEmbedding_mode_id();
+    if (embeddingId == null) {
+      embeddingId = kbDatasetModel.getId() == null ? 1002L : Db.queryLong("select embedding_mode_id from max_kb_dataset where id=?", kbDatasetModel.getId());
+      kbDatasetModel.setEmbedding_mode_id(embeddingId);
+    }
+    if (!ModelAccess.canUse(userId, embeddingId) || Db.queryLong("select count(*) from max_kb_model where id=? and model_type='EMBEDDING'", embeddingId) == 0) {
+      return ResultVo.fail("向量模型不存在或无权使用");
+    }
+    if (kbDatasetModel.getId() != null && !embeddingId.equals(Db.queryLong("select embedding_mode_id from max_kb_dataset where id=?", kbDatasetModel.getId()))
+        && Db.queryLong("select count(*) from max_kb_paragraph where dataset_id=?", kbDatasetModel.getId()) > 0) {
+      return ResultVo.fail("已有文档的知识库不能直接切换向量空间，请新建知识库并重新导入文档");
+    }
     ResultVo resultVo = new ResultVo();
     TableResult<Kv> saveOrUpdate = Aop.get(MaxKbDatasetDao.class).saveOrUpdate(userId, kbDatasetModel);
     Kv data = saveOrUpdate.getData();
@@ -99,6 +114,9 @@ public class MaxKbDatasetService {
   }
 
   public ResultVo delete(Long userId, Long id) {
+    if (!DatasetAccess.owns(userId, id)) {
+      return ResultVo.fail("知识库不存在或无权访问");
+    }
     TableInput tableInput = null;
     if (userId != null && userId.equals(1L)) {
       tableInput = TableInput.by("id", id);

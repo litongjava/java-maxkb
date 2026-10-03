@@ -30,4 +30,6 @@ public class MaxKbApplicationVo {
   private Boolean tts_model_enable;
   private String tts_type;
   private String type;
+  /** 对话日志清理策略：保留天数，空值按 180 天处理 */
+  private Integer clean_time;
 }

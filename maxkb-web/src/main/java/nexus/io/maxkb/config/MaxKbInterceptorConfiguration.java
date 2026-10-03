@@ -18,9 +18,9 @@ public class MaxKbInterceptorConfiguration {
     model.addAllowUrls(TioBootAdminUrls.ALLLOW_URLS);
     model.addAllowUrls("", "/");
     model.addAllowUrls("/ui/**");
-    model.addAllowUrl("/sse");
+    model.addAllowUrls("/sse", "/api/user/login");
 
-    model.addAllowUrls("/api/application/chat_message/*", "/api/profile", "/api/application/authentication");
+    model.addAllowUrls("/api/profile", "/api/application/authentication");
 
     model.addAllowUrls("/api/v1/search", "/api/display/info", "/api/auth/types", "/api/qr_type");
     //

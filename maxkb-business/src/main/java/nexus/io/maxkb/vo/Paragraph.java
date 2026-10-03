@@ -13,6 +13,7 @@ public class Paragraph {
   private String title;
   private String question;
   private String content;
+  private Boolean is_active;
 
   public Paragraph(String content) {
     this.content = content;

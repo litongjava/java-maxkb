@@ -18,4 +18,9 @@ public class MaxKbRetrieveResult {
   private String model_name;
   private String problem_text;
   private List<ParagraphSearchResultVo> paragraph_list;
+  private List<com.alibaba.fastjson2.JSONObject> iterations;
+  private String stop_reason;
+  private Boolean sufficient;
+  private String missing;
+  private com.alibaba.fastjson2.JSONObject context;
 }

@@ -7,7 +7,7 @@ import nexus.io.model.result.ResultVo;
 @RequestPath("/api/auth/types")
 public class ApiAuthTypesController {
 
-  @Get
+  @Get("")
   public ResultVo index() {
     // { "code": 200, "data": ["LDAP", "PASSWORD"] }
     //String[] data = { "LDAP", "PASSWORD" };

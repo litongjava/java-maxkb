@@ -35,7 +35,7 @@ public class MaxKbProblemService {
   }
 
   public ResultVo page(Long datasetId, Integer pageNo, Integer pageSize) {
-    TableInput tableInput = TableInput.create().setPageNo(pageNo).setPageSize(pageSize);
+    TableInput tableInput = TableInput.by("dataset_id", datasetId).setPageNo(pageNo).setPageSize(pageSize);
     TableResult<Page<Row>> page = ApiTable.page(MaxKbTableNames.max_kb_problem, tableInput);
     int totalRow = page.getData().getTotalRow();
     List<Row> list = page.getData().getList();
@@ -45,12 +45,20 @@ public class MaxKbProblemService {
   }
 
   public ResultVo delete(Long datasetId, List<Long> ids) {
+    for (Long id : ids) {
+      if (Db.queryLong("select count(*) from max_kb_problem where id=? and dataset_id=?", id, datasetId) == 0) {
+        return ResultVo.fail("问题不存在或不属于当前知识库");
+      }
+    }
     ApiTable.deleteByIds(MaxKbTableNames.max_kb_problem, ids);
     ApiTable.deleteByIds(MaxKbTableNames.max_kb_problem_paragraph_mapping, "problem_id", ids);
     return ResultVo.ok();
   }
 
   public ResultVo delete(Long datasetId, Long problemId) {
+    if (Db.queryLong("select count(*) from max_kb_problem where id=? and dataset_id=?", problemId, datasetId) == 0) {
+      return ResultVo.fail("问题不存在或不属于当前知识库");
+    }
     ApiTable.delById(MaxKbTableNames.max_kb_problem, problemId);
     ApiTable.delById(MaxKbTableNames.max_kb_problem_paragraph_mapping, "problem_id", problemId);
     return ResultVo.ok();
@@ -101,6 +109,16 @@ public class MaxKbProblemService {
     List<MaxKbParagraphId> paragraph_list = batchReequest.getParagraph_list();
     List<Long> problem_id_list = batchReequest.getProblem_id_list();
 
+    for (Long problemId : problem_id_list) {
+      if (Db.queryLong("select count(*) from max_kb_problem where id=? and dataset_id=?", problemId, datasetId) == 0) {
+        return ResultVo.fail("问题不属于当前知识库");
+      }
+    }
+    for (MaxKbParagraphId paragraph : paragraph_list) {
+      if (Db.queryLong("select count(*) from max_kb_paragraph where id=? and document_id=? and dataset_id=?", paragraph.getParagraph_id(), paragraph.getDocument_id(), datasetId) == 0) {
+        return ResultVo.fail("段落不属于当前知识库");
+      }
+    }
     List<Row> mappings = new ArrayList<>();
     for (int i = 0; i < paragraph_list.size(); i++) {
       MaxKbParagraphId maxKbParagraphId = paragraph_list.get(i);

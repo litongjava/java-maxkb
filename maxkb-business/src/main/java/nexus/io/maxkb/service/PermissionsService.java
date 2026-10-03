@@ -29,12 +29,24 @@ public class PermissionsService {
       "TEAM:READ", "TEAM:CREATE", "TEAM:DELETE", "TEAM:EDIT");
 
   public List<String> getPermissionsByRole(String role) {
+    return getPermissionsByRole(role, nexus.io.tio.boot.http.TioRequestContext.getUserIdLong());
+  }
+
+  public List<String> getPermissionsByRole(String role, Long userId) {
     // Switch-case to return the permissions based on the role
     switch (role.toLowerCase()) {
     case "admin":
       return getAdminPermissions();
     case "user":
-      return new ArrayList<>();
+      List<String> permissions = new ArrayList<>(Arrays.asList("DATASET:CREATE", "DATASET:READ", "APPLICATION:READ", "APPLICATION:CREATE", "MODEL:READ", "MODEL:CREATE", "FUNCTION:READ", "FUNCTION:CREATE"));
+      for (String module : Arrays.asList(APPLICATION, DATASET)) {
+        String table = APPLICATION.equals(module) ? "max_kb_application" : "max_kb_dataset";
+        List<Long> ids = Db.query("select id from " + table + " where user_id=?", userId);
+        permissions.addAll(genPermissions(module, MANAGE, ids));
+        permissions.addAll(genPermissions(module, USE, ids));
+        permissions.addAll(genPermissions(module, DELETE, ids));
+      }
+      return permissions;
     default:
       return new ArrayList<>();
     }

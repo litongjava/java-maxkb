@@ -12,7 +12,7 @@ public class ApiProfileController {
   public ResultVo index() {
     Kv data = Kv.by("version", "v1.5.1 (build at 2024-08-29T17:29, commit: 30b1bdfe)");
     // 将IS_XPACK和XPACK_LICENSE_IS_VALID设置为true,前端将不在提示 创建应用的是的数量限制
-    data.set("IS_XPACK", true).set("XPACK_LICENSE_IS_VALID", true);
+    data.set("IS_XPACK", false).set("XPACK_LICENSE_IS_VALID", false).set("captcha_enabled", false);
     return ResultVo.ok(data);
   }
 }

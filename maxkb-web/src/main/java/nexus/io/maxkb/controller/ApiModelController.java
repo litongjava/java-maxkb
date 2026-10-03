@@ -20,13 +20,13 @@ public class ApiModelController {
 
   MaxKbModelService modelService = Aop.get(MaxKbModelService.class);
 
-  @Get
+  @Get("")
   public ResultVo index(HttpRequest request) {
     String name = request.getParam("name");
-    return modelService.list(name);
+    return modelService.list(name, request.getParam("model_type"));
   }
 
-  @Post
+  @Post("")
   public ResultVo save(HttpRequest request) {
     Long userId = TioRequestContext.getUserIdLong();
     String bodyString = request.getBodyString();
@@ -51,6 +51,22 @@ public class ApiModelController {
   @Get("/{id}")
   public ResultVo get(Long id) {
     return modelService.get(id);
+  }
+
+  @Get("/{id}/model_params_form")
+  public ResultVo modelParams(Long id) {
+    nexus.io.db.activerecord.Row row = nexus.io.db.activerecord.Db.findById("max_kb_model", id);
+    if (row == null) {
+      return ResultVo.fail(404, "模型不存在");
+    }
+    return ResultVo.ok(com.alibaba.fastjson2.JSON.parseArray(row.getStr("model_params_form")));
+  }
+
+  @Put("/{id}/model_params_form")
+  public ResultVo updateModelParams(Long id, HttpRequest request) {
+    com.alibaba.fastjson2.JSONArray form = com.alibaba.fastjson2.JSON.parseArray(request.getBodyString());
+    nexus.io.db.activerecord.Db.update("update max_kb_model set model_params_form=?::jsonb where id=?", form.toJSONString(), id);
+    return ResultVo.ok(form);
   }
 
 }

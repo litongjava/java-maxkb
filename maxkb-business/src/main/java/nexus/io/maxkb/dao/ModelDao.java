@@ -24,20 +24,23 @@ public class ModelDao {
         //
         .set("permission_type", modelVo.getPermission_type())
         //
-        .set("credential", modelVo.getCredential()).set("user_id", userId).set("status", "SUCCESS");
+        .set("credential", modelVo.getCredential()).set("status", "SUCCESS");
 
     String provider = modelVo.getProvider();
     if (provider != null) {
       record.set("provider", provider);
     }
 
+    if (modelVo.getModel_params_form() != null) {
+      record.set("model_params_form", modelVo.getModel_params_form());
+    }
     Long id = modelVo.getId();
     if (id != null) {
       record.set("id", id);
-      return Db.update(MaxKbTableNames.max_kb_model, "id", record, new String[] { "credential" });
+      return Db.update(MaxKbTableNames.max_kb_model, "id", record, new String[] { "credential", "model_params_form" });
     } else {
-      record.set("id", SnowflakeIdUtils.id());
-      return Db.save(MaxKbTableNames.max_kb_model, record, new String[] { "credential" });
+      record.set("id", SnowflakeIdUtils.id()).set("user_id", userId);
+      return Db.save(MaxKbTableNames.max_kb_model, record, new String[] { "credential", "model_params_form" });
     }
   }
 

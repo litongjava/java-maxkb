@@ -31,6 +31,9 @@ import nexus.io.tio.utils.snowflake.SnowflakeIdUtils;
 public class MaxKbApplicationService {
 
   public ResultVo create(Long userId, MaxKbApplicationVo application) {
+    if (!ModelAccess.canUse(userId, application.getModel_id())) {
+      return ResultVo.fail("无权使用模型");
+    }
     Long applicationId = SnowflakeIdUtils.id();
     application.setId(applicationId);
     Row record = Row.fromBean(application);
@@ -43,10 +46,19 @@ public class MaxKbApplicationService {
   }
 
   public ResultVo update(Long userId, MaxKbApplicationVo application) {
+    if (!ApplicationAccess.owns(userId, application.getId())) {
+      return ResultVo.fail("应用不存在或无权访问");
+    }
+    if (!ModelAccess.canUse(userId, application.getModel_id())) {
+      return ResultVo.fail("无权使用模型");
+    }
     List<Long> dataset_id_list = application.getDataset_id_list();
     List<MaxKbApplicationDatasetMapping> saveRecords = new ArrayList<>();
     if (dataset_id_list != null) {
       for (Long datasetId : dataset_id_list) {
+        if (!DatasetAccess.owns(userId, datasetId)) {
+          return ResultVo.fail("无权关联知识库");
+        }
         MaxKbApplicationDatasetMapping mapping = new MaxKbApplicationDatasetMapping();
         mapping.setId(SnowflakeIdUtils.id()).setDatasetId(datasetId).setApplicationId(application.getId());
         saveRecords.add(mapping);
@@ -58,9 +70,11 @@ public class MaxKbApplicationService {
     record.set("user_id", userId);
 
     Db.tx(() -> {
-      Db.deleteById(MaxKbApplicationDatasetMapping.tableName, "application_id", application.getId());
-      if (saveRecords.size() > 0) {
-        Db.batchSave(saveRecords, 2000);
+      if (dataset_id_list != null) {
+        Db.deleteById(MaxKbApplicationDatasetMapping.tableName, "application_id", application.getId());
+        if (saveRecords.size() > 0) {
+          Db.batchSave(saveRecords, 2000);
+        }
       }
 
       Db.update(MaxKbApplication.tableName, record);
@@ -71,12 +85,10 @@ public class MaxKbApplicationService {
   }
 
   public ResultVo delete(Long userId, Long applicationId) {
-    boolean deleted = false;
-    if (userId != null && userId.equals(1L)) {
-      deleted = new MaxKbApplication().setId(applicationId).delete();
-    } else {
-      deleted = new MaxKbApplication().setId(applicationId).setUserId(userId).delete();
+    if (!ApplicationAccess.owns(userId, applicationId)) {
+      return ResultVo.fail("无权删除应用");
     }
+    boolean deleted = Db.deleteById(MaxKbApplication.tableName, applicationId);
     new MaxKbApplicationDatasetMapping().setApplicationId(applicationId).delete();
     Aop.get(MaxKbApplicationAccessTokenService.class).delete(applicationId);
     return ResultVo.ok(deleted);
@@ -132,6 +144,9 @@ public class MaxKbApplicationService {
     }
 
     Row record = Db.findFirst(MaxKbApplication.tableName, quereyRecord);
+    if (record == null) {
+      return ResultVo.fail("应用不存在或无权访问");
+    }
     PgObjectUtils.toBean(record, "model_params_setting", MaxKbModelParamsSetting.class);
     PgObjectUtils.toBean(record, "dataset_setting", MaxKbDatasetSettingVo.class);
 
@@ -148,7 +163,6 @@ public class MaxKbApplicationService {
     }
 
     Long modelId = record.getLong("model_id");
-    record.remove("model_id");
 
     String sql = String.format("select dataset_id from %s where application_id=?", MaxKbApplicationDatasetMapping.tableName);
     List<Long> dataset_id_list = Db.queryListLong(sql, applicationId);
@@ -159,9 +173,9 @@ public class MaxKbApplicationService {
   }
 
   public ResultVo listApplicaionModel(Long userId, Long applicationId) {
-    Row queryRecord = Row.by("user_id", userId);
+    Row queryRecord = Row.by("user_id", userId).set("model_type", "LLM");
     String columns = "id,name,provider,model_type,model_name,status,meta,permission_type,user_id";
-    List<Row> list = Db.find(MaxKbModel.tableName, columns, queryRecord);
+    List<Row> list = Db.find("select " + columns + " from max_kb_model where model_type='LLM' and (user_id=? or permission_type='PUBLIC')", userId);
     List<Kv> kvs = new ArrayList<>();
     MaxKbUserService maxKbUserService = Aop.get(MaxKbUserService.class);
 
@@ -176,16 +190,10 @@ public class MaxKbApplicationService {
   }
 
   public ResultVo setModelId(Long userIdLong, Long applicationId, Long modelId) {
-    boolean update = false;
-    if (userIdLong.equals(1L)) {
-      Row updateRecord = Row.by("id", modelId).set("id", applicationId).set("model_id", modelId);
-      update = Db.update(MaxKbApplication.tableName, "id", updateRecord);
-    } else {
-      Row updateRecord = Row.by("id", modelId).set("id", applicationId).set("user_id", userIdLong).set("model_id", modelId);
-      update = Db.update(MaxKbApplication.tableName, "id,user_id", updateRecord);
+    if (!ApplicationAccess.owns(userIdLong, applicationId)) {
+      return ResultVo.fail("无权访问应用");
     }
-
-    return ResultVo.ok(update);
+    return ResultVo.ok(java.util.Collections.emptyList());
   }
 
   public ResultVo listApplicaionDataset(Long userId, Long applicationId) {
@@ -193,16 +201,26 @@ public class MaxKbApplicationService {
   }
 
   public ResultVo profile(Long clientId) {
-    Long applicationId = Db.queryLongById(MaxKbApplicationPublicAccessClient.tableName, "client_id", clientId);
+    Long applicationId = Db.queryLong("select application_id from max_kb_application_public_access_client where client_id=? order by id desc limit 1", clientId);
     if (applicationId == null) {
       return ResultVo.fail("applicationId is null");
     }
     Row applicaiton = Aop.get(MaxKbApplicationDao.class).getBasicInfoById(applicationId);
+    if (!ApplicationAccess.canChat(clientId, applicationId)) {
+      return ResultVo.fail("应用已停用或无权访问");
+    }
     if (applicaiton == null) {
       return ResultVo.ok();
     }
 
-    return ResultVo.ok(applicaiton.toMap());
-
+    Kv profile = applicaiton.toKv();
+    // 分享页的显示开关与对话语言存放在公开链接上，由应用概览的公开访问设置维护
+    Row accessToken = Db.findFirst("select show_source,language from max_kb_application_access_token where application_id=? and deleted=0",
+        applicationId);
+    if (accessToken != null) {
+      profile.set("show_source", Boolean.TRUE.equals(accessToken.getBoolean("show_source")));
+      profile.set("language", accessToken.getStr("language"));
+    }
+    return ResultVo.ok(profile);
   }
 }

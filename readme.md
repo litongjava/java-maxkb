@@ -1,197 +1,168 @@
-# 智能知识库系统（java-maxkb）
+# Java MaxKB
 
-## 功能演示
+基于 tio-boot 的 Java 知识库后端，复用 MaxKB 前端。通过文档检测、结构提取、远程 OCR、向量检索和多轮问答，将文档转为可追溯的知识库回答。模型生成复用 `java-openai` 的 `UniChatClient`，本机无需部署模型权重。
 
-[!演示视频](https://www.bilibili.com/video/BV1yJU8YHEgg/?vd_source=69e3cff470444b21e8c322dddec00def)
+[前端仓库](https://github.com/litongjava/MaxKB/tree/main/ui) · [Java 后端仓库](https://github.com/litongjava/java-maxkb) · [演示视频](https://www.bilibili.com/video/BV1yJU8YHEgg/)
 
-## 前端和后端代码
+开发文档维护在 `tio-boot-docs/docs/zh/61_knowledge-base`。本地文档根目录为 `D:/code/markdown/project-litongjava/tio-boot-docs/docs/zh/61_knowledge-base`，主要章节：
 
-[前端代码github](https://github.com/litongjava/MaxKB/tree/main/ui)
-[后端代码gitee](https://github.com/litongjava/java-maxkb)
+| 章节 | 内容 |
+| --- | --- |
+| `01.md` / `29.md` | 数据库设计、Windows pgvector 安装、配置与启动 |
+| `03.md` / `35.md` | 模型管理、数据库模型目录、平台接入与自定义模型 ID |
+| `31.md` | 前端适配与 UI 验证 |
+| `32.md` | 单次问题内迭代检索、会话历史、token 阈值压缩、隔离 Python |
+| `33.md` | 官方前端升级与定制恢复 |
+| `34.md` | 独立用户和资源权限 |
 
-## 开发文档
+## 当前能力
 
-[!开发文档](https://www.tio-boot.com/zh/56_knowlege_base/01.html)
+- 用户、知识库、文档、分段、问题及应用管理；普通账号按所属资源隔离，支持公共模型和分享聊天。
+- 文档先检测再解析：文字 PDF、本地结构化提取、扫描页和图片 OCR、混合 PDF 逐页处理，解析预览保留文件 ID。
+- 向量、关键词及混合检索；文档和查询使用知识库选定的同一个向量模型。
+- 单次提问执行“检索 → 判断资料是否充足 → 补充检索 → 最终回答”，保留资料引用与检索过程。
+- 读取当前会话最近问答及摘要；**只有 token 超过预算才压缩上下文**，超过对话轮数不会单独触发压缩。
+- 平台目录、基础模型目录和表单入库；支持 OpenAI 兼容厂商与中转平台，允许手动输入模型 ID。
+- 隔离 Python 执行器代码及部署脚本保留，需要 Docker 容器环境。当前本机 Docker 安装暂缓，环境未就绪时拒绝执行，不使用宿主机 Python 回退。
 
-## 项目简介
+统计分析、Milvus 替代方案和完整官方工作流能力，不因前端有菜单或文档有设计示例就视为已全部实现。
 
-**java-maxkb** 是一个基于 Java 开发的智能知识库系统，利用先进的自然语言处理和向量检索技术，为用户提供高效、准确的问答服务。通过集成文档管理、片段向量化、语义搜索和大语言模型（如 GPT-4）等功能，系统能够理解用户的问题，并从知识库中检索最相关的内容生成回答。
+## 目录与运行环境
 
-## 功能特性
+推荐将两个仓库放在同一父目录：
 
-1. **数据库设计** [查看 01.html](https://www.tio-boot.com/zh/56_knowlege_base/01.html)  
-   设计并实现项目所需的数据表结构与数据库方案，为后续的数据操作打下坚实基础。
+```text
+project-maxkb/
+  java-maxkb/
+    maxkb-business/       业务逻辑与测试
+    maxkb-web/            HTTP 入口和本地配置
+    scripts/             初始化、启动、目录同步与补丁导出
+    docs/                验证记录、定制说明和补丁
+  MaxKB/
+    ui/                  官方前端及已记录的必要定制
+```
 
-2. **用户登录** [查看 02.html](https://www.tio-boot.com/zh/56_knowlege_base/02.html)  
-   实现了安全可靠的用户认证系统，保护用户数据并限制未经授权的访问。
+需要 JDK 21、Maven、Node.js/npm、已启动的 PostgreSQL，以及安装在数据库服务端的 pgvector 和 pg_trgm。默认远程服务需要可用的 Gitee API Key。Docker 仅为隔离 Python 执行功能所需。
 
-3. **模型管理** [查看 03.html](https://www.tio-boot.com/zh/56_knowlege_base/03.html)  
-   支持针对不同平台的模型（如 OpenAI、Google Gemini、Claude）进行管理与配置。
+## 配置与初始化
 
-4. **知识库管理** [查看 04.html](https://www.tio-boot.com/zh/56_knowlege_base/04.html)  
-   提供创建、更新及删除知识库的功能，方便用户维护与管理文档内容。
+在 `maxkb-web/my.txt` 创建本地配置，每行一项：
 
-5. **文档拆分** [查看 05.html](https://www.tio-boot.com/zh/56_knowlege_base/05.html)  
-   可将文档拆分为多个片段，便于后续向量化和检索操作。
+```properties
+jdbc.url=jdbc:postgresql://127.0.0.1:5432/<实际数据库名>
+jdbc.user=<数据库用户>
+jdbc.pswd=<数据库密码>
+app.admin.secret.key=<本机生成的随机签名密钥>
+server.port=10060
+app.env=dev
+jdbc.showSql=false
+```
 
-6. **片段向量** [查看 06.html](https://www.tio-boot.com/zh/56_knowlege_base/06.html)  
-   将文本片段进行向量化处理，以便进行语义相似度计算及高效检索。
+在 `maxkb-web/secrets.txt` 设置：
 
-7. **命中率测试** [查看 07.html](https://www.tio-boot.com/zh/56_knowlege_base/07.html)  
-   通过语义相似度和 Top-N 算法，检索并返回与用户问题最相关的文档片段，用于评估检索的准确性。
+```properties
+GITEE_API_KEY=<自己的密钥>
+```
 
-8. **文档管理** [查看 08.html](https://www.tio-boot.com/zh/56_knowlege_base/08.html)  
-   提供上传和管理文档的功能，上传后可自动拆分为片段便于进一步处理。
+这两个文件、运行日志和测试令牌保持在 Git 忽略范围，不放入前端配置或补丁。
 
-9. **片段管理** [查看 09.html](https://www.tio-boot.com/zh/56_knowlege_base/09.html)  
-   允许对已拆分的片段进行增、删、改、查等操作，确保内容更新灵活可控。
+如果出现 `extension "vector" is not available`，需要先在实际运行 PostgreSQL 的机器上安装扩展文件，再连接业务数据库启用扩展；仅执行 SQL 不能安装缺失的二进制。Windows 编译安装步骤见文档第 29 章。
 
-10. **问题管理** [查看 10.html](https://www.tio-boot.com/zh/56_knowlege_base/10.html)  
-    为片段指定相关问题，以提升检索时的准确性与关联度。
+已有数据库不需要删除重建。在 Java 仓库根目录执行：
 
-11. **应用管理** [查看 11.html](https://www.tio-boot.com/zh/56_knowlege_base/11.html)  
-    提供创建和配置应用（智能体）的功能，并可关联指定模型和知识库。
+```powershell
+.\scripts\Initialize-Database.ps1 -PostgresBin '<PostgreSQL安装目录>\bin'
+```
 
-12. **向量检索** [查看 12.html](https://www.tio-boot.com/zh/56_knowlege_base/12.html)  
-    基于语义相似度，在知识库中高效检索与用户问题最匹配的片段。
+脚本读取 `my.txt`，执行 `init-db.sql` 与 `002` 至 `009` 的迁移，包括默认模型、会话摘要、用户令牌版本、数据库模型目录及目录快照。升级已有数据库前先备份；幂等脚本不会自动转换所有历史表结构。
 
-13. **推理问答调试** [查看 13.html](https://www.tio-boot.com/zh/56_knowlege_base/13.html)  
-    提供检索与问答性能的评估工具，帮助开发者进行系统优化与调试。
+## 构建与启动
 
-14. **对话问答** [查看 14.html](https://www.tio-boot.com/zh/56_knowlege_base/14.html)  
-    为用户提供友好的人机交互界面，结合检索到的片段与用户问题实时生成回答。
+先在 `MaxKB/ui` 安装前端依赖：
 
-15. **统计分析** [查看 15.html](https://www.tio-boot.com/zh/56_knowlege_base/15.html)  
-    对用户的提问与系统回答进行数据化分析，并以可视化图表的形式呈现系统使用情况。
+```powershell
+npm install
+```
 
-16. **用户管理** [查看 16.html](https://www.tio-boot.com/zh/56_knowlege_base/16.html)  
-    提供多用户管理功能，包括用户的增删改查及权限控制。
+然后在 Java 仓库根目录构建并启动：
 
-17. **API 管理** [查看 17.html](https://www.tio-boot.com/zh/56_knowlege_base/17.html)  
-    对外提供标准化 API，便于外部系统集成和调用本系统的功能。
+```powershell
+.\scripts\Start-Local.ps1 -Build
+```
 
-18. **存储文件到 S3** [查看 18.html](https://www.tio-boot.com/zh/56_knowlege_base/18.html)  
-    将用户上传的文件存储至 S3 等对象存储平台，提升文件管理的灵活性与可扩展性。
+该脚本后台启动 Java 与 Vite；`-Build` 构建会跳过测试并跳过 GPG 签名。可用 `-JavaExecutable`、`-NodeExecutable`、`-MavenExecutable` 指定实际可执行文件路径。已有端口监听会被复用；修改代码后需停止确认属于本项目的旧进程，再重新构建启动。
 
-19. **文档解析优化** [查看 19.html](https://www.tio-boot.com/zh/56_knowlege_base/19.html)  
-    介绍与对比常见的文档解析方案，并提供提升文档解析速度和准确性的优化建议。
+- 前端：<http://localhost:3000/ui/>
+- Java API：<http://localhost:10060/api>
+- 后端日志：`maxkb-web/logs/startup.log`、`startup-error.log`
+- 前端日志：`MaxKB/ui/.local/vite.log`、`vite-error.log`
 
-20. **片段汇总** [查看 20.html](https://www.tio-boot.com/zh/56_knowlege_base/20.html)  
-    对片段内容进行汇总，以提升总结类问题的查询与回答效率。
+也可以分别执行：
 
-21. **文档多分块与检索** [查看 21.html](https://www.tio-boot.com/zh/56_knowlege_base/21.html)  
-    将片段进一步拆分为句子并进行向量检索，提升检索的准确度与灵活度。
+```powershell
+mvn clean '-DskipTests' '-Dmaven.javadoc.skip=true' '-Dgpg.skip=true' -Pproduction package
+.\scripts\Start-Local.ps1
+```
 
-22. **多文档支持** [查看 22.html](https://www.tio-boot.com/zh/56_knowlege_base/22.html)  
-    兼容多种文档格式，包括 `.doc`, `.docx`, `.xls`, `.xlsx`, `.ppt`, `.pptx` 等。
+Java 运行工作目录为 `maxkb-web`，以便加载本地配置。实际可运行 JAR 位于 `maxkb-web/target`，不要使用旧 README 中不存在的根目录 JAR 路径。
 
-23. **对话日志** [查看 23.html](https://www.tio-boot.com/zh/56_knowlege_base/23.html)  
-    记录并展示对话日志，用于后续分析和问题回溯。
+## 创建用户与使用知识库
 
-24. **检索性能优化** [查看 24.html](https://www.tio-boot.com/zh/56_knowlege_base/24.html)  
-    提供整库扫描和分区检索等多种方式，进一步提高检索速度和效率。
+管理员登录后，在“系统 → 用户 → 创建用户”新增账号。普通账号登录后拥有自己的应用、知识库和私有模型；停用或密码重置会使旧令牌失效。管理员仍有管理权限；需要数据库和进程也完全独立时，应分别部署实例。
 
-25. **Milvus** [查看 25.html](https://www.tio-boot.com/zh/56_knowlege_base/25.html)  
-    将向量数据库切换至 Milvus，以在大规模向量检索场景中获得更佳的性能与可扩展性。
+基本流程：创建模型 → 创建知识库并选择向量模型 → 上传文档并检查解析预览 → 确认分段 → 创建应用并关联知识库和聊天模型 → 在 UI 调试及追问。前端提交分段时必须保留解析返回的文件 `id`。
 
-26. **文档解析方案和费用对比** [查看 26.html](https://www.tio-boot.com/zh/56_knowlege_base/26.html)  
-    对比不同文档解析方案在成本、速度、稳定性等方面的差异，为用户提供更加经济高效的选择。
+## 模型配置
 
-27. **爬取网页数据** [查看 27.html](https://www.tio-boot.com/zh/56_knowlege_base/27.html)  
-    支持从网页中抓取所需内容，后续处理流程与本地文档一致：分段、向量化、存储与检索。
+平台信息存于 `max_kb_model_provider`，候选模型存于 `max_kb_model_catalog`，用户创建的实例与凭据存于 `max_kb_model`。运行时不再读取固定供应商 JSON。
 
-## 项目地址
+在“系统 → 模型 → 添加模型”选择平台，选择或手动输入完整模型 ID 后按回车，再填写 API 地址及 Key。保存校验使用实际填写的模型 ID；编辑时掩码 Key 保留原凭据，更换 API 地址必须重新填写新平台 Key。
 
-后端
-- GitHub：[https://github.com/litongjava/java-maxkb](https://github.com/litongjava/java-maxkb)
-- Gitee：[https://gitee.com/ppnt/java-maxkb](https://gitee.com/ppnt/java-maxkb)
+预置 OpenAI、Gitee、OpenRouter、硅基流动、DeepSeek、百炼、Kimi、智谱、Gemini 兼容接口、火山方舟和自定义中转入口。Claude 可以通过兼容中转使用，不代表已接通全部厂商原生协议。不同平台需要各自的有效密钥。
 
-前端
-- GitHub：[https://github.com/litongjava/MaxKB/tree/main/ui](https://github.com/litongjava/MaxKB/tree/main/ui)
+默认 Gitee 配置：
 
+| 用途 | 模型 |
+| --- | --- |
+| 最终回答默认模型、问题改写、证据核验和摘要 | `deepseek-v4.1-flash` |
+| 默认远程向量 | `Qwen3-Embedding-8B`，1024 维 |
+| 扫描页与图片 OCR | `PaddleOCR-VL-1.5` |
 
-## 安装与使用指南
+应用选择的模型用于最终回答；辅助步骤仍使用配置的 Gitee 模型。向量模型必须返回 1024 维，已有文档的知识库不能直接切换向量空间，需要新建知识库并重新导入文档。
 
-### 环境要求
+目录快照包含获取时的平台模型，不代表永久可用或所有模型已实测。管理员可刷新 OpenRouter/Gitee 目录：
 
-- **操作系统**：Windows、Linux 或 macOS
-- **Java 开发工具包（JDK）**：版本 8 或更高
-- **Maven**：用于项目构建和依赖管理
-- **PostgreSQL**：用于数据库存储
+```powershell
+python scripts/Sync-ModelCatalog.py --source openrouter --token-file <管理员令牌文件>
+# Gitee 需先在当前进程环境中设置 GITEE_API_KEY
+python scripts/Sync-ModelCatalog.py --source gitee --token-file <管理员令牌文件>
+```
 
-### 安装步骤
+其他兼容平台可通过管理员接口 `POST /api/provider/catalog/discover` 发现 ID，再用 `PUT /api/provider/catalog` 明确类型并登记。同步不自动删除未返回项，停用项由管理员明确设置 `enabled:false`。目录维护不需要重新编译。
 
-1. **克隆项目代码**
+## 验证
 
-   ```bash
-   # 从 GitHub 克隆
-   git clone https://github.com/litongjava/java-maxkb.git
-   cd java-maxkb
+本次后端回归命令：
 
-   # 或从 Gitee 克隆
-   git clone https://gitee.com/ppnt/java-maxkb.git
-   cd java-maxkb
-   ```
+```powershell
+mvn '-Dtest=ModelCatalogTest,UserPasswordTest,IterativeRetrievalServiceTest,ConversationContextServiceTest,IsolatedPythonExecutorTest,GiteeAuxiliaryModelTest,DocumentParsingServiceTest' '-Dsurefire.failIfNoSpecifiedTests=false' '-Dmaven.javadoc.skip=true' '-Dgpg.skip=true' test
+```
 
-2. **配置数据库**
+2026-10-03 的构建回归共 42 项通过。另验证了真实 Gitee 创建/掩码编辑、跨平台密钥保护、UI 目录及手动 ID、知识库连续追问。其他平台没有提供真实 Key，尚未进行全部平台的推理验收；容器模拟测试不等于真实 Docker 隔离验收。前端构建在 `MaxKB/ui` 执行 `npm run build`。
 
-   - 安装并启动 PostgreSQL 数据库。
-   - 创建项目所需的数据库和用户。
-   - 在 `src/main/resources/application.properties` 中配置数据库连接信息。
+## 前端基线与定制恢复
 
-3. **构建项目**
+前端以官方接口和代码为基线，Java 优先适配接口；独立路由、文件 ID、SSE 与 Agent 展示等必要定制单独保存。本次模型管理没有新增前端修改。
 
-   ```bash
-   mvn clean install -DskipTests -Dgpg.skip=true
-   ```
+最新补丁与完整清单见 [2026-10-03 定制记录](docs/customizations/2026-10-03/README.md)，历史行为清单见 [2026-10-02 记录](docs/customizations/2026-10-02/README.md)。当前快照基准是已有 fork 的合并目标，不能将其称为已经核实的官方 upstream 提交；当前已有合并状态保留。
 
-4. **运行项目**
+```powershell
+# 默认只检查；正在合并的仓库需要先正常完成合并
+.\scripts\Apply-FrontendCustomizations.ps1 -Repository ..\MaxKB -Bundle .\docs\customizations\2026-10-03
+```
 
-   ```bash
-   java -jar target/java-maxkb-web.jar
-   ```
+通过检查后再用 `-Apply` 应用；锁文件补丁单独保存，升级时不要盲目覆盖。前端和后端导出脚本会在临时目录应用补丁并校验内容，不修改工作仓库索引。Java 新增或修改的 `if` 语句必须使用 `{}`，Maven 构建可加 `-Dgpg.skip=true` 跳过签名。
 
-5. **访问系统**
+## 许可证
 
-   启动前端,打开浏览器，访问 `http://localhost:3000`，即可进入系统登录界面。
-
-## 贡献指南
-
-我们欢迎所有对本项目感兴趣的开发者贡献代码和建议。请按照以下步骤参与贡献：
-
-1. **Fork 仓库**
-
-   点击页面右上角的 “Fork” 按钮，将项目仓库复制到您的账户下。
-
-2. **克隆仓库到本地**
-
-   ```bash
-   # 从 GitHub 克隆
-   git clone https://github.com/yourusername/java-maxkb.git
-   ```
-
-3. **创建新分支**
-
-   ```bash
-   git checkout -b feature/your-feature-name
-   ```
-
-4. **提交更改**
-
-   ```bash
-   git commit -am '添加新功能: your-feature-name'
-   ```
-
-5. **推送到远程仓库**
-
-   ```bash
-   git push origin feature/your-feature-name
-   ```
-
-6. **创建 Pull Request**
-
-   在 GitHub 上提交 Pull Request，描述您的更改内容和目的。
-
-## 许可证信息
-
-本项目采用 MIT 许可证，详细信息请参阅 [LICENSE](LICENSE) 文件。
+Java 项目许可证以 [LICENSE](LICENSE) 为准。前端及其他依赖遵循各自仓库的许可证。

@@ -28,6 +28,8 @@ public class MaxKbApplicationAccessToken extends BaseMaxKbApplicationAccessToken
   //java.lang.Boolean 
   public static final String showSource = "show_source";
   //java.lang.String 
+  public static final String language = "language";
+  //java.lang.String 
   public static final String remark = "remark";
   //java.lang.String 
   public static final String creator = "creator";

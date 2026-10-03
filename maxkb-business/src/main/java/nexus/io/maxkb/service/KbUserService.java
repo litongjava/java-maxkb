@@ -10,7 +10,6 @@ import nexus.io.db.activerecord.Db;
 import nexus.io.db.activerecord.Row;
 import nexus.io.jfinal.aop.Aop;
 import nexus.io.kit.RowUtils;
-import nexus.io.maxkb.constant.MaxKbTableNames;
 import nexus.io.maxkb.vo.ResultPage;
 import nexus.io.maxkb.vo.UserLoginReqVo;
 import nexus.io.model.page.Page;
@@ -23,24 +22,57 @@ import nexus.io.tio.utils.token.TokenManager;
 
 public class KbUserService {
 
+  private static final String ACCOUNT_BY_USERNAME = """
+      select id, password, token_version
+      from max_kb_user
+      where username = ?
+        and is_active = true
+        and deleted = 0
+      """;
+
+  private static final String PROFILE_BY_ID = """
+      select id, username, email, phone, nick_name, role
+      from max_kb_user
+      where id = ?
+      """;
+
+  private static final String PAGE_CONDITION = """
+      where deleted = 0
+        and (username ilike ? or email ilike ?)
+      """;
+
+  private static final String COUNT_USERS = """
+      select count(*)
+      from max_kb_user
+      """ + PAGE_CONDITION;
+
+  private static final String PAGE_USERS = """
+      select id, username, email, phone, is_active, role, nick_name, create_time, update_time, source
+      from max_kb_user
+      """ + PAGE_CONDITION + """
+      order by create_time desc
+      limit ? offset ?
+      """;
+
   public ResultVo login(UserLoginReqVo vo) {
-    vo.setPassword(Md5Utils.md5Hex(vo.getPassword()));
-    String loginSql = String.format("select id from %s where username=? and password=?", MaxKbTableNames.max_kb_user);
-    Long userId = Db.queryLong(loginSql, vo.getUsername(), vo.getPassword());
-    if (userId == null) {
+    if (vo == null || vo.getUsername() == null || vo.getPassword() == null) {
       return ResultVo.fail("用户名或者密码不正确");
     }
+    Row account = Db.findFirst(ACCOUNT_BY_USERNAME, vo.getUsername());
+    if (account == null || !UserPassword.matches(vo.getPassword(), account.getStr("password"))) {
+      return ResultVo.fail("用户名或者密码不正确");
+    }
+    Long userId = account.getLong("id");
     String SECRET_KEY = TioAdminEnvUtils.getAdminSecretKey();
-    String token = JwtUtils.createTokenByUserId(SECRET_KEY, userId);
+    String token = JwtUtils.createToken(SECRET_KEY, java.util.Map.of("userId", userId, "exp", System.currentTimeMillis() / 1000 + 3600, "token_version", account.getLong("token_version")));
     TokenManager.login(userId, token);
     return ResultVo.ok("成功", token);
   }
 
   public ResultVo index(Long userId) {
-    String sql = String.format("select id,username,email,phone,nick_name,role from %s where id=?", MaxKbTableNames.max_kb_user);
-    Row record = Db.findFirst(sql, userId);
+    Row record = Db.findFirst(PROFILE_BY_ID, userId);
     Kv kv = record.toKv();
-    List<String> permissions = Aop.get(PermissionsService.class).getPermissionsByRole(kv.getStr("role"));
+    List<String> permissions = Aop.get(PermissionsService.class).getPermissionsByRole(kv.getStr("role"), userId);
     kv.set("permissions", permissions);
     return ResultVo.ok(kv);
   }
@@ -51,14 +83,15 @@ public class KbUserService {
   }
 
   public ResultVo page(Integer pageNo, Integer pageSize) {
-    TableInput tableInput = new TableInput();
-    tableInput.setPageNo(pageNo).setPageSize(pageSize).setColumns("id,username,email,phone,is_active,role,nick_name,create_time,update_time,source");
-    TableResult<Page<Row>> tableResult = ApiTable.page(MaxKbTableNames.max_kb_user, tableInput);
-    Page<Row> page = tableResult.getData();
-    int totalRow = page.getTotalRow();
-    List<Row> list = page.getList();
-    List<Kv> kvs = RowUtils.toKv(list, false);
-    ResultPage<Kv> resultPage = new ResultPage<>(pageNo, pageSize, totalRow, kvs);
-    return ResultVo.ok(resultPage);
+    return page(pageNo, pageSize, null);
+  }
+
+  public ResultVo page(Integer pageNo, Integer pageSize, String search) {
+    int currentPage = Math.max(1, pageNo == null ? 1 : pageNo);
+    int currentSize = Math.max(1, Math.min(100, pageSize == null ? 20 : pageSize));
+    String term = "%" + (search == null ? "" : search) + "%";
+    long total = Db.queryLong(COUNT_USERS, term, term);
+    List<Row> rows = Db.find(PAGE_USERS, term, term, currentSize, (long) (currentPage - 1) * currentSize);
+    return ResultVo.ok(new ResultPage<Kv>(currentPage, currentSize, (int) total, RowUtils.toKv(rows, false)));
   }
 }

@@ -9,7 +9,7 @@ import nexus.io.maxkb.config.boot.MaxKbBootConfig;
 import nexus.io.tio.boot.TioApplication;
 import nexus.io.tio.boot.server.TioBootServer;
 
-@AComponentScan("com.litongjava.maxkb.controller")
+@AComponentScan("nexus.io.maxkb.controller")
 public class MaxKbApp {
   public static void main(String[] args) {
     long start = System.currentTimeMillis();

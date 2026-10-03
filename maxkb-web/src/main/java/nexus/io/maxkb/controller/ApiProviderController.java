@@ -1,67 +1,31 @@
 package nexus.io.maxkb.controller;
 
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-
-import com.jfinal.kit.Kv;
-
-import lombok.extern.slf4j.Slf4j;
+import com.alibaba.fastjson2.JSON;
+import nexus.io.annotation.Get;
+import nexus.io.annotation.Post;
+import nexus.io.annotation.Put;
 import nexus.io.annotation.RequestPath;
-import nexus.io.maxkb.enumeration.ModelProvider;
+import nexus.io.jfinal.aop.Aop;
+import nexus.io.maxkb.service.kb.ModelCatalogService;
 import nexus.io.model.result.ResultVo;
 import nexus.io.tio.boot.http.TioRequestContext;
-import nexus.io.tio.http.common.HttpResponse;
-import nexus.io.tio.utils.hutool.FileUtil;
-import nexus.io.tio.utils.hutool.ResourceUtil;
+import nexus.io.tio.http.common.HttpRequest;
 
 @RequestPath("/api/provider")
-@Slf4j
 public class ApiProviderController {
-
-  @RequestPath
-  public HttpResponse index() {
-    URL resource = ResourceUtil.getResource("json/api_provider.json");
-    String jsonString = FileUtil.readString(resource);
-    HttpResponse response = TioRequestContext.getResponse();
-    response.setJson(jsonString.toString());
-    return response;
-  }
-
-  @RequestPath("/model_type_list")
-  public ResultVo model_type_list() {
-    List<Kv> kvs = new ArrayList<>();
-    kvs.add(Kv.by("key", "大语言模型").set("value", "LLM"));
-    kvs.add(Kv.by("key", "向量模型").set("value", "EMBEDDING"));
-    return ResultVo.ok("成功", kvs);
-  }
-
-  @RequestPath("/model_list")
-  public HttpResponse model_list(String provider, String model_type) {
-    model_type = model_type.toLowerCase();
-    String filename = provider + "_" + model_type + ".json";
-
-    log.info("filename:{}",filename);
-    URL resource = ResourceUtil.getResource("json/" + filename);
-    String jsonString = FileUtil.readString(resource);
-
-    HttpResponse response = TioRequestContext.getResponse();
-    response.setJson(jsonString.toString());
-    return response;
-  }
-
-  public HttpResponse model_form(String provider, String model_type, String model_name) {
-
-    String filename =null;
-//    if(ModelProvider.model_openai_provider.getName().equals(provider)) {
-//    }
-    
-    filename = provider + "_model_form.json";
-    log.info("filename:{}",filename);
-    URL resource = ResourceUtil.getResource("json/" + filename);
-    String jsonString = FileUtil.readString(resource);
-    HttpResponse response = TioRequestContext.getResponse();
-    response.setJson(jsonString.toString());
-    return response;
-  }
+  private final ModelCatalogService catalog = Aop.get(ModelCatalogService.class);
+  @Get("")
+  public ResultVo index() { return ResultVo.ok(catalog.providers()); }
+  @Get("/model_type_list")
+  public ResultVo model_type_list(String provider) { return ResultVo.ok(catalog.types(provider)); }
+  @Get("/model_list")
+  public ResultVo model_list(String provider, String model_type) { return ResultVo.ok(catalog.models(provider, model_type)); }
+  @Get("/model_form")
+  public ResultVo model_form(String provider, String model_type, String model_name) { return ResultVo.ok(catalog.form(provider, "credential_form")); }
+  @Get("/model_params_form")
+  public ResultVo model_params_form(String provider, String model_type, String model_name) { return ResultVo.ok(catalog.form(provider, "params_form")); }
+  @Post("/catalog/discover")
+  public ResultVo discover(HttpRequest request) { return catalog.discover(TioRequestContext.getUserIdLong(), JSON.parseObject(request.getBodyString())); }
+  @Put("/catalog")
+  public ResultVo saveCatalog(HttpRequest request) { return catalog.saveCatalog(TioRequestContext.getUserIdLong(), JSON.parseObject(request.getBodyString())); }
 }

@@ -1,0 +1,23 @@
+{
+  "base": "b0fee14ae8aa64581f9e4468a80635342b31e278",
+  "scope": "current local source differences, includes retained earlier changes",
+  "verified": true,
+  "files": [
+    {
+      "file": "src/main/java/nexus/io/chat/UniChatClient.java",
+      "sha256_lf": "bb850adee946d298fe583ddc6bc4596fabd8ab8d1b243b0f49fb2c408f6fb2c4"
+    },
+    {
+      "file": "src/main/java/nexus/io/chat/UniChatRequest.java",
+      "sha256_lf": "637efe7a9f290d2c29477d518ea16c9f47876482f1ff35b97335f6b6be95dea9"
+    },
+    {
+      "file": "src/main/java/nexus/io/openai/chat/OpenAiChatRequest.java",
+      "sha256_lf": "0258456c44fc230f0c71f539028c912a18a299f29c039a21a31e0d070556c9aa"
+    },
+    {
+      "file": "src/test/java/com/litongjava/chat/UniChatCompatibilityTest.java",
+      "sha256_lf": "40d55a8b6cf69110f867aa9ba761e3c74ed1572fde6deda06b879f2717694b85"
+    }
+  ]
+}

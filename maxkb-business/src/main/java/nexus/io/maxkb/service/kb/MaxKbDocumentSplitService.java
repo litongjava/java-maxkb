@@ -12,17 +12,14 @@ import dev.langchain4j.data.document.DocumentSplitter;
 import dev.langchain4j.data.document.splitter.DocumentSplitters;
 import dev.langchain4j.data.segment.TextSegment;
 import lombok.extern.slf4j.Slf4j;
-import nexus.io.jfinal.aop.Aop;
 import nexus.io.model.result.ResultVo;
 import nexus.io.model.upload.UploadResult;
 import nexus.io.openai.token.OpenAiTokenizer;
-import nexus.io.tio.utils.environment.EnvUtils;
 
 /**
  * MaxKbDocumentSplitService
  *
- * 该服务用于将上传的PDF文档拆分为多个Markdown段落，利用OpenAI API将图像转换为文本。
- * 支持多线程并发处理，提高处理效率。
+ * 检测文档内容，选择结构化提取或远程 OCR 后分段。
  * 
  * @author 
  * @date 
@@ -40,11 +37,10 @@ public class MaxKbDocumentSplitService {
    * @throws ExecutionException 执行异常
    */
   public ResultVo split(byte[] data, UploadResult vo) throws IOException, InterruptedException, ExecutionException {
-    MaxKbDocumentConvertService maxKbDocumentConvertService = Aop.get(MaxKbDocumentConvertService.class);
     String filename = vo.getName();
-    String suffix = "png";
-    String apiKey = EnvUtils.getStr("OPENAI_API_KEY");
-    String markdown = maxKbDocumentConvertService.toMarkdown(apiKey, data, suffix);
+    DocumentParsingService.Parsed parsed;
+    try { parsed = new DocumentParsingService().parse(data, filename); } catch (Exception e) { throw new IOException(e.getMessage(), e); }
+    String markdown = parsed.text();
     List<TextSegment> segments = split(markdown);
     // 创建包含文件名和ID的KV对象
     Kv fileSplitResult = Kv.by("name", filename).set("id", vo.getId());
@@ -53,7 +49,7 @@ public class MaxKbDocumentSplitService {
     for (TextSegment textSegment : segments) {
       contents.add(Kv.by("title", "").set("content", textSegment.text()));
     }
-    fileSplitResult.set("content", contents);
+    fileSplitResult.set("content", contents).set("parse_strategy", parsed.strategy()).set("page_count", parsed.pages());
     List<Kv> results = new ArrayList<>();
 
     results.add(fileSplitResult);

@@ -39,7 +39,7 @@ public class ApiDatasetController {
     return Aop.get(MaxKbDatasetService.class).page(userId, pageNo, pageSize, name);
   }
 
-  @Post
+  @Post("")
   public ResultVo save(HttpRequest request) {
     String bodyString = request.getBodyString();
     KbDatasetModel kbDatasetModel = JsonUtils.parse(bodyString, KbDatasetModel.class);
@@ -51,6 +51,24 @@ public class ApiDatasetController {
   public ResultVo get(Long id) {
     Long userId = TioRequestContext.getUserIdLong();
     return Aop.get(MaxKbDatasetService.class).get(userId, id);
+  }
+
+  @Put("/{id}")
+  public ResultVo updateDataset(Long id, HttpRequest request) {
+    KbDatasetModel model = JsonUtils.parse(request.getBodyString(), KbDatasetModel.class);
+    model.setId(id);
+    return Aop.get(MaxKbDatasetService.class).save(TioRequestContext.getUserIdLong(), model);
+  }
+
+  @Put("/{datasetId}/document/{documentId}/paragraph/{paragraphId}")
+  public ResultVo updateParagraph(Long datasetId, Long documentId, Long paragraphId, HttpRequest request) {
+    return Aop.get(MaxKbParagraphServcie.class).update(TioRequestContext.getUserIdLong(), datasetId, documentId, paragraphId,
+        JsonUtils.parse(request.getBodyString(), Paragraph.class));
+  }
+
+  @Delete("/{datasetId}/document/{documentId}/paragraph/{paragraphId}")
+  public ResultVo deleteParagraph(Long datasetId, Long documentId, Long paragraphId) {
+    return Aop.get(MaxKbParagraphServcie.class).delete(TioRequestContext.getUserIdLong(), datasetId, documentId, paragraphId);
   }
 
   @Delete("/{id}")
