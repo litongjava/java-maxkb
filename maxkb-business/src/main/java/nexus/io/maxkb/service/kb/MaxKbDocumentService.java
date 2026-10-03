@@ -14,6 +14,7 @@ import nexus.io.kit.RowUtils;
 import nexus.io.maxkb.constant.MaxKbTableNames;
 import nexus.io.maxkb.vo.MaxKbUpdateDocumentRequestVo;
 import nexus.io.maxkb.vo.ResultPage;
+import nexus.io.maxkb.utils.JsonColumnUtils;
 import nexus.io.model.page.Page;
 import nexus.io.model.result.ResultVo;
 import nexus.io.table.services.ApiTable;
@@ -72,6 +73,10 @@ public class MaxKbDocumentService {
     int totalRow = page.getTotalRow();
     List<Row> list = page.getList();
     List<Kv> kvs = RowUtils.toKv(list, false);
+    for (int i = 0; i < kvs.size(); i++) {
+      // Web 站点文档把来源地址放在 meta 里，前端据此显示与同步。
+      kvs.get(i).set("meta", JsonColumnUtils.toJsonObject(list.get(i).get("meta")));
+    }
     ResultPage<Kv> resultPage = new ResultPage<>(pageNo, pageSize, totalRow, kvs);
     return ResultVo.ok(resultPage);
   }
@@ -85,6 +90,9 @@ public class MaxKbDocumentService {
     TableResult<List<Row>> tableResult = ApiTable.list(MaxKbTableNames.max_kb_document, tableInput);
     List<Row> records = tableResult.getData();
     List<Kv> kvs = RowUtils.toKv(records, false);
+    for (int i = 0; i < kvs.size(); i++) {
+      kvs.get(i).set("meta", JsonColumnUtils.toJsonObject(records.get(i).get("meta")));
+    }
     return ResultVo.ok(kvs);
   }
 
@@ -97,7 +105,12 @@ public class MaxKbDocumentService {
     }
 
     Row data = ApiTable.get(MaxKbTableNames.max_kb_document, tableInput).getData();
-    return ResultVo.ok(data.toKv());
+    if (data == null) {
+      return ResultVo.fail("文档不存在或无权访问");
+    }
+    Kv kv = data.toKv();
+    kv.set("meta", JsonColumnUtils.toJsonObject(data.get("meta")));
+    return ResultVo.ok(kv);
   }
 
   /**

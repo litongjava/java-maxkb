@@ -15,9 +15,16 @@ public class MaxKbDatasetDao {
     TableInput record = new TableInput();
     record.set("id", model.getId())
     //
-    .set("name", model.getName()).set("desc",model.getDesc()).set("type",model.getType()).set("user_id", userId)
+    .set("name", model.getName()).set("desc",model.getDesc()).set("user_id", userId)
     //
     .set("embedding_mode_id", model.getEmbedding_mode_id());
+    // 编辑接口可能只提交名称和描述，这里不覆盖未提交的类型与 meta。
+    if (model.getType() != null) {
+      record.set("type", model.getType());
+    }
+    if (model.getMeta() != null) {
+      record.set("meta", model.getMeta().toJSONString());
+    }
 
     return ApiTable.saveOrUpdate(MaxKbTableNames.max_kb_dataset, record);
   }

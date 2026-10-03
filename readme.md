@@ -8,12 +8,14 @@
 
 | 章节 | 内容 |
 | --- | --- |
-| `01.md` / `29.md` | 数据库设计、Windows pgvector 安装、配置与启动 |
-| `03.md` / `35.md` | 模型管理、数据库模型目录、平台接入与自定义模型 ID |
-| `31.md` | 前端适配与 UI 验证 |
-| `32.md` | 单次问题内迭代检索、会话历史、token 阈值压缩、隔离 Python |
-| `33.md` | 官方前端升级与定制恢复 |
-| `34.md` | 独立用户和资源权限 |
+| `01.md` | 数据库设计 |
+| `03.md` / `33.md` | 模型管理、数据库模型目录、平台接入与自定义模型 ID |
+| `25.md` | 独立用户和资源权限 |
+| `31.md` / `32.md` | 单次提问内的迭代检索、会话历史与 token 阈值压缩 |
+| `34.md` / `39.md` | 爬取网页数据、离线运行向量模型 |
+| `35.md` / `36.md` / `37.md` | 隔离 Python 执行环境（Docker over TCP / 宿主沙箱）、执行器与函数库接口 |
+| `38.md` | Windows 部署 Java MaxKB 与远程模型 |
+| `41.md` / `42.md` | 官方前端升级与定制恢复、前端适配与验收 |
 
 ## 当前能力
 
@@ -23,7 +25,7 @@
 - 单次提问执行“检索 → 判断资料是否充足 → 补充检索 → 最终回答”，保留资料引用与检索过程。
 - 读取当前会话最近问答及摘要；**只有 token 超过预算才压缩上下文**，超过对话轮数不会单独触发压缩。
 - 平台目录、基础模型目录和表单入库；支持 OpenAI 兼容厂商与中转平台，允许手动输入模型 ID。
-- 隔离 Python 执行器代码及部署脚本保留，需要 Docker 容器环境。当前本机 Docker 安装暂缓，环境未就绪时拒绝执行，不使用宿主机 Python 回退。
+- 隔离 Python 执行器从不以 Java 进程身份运行用户代码：默认走一次性 Docker 容器（引擎可在本机，也可在局域网内已装 Docker 的主机），Linux 上也可用 `kb.python.runner=host` 切到沙箱用户后在独立目录里执行；两种 runner 不可用时都明确拒绝执行，不使用宿主机 Python 回退。
 
 统计分析、Milvus 替代方案和完整官方工作流能力，不因前端有菜单或文档有设计示例就视为已全部实现。
 
@@ -42,7 +44,7 @@ project-maxkb/
     ui/                  官方前端及已记录的必要定制
 ```
 
-需要 JDK 21、Maven、Node.js/npm、已启动的 PostgreSQL，以及安装在数据库服务端的 pgvector 和 pg_trgm。默认远程服务需要可用的 Gitee API Key。Docker 仅为隔离 Python 执行功能所需。
+需要 JDK 21、Maven、Node.js/npm、已启动的 PostgreSQL，以及安装在数据库服务端的 pgvector 和 pg_trgm。默认远程服务需要可用的 Gitee API Key。Docker 仅为隔离 Python 执行功能所需，且不必装在本机；Linux 上也可以用宿主的 `runuser` 沙箱替代 Docker。
 
 ## 配置与初始化
 
@@ -74,7 +76,68 @@ GITEE_API_KEY=<自己的密钥>
 .\scripts\Initialize-Database.ps1 -PostgresBin '<PostgreSQL安装目录>\bin'
 ```
 
-脚本读取 `my.txt`，执行 `init-db.sql` 与 `002` 至 `009` 的迁移，包括默认模型、会话摘要、用户令牌版本、数据库模型目录及目录快照。升级已有数据库前先备份；幂等脚本不会自动转换所有历史表结构。
+脚本读取 `my.txt`，执行 `init-db.sql` 与 `002` 至 `011` 的迁移，包括默认模型、会话摘要、用户令牌版本、数据库模型目录、目录快照、API Key 与分享链接。升级已有数据库前先备份；幂等脚本不会自动转换所有历史表结构。
+
+### 隔离 Python 执行器
+
+用户代码从不以 Java 进程的身份运行。执行器有两个 runner，由 `kb.python.runner` 选择，**默认 `docker`**（原行为不变）：
+
+| runner | 适用 | 隔离方式 |
+| --- | --- | --- |
+| `docker` | Windows 与 Linux；引擎可在本机或局域网内其它主机 | 一次性容器：断网、只读根、非 root、内存/CPU/pids 上限、tmpfs |
+| `host` | Linux（含容器内部署），不需要 Docker | `runuser` 切到沙箱用户 + 独立目录 + 白名单环境变量；**不断网、无只读根、无资源上限** |
+
+配置项都在 `maxkb-web/my.txt`：
+
+| 配置 | 作用 |
+| --- | --- |
+| `kb.python.runner` | `docker`（默认）或 `host` |
+| `kb.python.docker` | docker 可执行文件路径，留空取 PATH 上的 `docker` |
+| `kb.python.docker.host` | Docker 引擎地址，例如 `tcp://192.168.31.97:2375`；留空使用本机引擎 |
+| `kb.python.wsl.distribution` | 使用 WSL 里的 Docker 引擎时填发行版名，与 `kb.python.docker` 二选一 |
+| `kb.python.image` | 容器镜像，默认 `python:3.12-slim`；执行固定使用 `--pull=never`，需提前 pull 到目标引擎 |
+| `kb.python.timeout_seconds` | 单次执行超时秒数，默认 15 |
+| `kb.python.sandbox.user` | host runner 的沙箱用户，默认 `sandbox` |
+| `kb.python.sandbox.dir` | host runner 的沙箱目录，默认 `/var/lib/java-maxkb/sandbox`，同时作为子进程的工作目录 |
+| `kb.python.sandbox.python` | host runner 的 Python，默认 `python3` |
+| `kb.python.sandbox.su` | 显式改用 `su` 提权（默认不配；见下面的说明） |
+
+#### Docker runner
+
+`kb.python.docker.host` 会作为 docker 的 `--host` 全局参数传给 `run` 和 `rm`，所以容器引擎不必装在本机；`DOCKER_HOST`、`DOCKER_CONTEXT`、`DOCKER_TLS_VERIFY`、`DOCKER_CERT_PATH` 也会透传给 docker 客户端。
+
+本机没有 Docker 时，在运行 Docker 的主机上以 root 执行一次：
+
+```bash
+./scripts/enable-remote-docker-tcp.sh <本机客户端IP> 2375
+```
+
+脚本用 socat 容器把 unix socket 转发到 TCP，只用 iptables 放行指定来源，不重启 dockerd。明文 2375 没有认证，能连上它等于拿到该主机 root 权限，仅适合可信内网；有条件时应改用 2376 双向 TLS 或 `ssh://` 隧道。客户端侧只需要一个 docker 客户端：Windows 下载 `https://download.docker.com/win/static/stable/x86_64/docker-<版本>.zip`，解压出的 `docker.exe` 即可，不需要 Docker Desktop 和 dockerd。目标引擎上还要有镜像：
+
+```powershell
+docker --host tcp://192.168.31.97:2375 version
+docker --host tcp://192.168.31.97:2375 pull python:3.12-slim
+.\scripts\Test-PythonSandbox.ps1
+```
+
+`Test-PythonSandbox.ps1` 默认读取 `my.txt` 的实际配置（也可用参数临时覆盖），检查容器内 uid、只读根文件系统、无网络和密钥不可见。
+
+#### host runner
+
+在 Linux 主机（或容器）里以 root 执行一次：
+
+```bash
+./scripts/setup-python-host-sandbox.sh sandbox /var/lib/java-maxkb/sandbox python3
+```
+
+脚本创建沙箱用户与目录（0750），并用 `runuser` 验证确实切到了该用户。然后把上面的 `kb.python.runner=host` 四项写进 `my.txt`。
+
+要求与限制，都要如实看待：
+
+- java-maxkb 必须**以 root 运行**，否则 `runuser` 无法切换用户；执行前会校验并拒绝。
+- 默认用 util-linux 的 **`runuser`**，不是 `su`。`/bin/su` 是 setuid 程序：实测由 JVM 启动它，默认的 posix_spawn 会在 `ProcessBuilder.start()` 卡死，改用 `-Djdk.lang.Process.launchMechanism=FORK` 也会返回 `su: Authentication failure`；同一台机上从 shell 调用 `su` 却正常。`runuser` 不带 setuid，argv 直接传递，由 JVM 启动没有问题。确有需要时可用 `kb.python.sandbox.su` 覆盖，但要自己确认在目标环境可用。
+- 子进程只拿到白名单环境变量（`PATH`、`LANG`、`LC_*`、`TZ`、`TERM`）加上固定的 `HOME`/`TMPDIR`/`USER`/`LOGNAME`/`SHELL`，应用密钥不会进入用户代码；超时会连同子进程整棵树一起终止。
+- **不提供**断网、只读根文件系统和内存/CPU/pids 上限，沙箱用户可以读宿主上其他人可读的任何文件。因此 `my.txt`、`secrets.txt` 等含密钥的文件应当 `chmod 600`。需要这些保证就继续用 `kb.python.runner=docker`——两者可以在同一份配置里按环境切换。
 
 ## 构建与启动
 
@@ -148,7 +211,7 @@ python scripts/Sync-ModelCatalog.py --source gitee --token-file <管理员令牌
 mvn '-Dtest=ModelCatalogTest,UserPasswordTest,IterativeRetrievalServiceTest,ConversationContextServiceTest,IsolatedPythonExecutorTest,GiteeAuxiliaryModelTest,DocumentParsingServiceTest' '-Dsurefire.failIfNoSpecifiedTests=false' '-Dmaven.javadoc.skip=true' '-Dgpg.skip=true' test
 ```
 
-2026-10-03 的构建回归共 42 项通过。另验证了真实 Gitee 创建/掩码编辑、跨平台密钥保护、UI 目录及手动 ID、知识库连续追问。其他平台没有提供真实 Key，尚未进行全部平台的推理验收；容器模拟测试不等于真实 Docker 隔离验收。前端构建在 `MaxKB/ui` 执行 `npm run build`。
+2026-10-03 的构建回归共 53 项通过。另验证了真实 Gitee 创建/掩码编辑、跨平台密钥保护、UI 目录及手动 ID、知识库连续追问，以及局域网远程 Docker 引擎上的容器隔离执行和 Linux 宿主 `runuser` 沙箱执行。其他平台没有提供真实 Key，尚未进行全部平台的推理验收。前端构建在 `MaxKB/ui` 执行 `npm run build`。两种 runner 的执行记录见[验证记录](docs/agent-verification.md)。
 
 ## 前端基线与定制恢复
 

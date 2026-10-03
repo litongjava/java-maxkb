@@ -16,6 +16,7 @@ import nexus.io.maxkb.dao.MaxKbDatasetDao;
 import nexus.io.maxkb.model.MaxKbDataset;
 import nexus.io.maxkb.vo.KbDatasetModel;
 import nexus.io.maxkb.vo.ResultPage;
+import nexus.io.maxkb.utils.JsonColumnUtils;
 import nexus.io.model.page.Page;
 import nexus.io.model.result.ResultVo;
 import nexus.io.table.constants.Operators;
@@ -66,15 +67,31 @@ public class MaxKbDatasetService {
     if (kbDatasetModel.getId() != null && !DatasetAccess.owns(userId, kbDatasetModel.getId())) {
       return ResultVo.fail("知识库不存在或无权访问");
     }
+    Row existing = kbDatasetModel.getId() == null ? null : Db.findById(MaxKbTableNames.max_kb_dataset, kbDatasetModel.getId());
+    if (existing != null) {
+      // 编辑接口只提交部分字段，未提交的字段沿用原值，避免类型和 meta 被清空。
+      if (kbDatasetModel.getType() == null) {
+        kbDatasetModel.setType(existing.getStr("type"));
+      }
+      if (kbDatasetModel.getMeta() == null) {
+        kbDatasetModel.setMeta(JsonColumnUtils.toJsonObject(existing.get("meta")));
+      }
+      if (kbDatasetModel.getName() == null) {
+        kbDatasetModel.setName(existing.getStr("name"));
+      }
+      if (kbDatasetModel.getDesc() == null) {
+        kbDatasetModel.setDesc(existing.getStr("desc"));
+      }
+    }
     Long embeddingId = kbDatasetModel.getEmbedding_mode_id();
     if (embeddingId == null) {
-      embeddingId = kbDatasetModel.getId() == null ? 1002L : Db.queryLong("select embedding_mode_id from max_kb_dataset where id=?", kbDatasetModel.getId());
+      embeddingId = existing == null ? 1002L : existing.getLong("embedding_mode_id");
       kbDatasetModel.setEmbedding_mode_id(embeddingId);
     }
     if (!ModelAccess.canUse(userId, embeddingId) || Db.queryLong("select count(*) from max_kb_model where id=? and model_type='EMBEDDING'", embeddingId) == 0) {
       return ResultVo.fail("向量模型不存在或无权使用");
     }
-    if (kbDatasetModel.getId() != null && !embeddingId.equals(Db.queryLong("select embedding_mode_id from max_kb_dataset where id=?", kbDatasetModel.getId()))
+    if (existing != null && !embeddingId.equals(existing.getLong("embedding_mode_id"))
         && Db.queryLong("select count(*) from max_kb_paragraph where dataset_id=?", kbDatasetModel.getId()) > 0) {
       return ResultVo.fail("已有文档的知识库不能直接切换向量空间，请新建知识库并重新导入文档");
     }
@@ -94,9 +111,26 @@ public class MaxKbDatasetService {
       tableInput.set("id", id).set("user_id", userId);
     }
     TableResult<Row> result = ApiTable.get(MaxKbTableNames.max_kb_dataset, tableInput);
-    Kv kv = result.getData().toKv();
+    Row row = result.getData();
+    if (row == null) {
+      return ResultVo.fail("知识库不存在或无权访问");
+    }
+    Kv kv = row.toKv();
+    // meta 是 jsonb 列，直接序列化 PGobject 会得到前端无法解析的结构。
+    kv.set("meta", JsonColumnUtils.toJsonObject(row.get("meta")));
+    kv.set("application_id_list", applicationIdList(id));
+    kv.set("document_count", Db.queryLong(document_count_sql, id));
+    kv.set("char_length", Db.queryLong(sum_char_length_sql, id));
     resultVo.setData(kv);
     return resultVo;
+  }
+
+  private List<Long> applicationIdList(Long datasetId) {
+    List<Long> applicationIds = new ArrayList<>();
+    for (Row row : Db.find("select application_id from max_kb_application_dataset_mapping where dataset_id=?", datasetId)) {
+      applicationIds.add(row.getLong("application_id"));
+    }
+    return applicationIds;
   }
 
   public ResultVo list(Long userId) {
@@ -110,6 +144,9 @@ public class MaxKbDatasetService {
     String columns = "id,name,\"desc\",type,meta,user_id,embedding_mode_id,create_time,update_time";
     List<Row> records = Db.find(MaxKbDataset.tableName, columns, queryRecord);
     List<Kv> kvs = RowUtils.toKv(records, false);
+    for (int i = 0; i < kvs.size(); i++) {
+      kvs.get(i).set("meta", JsonColumnUtils.toJsonObject(records.get(i).get("meta")));
+    }
     return ResultVo.ok(kvs);
   }
 

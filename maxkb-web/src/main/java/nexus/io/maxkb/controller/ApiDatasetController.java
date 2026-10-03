@@ -2,6 +2,9 @@ package nexus.io.maxkb.controller;
 
 import java.util.List;
 
+import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.JSONObject;
+
 import nexus.io.annotation.Delete;
 import nexus.io.annotation.Get;
 import nexus.io.annotation.Post;
@@ -14,6 +17,7 @@ import nexus.io.maxkb.service.kb.MaxKbDocumentService;
 import nexus.io.maxkb.service.kb.MaxKbParagraphServcie;
 import nexus.io.maxkb.service.kb.MaxKbParagraphSplitService;
 import nexus.io.maxkb.service.kb.MaxKbProblemService;
+import nexus.io.maxkb.service.kb.MaxKbWebDatasetService;
 import nexus.io.maxkb.vo.KbDatasetModel;
 import nexus.io.maxkb.vo.MaxKbUpdateDocumentRequestVo;
 import nexus.io.maxkb.vo.Paragraph;
@@ -45,6 +49,41 @@ public class ApiDatasetController {
     KbDatasetModel kbDatasetModel = JsonUtils.parse(bodyString, KbDatasetModel.class);
     Long userId = TioRequestContext.getUserIdLong();
     return Aop.get(MaxKbDatasetService.class).save(userId, kbDatasetModel);
+  }
+
+  /** 创建 Web 站点知识库：保存根地址与选择器后由后台线程抓取页面。 */
+  @Post("/web")
+  public ResultVo saveWebDataset(HttpRequest request) {
+    JSONObject input = JSON.parseObject(request.getBodyString());
+    return Aop.get(MaxKbWebDatasetService.class).save(TioRequestContext.getUserIdLong(), input);
+  }
+
+  /** 同步 Web 站点知识库，sync_type 取 replace 或 complete。 */
+  @Put("/{id}/sync_web")
+  public ResultVo syncWebDataset(Long id, HttpRequest request) {
+    return Aop.get(MaxKbWebDatasetService.class).sync(TioRequestContext.getUserIdLong(), id,
+        request.getParam("sync_type"));
+  }
+
+  /** 按地址列表向 Web 站点知识库导入网页文档。 */
+  @Post("/{datasetId}/document/web")
+  public ResultVo importWebDocument(Long datasetId, HttpRequest request) {
+    JSONObject input = JSON.parseObject(request.getBodyString());
+    return Aop.get(MaxKbWebDatasetService.class).importDocuments(TioRequestContext.getUserIdLong(), datasetId, input);
+  }
+
+  /** 重新抓取一个网页文档。 */
+  @Put("/{datasetId}/document/{documentId}/sync")
+  public ResultVo syncWebDocument(Long datasetId, Long documentId) {
+    return Aop.get(MaxKbWebDatasetService.class).syncDocument(TioRequestContext.getUserIdLong(), datasetId, documentId);
+  }
+
+  /** 批量同步网页文档，请求体为 {"id_list":[...]}。 */
+  @Put("/{datasetId}/document/_bach")
+  public ResultVo batchSyncWebDocument(Long datasetId, HttpRequest request) {
+    JSONObject input = JSON.parseObject(request.getBodyString());
+    return Aop.get(MaxKbWebDatasetService.class).batchSyncDocuments(TioRequestContext.getUserIdLong(), datasetId,
+        input == null ? null : input.getJSONArray("id_list"));
   }
 
   @Get("/{id}")
