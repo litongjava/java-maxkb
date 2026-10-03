@@ -15,7 +15,7 @@ import nexus.io.tio.http.common.HttpRequest;
 public class ApiProviderController {
   private final ModelCatalogService catalog = Aop.get(ModelCatalogService.class);
   @Get("")
-  public ResultVo index() { return ResultVo.ok(catalog.providers()); }
+  public ResultVo index(String model_type) { return ResultVo.ok(catalog.providers(model_type)); }
   @Get("/model_type_list")
   public ResultVo model_type_list(String provider) { return ResultVo.ok(catalog.types(provider)); }
   @Get("/model_list")

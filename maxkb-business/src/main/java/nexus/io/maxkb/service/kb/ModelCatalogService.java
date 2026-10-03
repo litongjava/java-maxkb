@@ -18,8 +18,22 @@ import nexus.io.tio.utils.environment.EnvUtils;
 /** Database-backed catalog; catalog membership is never a model ID whitelist. */
 public class ModelCatalogService {
   public List<Kv> providers() {
+    return providers(null);
+  }
+
+  /**
+   * @param modelType 目录中登记的模型类型，可为空；为空时返回全部已启用平台
+   */
+  public List<Kv> providers(String modelType) {
+    String sql = """
+        select p.provider,p.name,p.icon from max_kb_model_provider p
+        where p.enabled=true
+          and (cast(? as text) is null
+               or exists (select 1 from jsonb_array_elements(p.model_types) t where t->>'value'=?))
+        order by p.sort_order,p.name
+        """;
     List<Kv> result = new ArrayList<>();
-    for (Row row : Db.find("select provider,name,icon from max_kb_model_provider where enabled=true order by sort_order,name")) {
+    for (Row row : Db.find(sql, modelType, modelType)) {
       result.add(row.toKv());
     }
     return result;
@@ -43,9 +57,15 @@ public class ModelCatalogService {
   }
 
   public List<Kv> models(String provider, String type) {
+    String sql = """
+        select model_id as name,description as desc,model_type
+        from max_kb_model_catalog c
+        where provider=? and model_type=? and enabled=true
+          and exists(select 1 from max_kb_model_provider p where p.provider=c.provider and p.enabled=true)
+        order by model_id
+        """;
     List<Kv> result = new ArrayList<>();
-    for (Row row : Db.find("select model_id as name,description as desc,model_type from max_kb_model_catalog c "
-        + "where provider=? and model_type=? and enabled=true and exists(select 1 from max_kb_model_provider p where p.provider=c.provider and p.enabled=true) order by model_id", provider, type)) {
+    for (Row row : Db.find(sql, provider, type)) {
       result.add(row.toKv());
     }
     return result;
@@ -129,11 +149,16 @@ public class ModelCatalogService {
           return ResultVo.fail(400, "当前支持 LLM 和 EMBEDDING 类型");
         }
       }
+      String upsert = """
+          insert into max_kb_model_catalog(provider,model_type,model_id,description,source,enabled)
+          values(?,?,?,?,?,?)
+          on conflict(provider,model_type,model_id)
+          do update set description=excluded.description,source=excluded.source,enabled=excluded.enabled,updated_at=now()
+          """;
       Db.tx(() -> {
         for (int i = 0; i < models.size(); i++) {
           JSONObject model = models.getJSONObject(i);
-          Db.update("insert into max_kb_model_catalog(provider,model_type,model_id,description,source,enabled) values(?,?,?,?,?,?) "
-              + "on conflict(provider,model_type,model_id) do update set description=excluded.description,source=excluded.source,enabled=excluded.enabled,updated_at=now()",
+          Db.update(upsert,
               provider, model.getString("model_type"), modelId(model.getString("name")), model.getString("desc"),
               "admin", !Boolean.FALSE.equals(model.getBoolean("enabled")));
         }

@@ -15,12 +15,16 @@ import com.alibaba.fastjson2.JSONObject;
 
 @RequestPath("/api/application")
 public class ApiChatContextController {
+  private static final String FIND_CONTEXT = """
+      select summary,through_record_id,compacted_rounds,revision from max_kb_chat_context where chat_id=?
+      """;
+
   @Get("/{app}/chat/{chat}/context")
   public ResultVo get(Long app, Long chat) {
     if (!ApplicationAccess.canReadChat(TioRequestContext.getUserIdLong(), app, chat)) {
       return ResultVo.fail("会话不存在或无权访问");
     }
-    Row row = Db.findFirst("select summary,through_record_id,compacted_rounds,revision from max_kb_chat_context where chat_id=?", chat);
+    Row row = Db.findFirst(FIND_CONTEXT, chat);
     return ResultVo.ok(row == null ? JSONObject.of("summary", "", "revision", 0, "compacted_rounds", 0) : row.toKv());
   }
 
