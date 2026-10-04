@@ -23,7 +23,7 @@ import nexus.io.mosskb.constant.MossKbTableNames;
 public class SchemaRegressionTest {
 
   /** db/schema.sql 建出的 public 表数量，与 db/README.md 记录的一致。 */
-  private static final int EXPECTED_PUBLIC_TABLES = 30;
+  private static final int EXPECTED_PUBLIC_TABLES = 31;
 
   /** 不带业务前缀的表，沿用上游命名约定。 */
   private static final String[] UNPREFIXED_TABLES = { "system_setting", "libre_office_converted_mapping" };

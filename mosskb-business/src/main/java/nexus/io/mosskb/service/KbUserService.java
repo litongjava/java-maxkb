@@ -32,9 +32,24 @@ public class KbUserService {
       """;
 
   private static final String PROFILE_BY_ID = """
-      select id, username, email, phone, nick_name, role
+      select id, username, email, phone, nick_name, role, language
       from moss_kb_user
       where id = ?
+      """;
+
+  /** 与前端语言下拉一致：简体中文、繁体中文、英文。 */
+  private static final List<String> SUPPORT_LANGUAGES = List.of("zh-CN", "zh-Hant", "en-US");
+
+  /**
+   * 切换界面语言：只改 language 与 update_time，不碰令牌与密码。
+   * language 为空的老账号继续跟随浏览器语言，直到用户自己切换一次。
+   */
+  private static final String SWITCH_LANGUAGE = """
+      update moss_kb_user
+      set language = ?,
+          update_time = now()
+      where id = ?
+        and deleted = 0
       """;
 
   private static final String PAGE_CONDITION = """
@@ -93,6 +108,29 @@ public class KbUserService {
 
   public ResultVo logout(Long userId) {
     TokenManager.logout(userId);
+    return ResultVo.ok();
+  }
+
+  /**
+   * 切换当前登录用户的界面语言。语言只决定界面与接口消息的语种，不属于权限，
+   * 因此身份同样只认令牌，不接受请求体里的用户标识。
+   *
+   * @param userId 当前登录用户，取自令牌
+   * @param input  请求体，只读取 language
+   */
+  public ResultVo switchLanguage(Long userId, JSONObject input) {
+    if (userId == null) {
+      return ResultVo.fail("未登录");
+    }
+    String language = input == null ? null : input.getString("language");
+    // List.of(...).contains(null) 会抛 NPE，所以空值要先挡掉。
+    if (language == null || !SUPPORT_LANGUAGES.contains(language)) {
+      return ResultVo.fail("语言只支持：" + String.join(",", SUPPORT_LANGUAGES));
+    }
+    int updated = Db.update(SWITCH_LANGUAGE, language, userId);
+    if (updated != 1) {
+      return ResultVo.fail("用户不存在或已被禁用");
+    }
     return ResultVo.ok();
   }
 

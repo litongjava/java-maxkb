@@ -13,6 +13,7 @@ public interface MossKbTableNames {
   String moss_kb_sentence = "moss_kb_sentence";
   String moss_kb_document_markdown_cache = "moss_kb_document_markdown_cache";
   String moss_kb_document_markdown_page_cache = "moss_kb_document_markdown_page_cache";
+  String moss_kb_document_split_task = "moss_kb_document_split_task";
   String moss_kb_embedding_cache = "moss_kb_embedding_cache";
   String moss_kb_problem = "moss_kb_problem";
   String moss_kb_problem_paragraph_mapping = "moss_kb_problem_paragraph_mapping";

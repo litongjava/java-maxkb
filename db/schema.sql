@@ -46,7 +46,9 @@ CREATE TABLE IF NOT EXISTS "public"."moss_kb_user" (
   "update_time" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
   "deleted" SMALLINT DEFAULT 0,
   "tenant_id" BIGINT NOT NULL DEFAULT 0,
-  "token_version" BIGINT NOT NULL DEFAULT 0
+  "token_version" BIGINT NOT NULL DEFAULT 0,
+  -- 界面语言，取 zh-CN / zh-Hant / en-US，为空表示跟随浏览器语言（与公开分享链接的 language 同义）。
+  "language" VARCHAR(16)
 );
 
 CREATE INDEX IF NOT EXISTS "user_email_index_like" ON "public"."moss_kb_user" USING btree (
@@ -323,6 +325,29 @@ CREATE TABLE IF NOT EXISTS "public"."moss_kb_task" (
   "tenant_id" BIGINT NOT NULL DEFAULT 0
 );
 
+-- 分段预览任务：上传后立刻返回 task_id，解析在后台线程里按页推进，
+-- 前端轮询这个表拿到进度或最终分段。result 直接存前端要用的分段列表。
+CREATE TABLE IF NOT EXISTS "public"."moss_kb_document_split_task" (
+  "id" BIGINT NOT NULL PRIMARY KEY,
+  "user_id" BIGINT,
+  "file_id" BIGINT,
+  "file_name" VARCHAR NOT NULL,
+  "file_size" BIGINT,
+  "status" VARCHAR(16) NOT NULL DEFAULT 'running',
+  "progress" SMALLINT NOT NULL DEFAULT 0,
+  "total" INT NOT NULL DEFAULT 0,
+  "result" JSONB,
+  "error_message" TEXT,
+  "creator" VARCHAR(64) DEFAULT '',
+  "create_time" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  "updater" VARCHAR(64) DEFAULT '',
+  "update_time" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  "deleted" SMALLINT NOT NULL DEFAULT 0,
+  "tenant_id" BIGINT NOT NULL DEFAULT 0
+);
+
+CREATE INDEX IF NOT EXISTS "moss_kb_document_split_task_user_id" ON "public"."moss_kb_document_split_task" USING btree ("user_id");
+
 -- 分段与向量。embedding 与 title_embedding 使用知识库选定的同一个向量空间。
 CREATE TABLE IF NOT EXISTS "public"."moss_kb_paragraph" (
   "id" BIGINT PRIMARY KEY,
@@ -580,6 +605,8 @@ END $$;
 -- 下面语句让早期版本的数据库补齐后来新增的列。全新初始化时它们是空操作。
 ALTER TABLE "public"."moss_kb_dataset" ADD COLUMN IF NOT EXISTS "llm_mode_id" BIGINT;
 ALTER TABLE "public"."moss_kb_user" ADD COLUMN IF NOT EXISTS "token_version" BIGINT NOT NULL DEFAULT 0;
+-- 界面语言，为空表示跟随浏览器语言：老账号升级后语言不变，直到用户自己切换一次。
+ALTER TABLE "public"."moss_kb_user" ADD COLUMN IF NOT EXISTS "language" VARCHAR(16);
 ALTER TABLE "public"."moss_kb_model" ADD COLUMN IF NOT EXISTS "model_params_form" JSONB NOT NULL DEFAULT '[]';
 ALTER TABLE "public"."moss_kb_application_access_token" ADD COLUMN IF NOT EXISTS "language" VARCHAR(16);
 ALTER TABLE "public"."moss_kb_function_lib" ADD COLUMN IF NOT EXISTS "function_type" VARCHAR(16) NOT NULL DEFAULT 'PUBLIC';

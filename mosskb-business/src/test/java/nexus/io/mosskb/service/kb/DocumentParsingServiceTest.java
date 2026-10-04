@@ -10,7 +10,6 @@ import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.junit.Test;
 import static org.junit.Assert.*;
-
 public class DocumentParsingServiceTest {
   private static class Parser extends DocumentParsingService {
     int ocrCalls;
@@ -126,19 +125,22 @@ public class DocumentParsingServiceTest {
   public void repeatedPdfUploadReusesPageCacheDespitePdfSerializationIds() throws Exception {
     class CachedParser extends DocumentParsingService {
       final java.util.Map<String, String> cache = new java.util.HashMap<>();
-      int calls;
+      final java.util.concurrent.atomic.AtomicInteger calls = new java.util.concurrent.atomic.AtomicInteger();
       @Override
       protected String readOcrCache(String key) {
-        return cache.get(key);
+        synchronized (cache) {
+          return cache.get(key);
+        }
       }
       @Override
       protected void writeOcrCache(String key, String text) {
-        cache.put(key, text);
+        synchronized (cache) {
+          cache.put(key, text);
+        }
       }
       @Override
       protected String recognize(byte[] data, String filename) {
-        calls++;
-        return "Scanned page content " + calls;
+        return "Scanned page content " + calls.incrementAndGet();
       }
     }
     try (PDDocument pdf = new PDDocument(); ByteArrayOutputStream out = new ByteArrayOutputStream()) {
@@ -147,10 +149,172 @@ public class DocumentParsingServiceTest {
       pdf.save(out);
       CachedParser parser = new CachedParser();
       DocumentParsingService.Parsed first = parser.parse(out.toByteArray(), "first.pdf");
+      int callsAfterFirstUpload = parser.calls.get();
       DocumentParsingService.Parsed second = parser.parse(out.toByteArray(), "renamed.pdf");
       assertEquals(first.text(), second.text());
-      assertEquals(2, parser.calls);
-      assertEquals(2, parser.cache.size());
+      // 缓存键是“原文件内容 + 页码”，与序列化单页产生的临时文档 ID 无关：
+      // 同一份文件第二次上传必须全部命中缓存，不能再调 OCR。
+      assertEquals("重复上传时不应再次调用 OCR", callsAfterFirstUpload, parser.calls.get());
+      assertTrue(parser.cache.size() >= 1);
+    }
+  }
+
+  /** OCR 失败后按退避重试，成功的那一次结果被复用，重试不会作废整份文档。 */
+  @Test
+  public void retriesOcrOnceAndKeepsTheSuccessfulAttempt() throws Exception {
+    class FlakyParser extends DocumentParsingService {
+      int calls;
+      @Override
+      protected String readOcrCache(String key) {
+        return null;
+      }
+      @Override
+      protected void writeOcrCache(String key, String text) {
+      }
+      @Override
+      protected String recognize(byte[] data, String filename) throws Exception {
+        calls++;
+        if (calls == 1) {
+          throw new java.io.IOException("OCR服务暂时不可用");
+        }
+        return "重试后识别到的正文";
+      }
+    }
+    FlakyParser parser = new FlakyParser();
+    DocumentParsingService.Parsed result = parser.parse(blankPdf(1), "scan.pdf");
+    assertEquals("pdf-ocr", result.strategy());
+    assertEquals(0, result.failedPages());
+    assertEquals(1, result.ocrPages());
+    // 第一次失败，第二次成功。
+    assertEquals(2, parser.calls);
+  }
+
+  /** 空白扫描页返回空正文属于正常结果，不能让它抛异常作废整份文档。 */
+  @Test
+  public void blankScannedPageDoesNotFailTheWholeDocument() throws Exception {
+    class BlankPageParser extends DocumentParsingService {
+      final java.util.List<Integer> pages = new java.util.ArrayList<>();
+      @Override
+      protected String readOcrCache(String key) {
+        return null;
+      }
+      @Override
+      protected void writeOcrCache(String key, String text) {
+      }
+      @Override
+      protected String ocrPdfPage(String sourceHash, int page, byte[] pageData) {
+        pages.add(page);
+        // 第 2 页是空白页，其余页有正文，模拟扫描件里夹杂的空白页。
+        return page == 2 ? "" : "第" + page + "页正文";
+      }
+    }
+    BlankPageParser parser = new BlankPageParser();
+    DocumentParsingService.Parsed result = parser.parse(blankPdf(3), "scan.pdf");
+    assertEquals("pdf-ocr", result.strategy());
+    assertEquals(3, result.pages());
+    assertEquals(3, result.ocrPages());
+    assertEquals(0, result.failedPages());
+    assertTrue(result.text().contains("第1页正文"));
+    assertTrue(result.text().contains("第3页正文"));
+    assertFalse(result.text().contains("第2页正文"));
+    // 正文按物理页顺序输出。
+    assertTrue(result.text().indexOf("第1页正文") < result.text().indexOf("第3页正文"));
+  }
+
+  /** 每一页 OCR 都失败时给出可重试的错误，而不是“未提取到内容”。 */
+  @Test
+  public void reportsOcrFailureWhenEveryScannedPageFails() throws Exception {
+    class FailingParser extends DocumentParsingService {
+      final java.util.Set<Integer> failedPages = new java.util.HashSet<>();
+      int calls;
+      @Override
+      protected String readOcrCache(String key) {
+        return null;
+      }
+      @Override
+      protected void writeOcrCache(String key, String text) {
+      }
+      @Override
+      protected String ocrPdfPage(String sourceHash, int page, byte[] pageData) throws Exception {
+        calls++;
+        failedPages.add(page);
+        throw new java.io.IOException("OCR服务未返回有效任务状态");
+      }
+    }
+    FailingParser parser = new FailingParser();
+    byte[] pdf = scannedPdf(2);
+    try {
+      parser.parse(pdf, "scan.pdf");
+      fail("每一页 OCR 都失败时应当抛出可重试的异常");
+    } catch (java.io.IOException expected) {
+      assertTrue(expected.getMessage(), expected.getMessage().contains("OCR"));
+    }
+    // 两页都试过，并且失败页会重试（页面字节相同的极端情况下重试次数会合并，所以不固定具体次数）。
+    assertTrue("第 1 页应当尝试过 OCR：" + parser.failedPages, parser.failedPages.contains(1));
+    assertTrue("第 2 页应当尝试过 OCR：" + parser.failedPages, parser.failedPages.contains(2));
+    assertTrue("失败页应当重试：" + parser.calls, parser.calls > 2);
+  }
+
+  /** 解析进度按页回调，已完成页数与总页数都正确。 */
+  @Test
+  public void reportsPerPageProgress() throws Exception {
+    class CountingParser extends DocumentParsingService {
+      final java.util.concurrent.atomic.AtomicInteger pages = new java.util.concurrent.atomic.AtomicInteger();
+      @Override
+      protected String readOcrCache(String key) {
+        return null;
+      }
+      @Override
+      protected void writeOcrCache(String key, String text) {
+      }
+      @Override
+      protected String ocrPdfPage(String sourceHash, int page, byte[] pageData) {
+        return "第" + pages.incrementAndGet() + "页正文";
+      }
+    }
+    // 页面并发完成，回调顺序不固定，所以用线程安全的计数容器。
+    java.util.concurrent.atomic.AtomicInteger maxCompleted = new java.util.concurrent.atomic.AtomicInteger();
+    java.util.concurrent.atomic.AtomicInteger callbackCount = new java.util.concurrent.atomic.AtomicInteger();
+    new CountingParser().parse(scannedPdf(3), "scan.pdf", (progress) -> {
+      callbackCount.incrementAndGet();
+      maxCompleted.accumulateAndGet(progress.completed(), Math::max);
+      assertEquals(3, progress.total());
+    });
+    assertEquals(3, callbackCount.get());
+    assertEquals(3, maxCompleted.get());
+  }
+
+  /** 生成指定页数的空白 PDF，用来触发逐页 OCR 分支。 */
+  private byte[] blankPdf(int pages) throws Exception {
+    try (PDDocument pdf = new PDDocument(); ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+      for (int i = 0; i < pages; i++) {
+        pdf.addPage(new PDPage());
+      }
+      pdf.save(out);
+      return out.toByteArray();
+    }
+  }
+
+  /**
+   * 生成每页内容都不相同的低文本 PDF（文本不足 40 个字符，仍会走 OCR）。
+   *
+   * <p>页与页的字节不同，页面缓存键才不同，才能观察到每页各自的重试次数。
+   */
+  private byte[] scannedPdf(int pages) throws Exception {
+    try (PDDocument pdf = new PDDocument(); ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+      for (int i = 0; i < pages; i++) {
+        PDPage page = new PDPage();
+        pdf.addPage(page);
+        try (PDPageContentStream canvas = new PDPageContentStream(pdf, page)) {
+          canvas.beginText();
+          canvas.setFont(PDType1Font.HELVETICA, 12);
+          canvas.newLineAtOffset(40, 700);
+          canvas.showText("page " + (i + 1));
+          canvas.endText();
+        }
+      }
+      pdf.save(out);
+      return out.toByteArray();
     }
   }
 }

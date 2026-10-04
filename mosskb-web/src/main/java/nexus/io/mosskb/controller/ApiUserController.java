@@ -35,6 +35,16 @@ public class ApiUserController {
   }
 
   /**
+   * 切换当前登录用户的界面语言。前端头像菜单的语言下拉调用 POST /api/user/language，
+   * 身份由登录令牌确定，请求体只需要 language。
+   */
+  @Post("/language")
+  public ResultVo language(HttpRequest request) {
+    Long userId = TioRequestContext.getUserIdLong();
+    return Aop.get(KbUserService.class).switchLanguage(userId, JSON.parseObject(request.getBodyString()));
+  }
+
+  /**
    * 修改当前登录用户的密码。身份由登录令牌确定，不再校验邮箱验证码，请求体只需要新密码和确认密码。
    */
   @Post("/current/reset_password")
