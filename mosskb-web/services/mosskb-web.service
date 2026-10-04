@@ -1,0 +1,14 @@
+[Unit]
+Description=mosskb-web
+After=network.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/data/apps/mosskb-web
+ExecStart=/usr/java/jdk-25.0.2/bin/java -jar mosskb-web-1.0.4.jar
+Restart=on-failure
+RestartSec=5s
+
+[Install]
+WantedBy=default.target

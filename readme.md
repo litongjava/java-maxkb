@@ -1,8 +1,8 @@
-# Java MaxKB
+# Java MossKB
 
-基于 tio-boot 的 Java 知识库后端，复用 MaxKB 前端。通过文档检测、结构提取、远程 OCR、向量检索和多轮问答，将文档转为可追溯的知识库回答。模型生成复用 `java-openai` 的 `UniChatClient`，本机无需部署模型权重。
+基于 tio-boot 的 Java 知识库后端，复用 MossKB 前端。通过文档检测、结构提取、远程 OCR、向量检索和多轮问答，将文档转为可追溯的知识库回答。模型生成复用 `java-openai` 的 `UniChatClient`，本机无需部署模型权重。
 
-[前端仓库](https://gitee.com/ppnt/java-maxkb-ui) · [Java 后端仓库](https://gitee.com/ppnt/java-maxkb) · [演示视频](https://www.bilibili.com/video/BV1yJU8YHEgg/)
+[前端仓库](https://github.com/litongjava/java-mosskb-ui) · [Java 后端仓库](https://github.com/litongjava/java-mosskb) · [演示视频](https://www.bilibili.com/video/BV1yJU8YHEgg/)
 
 开发文档维护在 `tio-boot-docs/docs/zh/61_knowledge-base`。本地文档根目录为 `D:/code/markdown/project-litongjava/tio-boot-docs/docs/zh/61_knowledge-base`，主要章节：
 
@@ -34,14 +34,14 @@
 推荐将两个仓库放在同一父目录：
 
 ```text
-project-maxkb/
-  java-maxkb/
+project-mosskb/
+  java-mosskb/
     db/                   数据库结构与初始数据脚本
-    maxkb-business/       业务逻辑与测试
-    maxkb-web/            HTTP 入口和本地配置
+    mosskb-business/       业务逻辑与测试
+    mosskb-web/            HTTP 入口和本地配置
     scripts/             初始化、启动、目录同步与补丁导出
     docs/                验证记录、定制说明和补丁
-  java-maxkb-ui/
+  java-mosskb-ui/
     src/                  前端源码（基于官方界面，保留必要定制）
 ```
 
@@ -49,7 +49,7 @@ project-maxkb/
 
 ## 配置与初始化
 
-在 `maxkb-web/my.txt` 创建本地配置，每行一项：
+在 `mosskb-web/my.txt` 创建本地配置，每行一项：
 
 ```properties
 jdbc.url=jdbc:postgresql://127.0.0.1:5432/<实际数据库名>
@@ -61,7 +61,7 @@ app.env=dev
 jdbc.showSql=false
 ```
 
-在 `maxkb-web/secrets.txt` 设置：
+在 `mosskb-web/secrets.txt` 设置：
 
 ```properties
 GITEE_API_KEY=<自己的密钥>
@@ -94,7 +94,7 @@ Linux 使用同名 Shell 脚本：
 | `docker` | Windows 与 Linux；引擎可在本机或局域网内其它主机 | 一次性容器：断网、只读根、非 root、内存/CPU/pids 上限、tmpfs |
 | `host` | Linux（含容器内部署），不需要 Docker | `runuser` 切到沙箱用户 + 独立目录 + 白名单环境变量；**不断网、无只读根、无资源上限** |
 
-配置项都在 `maxkb-web/my.txt`：
+配置项都在 `mosskb-web/my.txt`：
 
 | 配置 | 作用 |
 | --- | --- |
@@ -105,7 +105,7 @@ Linux 使用同名 Shell 脚本：
 | `kb.python.image` | 容器镜像，默认 `python:3.12-slim`；执行固定使用 `--pull=never`，需提前 pull 到目标引擎 |
 | `kb.python.timeout_seconds` | 单次执行超时秒数，默认 15 |
 | `kb.python.sandbox.user` | host runner 的沙箱用户，默认 `sandbox` |
-| `kb.python.sandbox.dir` | host runner 的沙箱目录，默认 `/var/lib/java-maxkb/sandbox`，同时作为子进程的工作目录 |
+| `kb.python.sandbox.dir` | host runner 的沙箱目录，默认 `/var/lib/java-mosskb/sandbox`，同时作为子进程的工作目录 |
 | `kb.python.sandbox.python` | host runner 的 Python，默认 `python3` |
 | `kb.python.sandbox.su` | 显式改用 `su` 提权（默认不配；见下面的说明） |
 
@@ -134,21 +134,21 @@ docker --host tcp://192.168.31.97:2375 pull python:3.12-slim
 在 Linux 主机（或容器）里以 root 执行一次：
 
 ```bash
-./scripts/setup-python-host-sandbox.sh sandbox /var/lib/java-maxkb/sandbox python3
+./scripts/setup-python-host-sandbox.sh sandbox /var/lib/java-mosskb/sandbox python3
 ```
 
 脚本创建沙箱用户与目录（0750），并用 `runuser` 验证确实切到了该用户。然后把上面的 `kb.python.runner=host` 四项写进 `my.txt`。
 
 要求与限制，都要如实看待：
 
-- java-maxkb 必须**以 root 运行**，否则 `runuser` 无法切换用户；执行前会校验并拒绝。
+- java-mosskb 必须**以 root 运行**，否则 `runuser` 无法切换用户；执行前会校验并拒绝。
 - 默认用 util-linux 的 **`runuser`**，不是 `su`。`/bin/su` 是 setuid 程序：实测由 JVM 启动它，默认的 posix_spawn 会在 `ProcessBuilder.start()` 卡死，改用 `-Djdk.lang.Process.launchMechanism=FORK` 也会返回 `su: Authentication failure`；同一台机上从 shell 调用 `su` 却正常。`runuser` 不带 setuid，argv 直接传递，由 JVM 启动没有问题。确有需要时可用 `kb.python.sandbox.su` 覆盖，但要自己确认在目标环境可用。
 - 子进程只拿到白名单环境变量（`PATH`、`LANG`、`LC_*`、`TZ`、`TERM`）加上固定的 `HOME`/`TMPDIR`/`USER`/`LOGNAME`/`SHELL`，应用密钥不会进入用户代码；超时会连同子进程整棵树一起终止。
 - **不提供**断网、只读根文件系统和内存/CPU/pids 上限，沙箱用户可以读宿主上其他人可读的任何文件。因此 `my.txt`、`secrets.txt` 等含密钥的文件应当 `chmod 600`。需要这些保证就继续用 `kb.python.runner=docker`——两者可以在同一份配置里按环境切换。
 
 ## 构建与启动
 
-先在 `java-maxkb-ui` 目录安装前端依赖：
+先在 `java-mosskb-ui` 目录安装前端依赖：
 
 ```powershell
 npm install
@@ -170,8 +170,8 @@ Linux 与 WSL 使用同名 Shell 脚本：
 
 - 前端：<http://localhost:3000/ui/>
 - Java API：<http://localhost:10060/api>
-- 后端日志：`maxkb-web/logs/startup.log`、`startup-error.log`
-- 前端日志：`java-maxkb-ui/.local/vite.log`、`vite-error.log`
+- 后端日志：`mosskb-web/logs/startup.log`、`startup-error.log`
+- 前端日志：`java-mosskb-ui/.local/vite.log`、`vite-error.log`
 
 也可以分别执行：
 
@@ -180,7 +180,7 @@ mvn clean '-DskipTests' '-Dmaven.javadoc.skip=true' '-Dgpg.skip=true' -Pproducti
 .\scripts\Start-Local.ps1
 ```
 
-Java 运行工作目录为 `maxkb-web`，以便加载本地配置。实际可运行 JAR 位于 `maxkb-web/target`，不要使用旧 README 中不存在的根目录 JAR 路径。
+Java 运行工作目录为 `mosskb-web`，以便加载本地配置。实际可运行 JAR 位于 `mosskb-web/target`，不要使用旧 README 中不存在的根目录 JAR 路径。
 
 ## 创建用户与使用知识库
 
@@ -190,7 +190,7 @@ Java 运行工作目录为 `maxkb-web`，以便加载本地配置。实际可运
 
 ## 模型配置
 
-平台信息存于 `max_kb_model_provider`，候选模型存于 `max_kb_model_catalog`，用户创建的实例与凭据存于 `max_kb_model`。运行时不再读取固定供应商 JSON。
+平台信息存于 `moss_kb_model_provider`，候选模型存于 `moss_kb_model_catalog`，用户创建的实例与凭据存于 `moss_kb_model`。运行时不再读取固定供应商 JSON。
 
 在“系统 → 模型 → 添加模型”选择平台，选择或手动输入完整模型 ID 后按回车，再填写 API 地址及 Key。保存校验使用实际填写的模型 ID；编辑时掩码 Key 保留原凭据，更换 API 地址必须重新填写新平台 Key。
 
@@ -224,7 +224,7 @@ python scripts/Sync-ModelCatalog.py --source gitee --token-file <管理员令牌
 mvn '-Dtest=ModelCatalogTest,UserPasswordTest,IterativeRetrievalServiceTest,ConversationContextServiceTest,IsolatedPythonExecutorTest,GiteeAuxiliaryModelTest,DocumentParsingServiceTest' '-Dsurefire.failIfNoSpecifiedTests=false' '-Dmaven.javadoc.skip=true' '-Dgpg.skip=true' test
 ```
 
-2026-10-03 的构建回归共 53 项通过。另验证了真实 Gitee 创建/掩码编辑、跨平台密钥保护、UI 目录及手动 ID、知识库连续追问，以及局域网远程 Docker 引擎上的容器隔离执行和 Linux 宿主 `runuser` 沙箱执行。其他平台没有提供真实 Key，尚未进行全部平台的推理验收。前端构建在 `java-maxkb-ui` 执行 `npm run build`。两种 runner 的执行记录见[验证记录](docs/agent-verification.md)。
+2026-10-03 的构建回归共 53 项通过。另验证了真实 Gitee 创建/掩码编辑、跨平台密钥保护、UI 目录及手动 ID、知识库连续追问，以及局域网远程 Docker 引擎上的容器隔离执行和 Linux 宿主 `runuser` 沙箱执行。其他平台没有提供真实 Key，尚未进行全部平台的推理验收。前端构建在 `java-mosskb-ui` 执行 `npm run build`。两种 runner 的执行记录见[验证记录](docs/agent-verification.md)。
 
 ## 前端基线与定制恢复
 
@@ -234,7 +234,7 @@ mvn '-Dtest=ModelCatalogTest,UserPasswordTest,IterativeRetrievalServiceTest,Conv
 
 ```powershell
 # 默认只检查；正在合并的仓库需要先正常完成合并
-.\scripts\Apply-FrontendCustomizations.ps1 -Repository ..\MaxKB -Bundle .\docs\customizations\2026-10-03
+.\scripts\Apply-FrontendCustomizations.ps1 -Repository ..\MossKB -Bundle .\docs\customizations\2026-10-03
 ```
 
 通过检查后再用 `-Apply` 应用；锁文件补丁单独保存，升级时不要盲目覆盖。前端和后端导出脚本会在临时目录应用补丁并校验内容，不修改工作仓库索引。Java 新增或修改的 `if` 语句必须使用 `{}`，Maven 构建可加 `-Dgpg.skip=true` 跳过签名。

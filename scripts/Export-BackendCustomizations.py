@@ -13,7 +13,7 @@ def git(repo, *args):
 
 
 def eligible(name):
-    source = name.startswith(("maxkb-business/src/", "maxkb-web/src/", "scripts/"))
+    source = name.startswith(("mosskb-business/src/", "mosskb-web/src/", "scripts/"))
     return source and Path(name).suffix in {".java", ".sql", ".py", ".ps1", ".sh"}
 
 
@@ -32,7 +32,7 @@ def main():
     tracked = [p for p in git(repo, "diff", "--name-only", base).decode().splitlines() if eligible(p)]
     additions = [p for p in git(repo, "ls-files", "--others", "--exclude-standard").decode().splitlines() if eligible(p)]
     files = sorted(set(tracked + additions))
-    sandbox = Path(tempfile.mkdtemp(prefix="maxkb-backend-check-"))
+    sandbox = Path(tempfile.mkdtemp(prefix="mosskb-backend-check-"))
     git(sandbox, "init", "-q")
     for name in tracked:
         previous = subprocess.run(["git", "-C", str(repo), "show", f"{base}:{name}"], stdout=subprocess.PIPE, stderr=subprocess.PIPE)

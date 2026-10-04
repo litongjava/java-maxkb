@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 set -euo pipefail
-# 在 java-maxkb 所在的 Linux 主机上以 root 执行:创建宿主 Python 沙箱用户与目录。
+# 在 java-mosskb 所在的 Linux 主机上以 root 执行:创建宿主 Python 沙箱用户与目录。
 # 宿主 runner(kb.python.runner=host)用 su 切到这个用户跑用户代码,不需要 Docker。
 #
 # 用法: ./setup-python-host-sandbox.sh [沙箱用户] [沙箱目录] [python 可执行文件]
-# 例:   ./setup-python-host-sandbox.sh sandbox /var/lib/java-maxkb/sandbox python3
+# 例:   ./setup-python-host-sandbox.sh sandbox /var/lib/java-mosskb/sandbox python3
 USER_NAME="${1:-sandbox}"
-DIR="${2:-/var/lib/java-maxkb/sandbox}"
+DIR="${2:-/var/lib/java-mosskb/sandbox}"
 PYTHON="${3:-python3}"
 
 if [ "$(id -u)" != "0" ]; then
@@ -45,7 +45,7 @@ for candidate in /usr/sbin/runuser /sbin/runuser /usr/bin/runuser /bin/runuser; 
   fi
 done
 if [ -z "$RUNUSER" ]; then
-  echo "找不到 runuser(util-linux)。java-maxkb 默认用 runuser 提权:它不是 setuid 程序,argv 直接传递。" >&2
+  echo "找不到 runuser(util-linux)。java-mosskb 默认用 runuser 提权:它不是 setuid 程序,argv 直接传递。" >&2
   echo "没有 runuser 时可以配置 kb.python.sandbox.su,但实测由 JVM 启动 setuid 的 su 会报 Authentication failure," >&2
   echo "默认 posix_spawn 下甚至会卡死,所以不推荐;请先安装 util-linux。" >&2
   exit 1
@@ -60,7 +60,7 @@ fi
 
 cat <<EOF
 
-沙箱就绪。在 maxkb-web/my.txt 里设置:
+沙箱就绪。在 mosskb-web/my.txt 里设置:
 
 kb.python.runner=host
 kb.python.sandbox.user=$USER_NAME
@@ -68,8 +68,8 @@ kb.python.sandbox.dir=$DIR
 kb.python.sandbox.python=$PYTHON_PATH
 
 再检查两件事:
-1. java-maxkb 必须以 root 运行(提权命令需要),否则加载时会拒绝执行;
-2. 沙箱用户可以读宿主上任何 others 可读的文件,请确认 maxkb-web/my.txt、maxkb-web/secrets.txt
+1. java-mosskb 必须以 root 运行(提权命令需要),否则加载时会拒绝执行;
+2. 沙箱用户可以读宿主上任何 others 可读的文件,请确认 mosskb-web/my.txt、mosskb-web/secrets.txt
    等含密钥的文件是 chmod 600,而不是默认的 644。
 3. 宿主 runner 不提供断网、只读根文件系统和内存/CPU/pids 上限;需要这些保证时仍应使用
    kb.python.runner=docker。

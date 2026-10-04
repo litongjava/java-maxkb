@@ -1,0 +1,37 @@
+package nexus.io.mosskb.dao;
+
+import com.jfinal.kit.Kv;
+
+import nexus.io.db.TableInput;
+import nexus.io.db.TableResult;
+import nexus.io.db.activerecord.Row;
+import nexus.io.mosskb.constant.MossKbTableNames;
+import nexus.io.mosskb.vo.KbDatasetModel;
+import nexus.io.table.services.ApiTable;
+
+public class MossKbDatasetDao {
+
+  public TableResult<Kv> saveOrUpdate(Long userId, KbDatasetModel model) {
+    TableInput record = new TableInput();
+    record.set("id", model.getId())
+    //
+    .set("name", model.getName()).set("desc",model.getDesc()).set("user_id", userId)
+    //
+    .set("embedding_mode_id", model.getEmbedding_mode_id());
+    // 编辑接口可能只提交名称和描述，这里不覆盖未提交的类型与 meta。
+    if (model.getType() != null) {
+      record.set("type", model.getType());
+    }
+    if (model.getMeta() != null) {
+      record.set("meta", model.getMeta().toJSONString());
+    }
+
+    return ApiTable.saveOrUpdate(MossKbTableNames.moss_kb_dataset, record);
+  }
+
+  public TableResult<Row> get(Long userId, Long id) {
+    TableInput tableInput = new TableInput();
+    tableInput.set("id",id).set("user_id",userId);
+    return ApiTable.get(MossKbTableNames.moss_kb_dataset, tableInput);
+  }
+}

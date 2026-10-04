@@ -1,4 +1,4 @@
-﻿# 在 Windows 上本地启动 Java MaxKB：先确保后端 JAR 已构建，再后台启动 Java 与前端 Vite。
+﻿# 在 Windows 上本地启动 Java MossKB：先确保后端 JAR 已构建，再后台启动 Java 与前端 Vite。
 #
 # 参数：
 #   -Build             先执行 Maven 打包（跳过测试、Javadoc 与 GPG 签名）。
@@ -23,14 +23,14 @@ param(
 
 $ErrorActionPreference = 'Stop'
 $projectRoot = (Resolve-Path (Join-Path $PSScriptRoot '..')).Path
-$webRoot = Join-Path $projectRoot 'maxkb-web'
-$uiRoot = Join-Path $projectRoot '../java-maxkb-ui'
+$webRoot = Join-Path $projectRoot 'mosskb-web'
+$uiRoot = Join-Path $projectRoot '../java-mosskb-ui'
 
 if (!(Test-Path (Join-Path $webRoot 'my.txt')) -or !(Test-Path (Join-Path $webRoot 'secrets.txt'))) {
-  throw 'Create maxkb-web/my.txt and maxkb-web/secrets.txt before starting.'
+  throw 'Create mosskb-web/my.txt and mosskb-web/secrets.txt before starting.'
 }
 if (!(Test-Path (Join-Path $uiRoot 'package.json'))) {
-  throw 'Frontend not found. Expected the java-maxkb-ui directory next to java-maxkb.'
+  throw 'Frontend not found. Expected the java-mosskb-ui directory next to java-mosskb.'
 }
 
 if ($Build) {
@@ -45,12 +45,12 @@ if ($Build) {
   }
 }
 
-$jar = Get-ChildItem (Join-Path $webRoot 'target') -Filter 'maxkb-web-*.jar' | Where-Object { $_.Name -notmatch '-(sources|javadoc)\.jar$' } | Sort-Object LastWriteTime -Descending | Select-Object -First 1
+$jar = Get-ChildItem (Join-Path $webRoot 'target') -Filter 'mosskb-web-*.jar' | Where-Object { $_.Name -notmatch '-(sources|javadoc)\.jar$' } | Sort-Object LastWriteTime -Descending | Select-Object -First 1
 if (!$jar) {
   throw 'No backend jar found. Run this script with -Build first.'
 }
 if (!(Test-Path (Join-Path $uiRoot 'node_modules/vite/bin/vite.js'))) {
-  throw 'Run npm install in java-maxkb-ui first.'
+  throw 'Run npm install in java-mosskb-ui first.'
 }
 
 New-Item -ItemType Directory -Force (Join-Path $webRoot 'logs'),(Join-Path $uiRoot '.local') | Out-Null

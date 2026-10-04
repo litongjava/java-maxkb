@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# 在 Linux / WSL 上本地启动 Java MaxKB：先确保后端 JAR 已构建，再后台启动 Java 与前端 Vite。
+# 在 Linux / WSL 上本地启动 Java MossKB：先确保后端 JAR 已构建，再后台启动 Java 与前端 Vite。
 #
 # 用法：
 #   ./scripts/Start-Local.sh                 # 用已有 JAR 启动
@@ -18,8 +18,8 @@
 set -euo pipefail
 
 PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-WEB_ROOT="${PROJECT_ROOT}/maxkb-web"
-UI_ROOT="$(cd "${PROJECT_ROOT}/.." && pwd)/java-maxkb-ui"
+WEB_ROOT="${PROJECT_ROOT}/mosskb-web"
+UI_ROOT="$(cd "${PROJECT_ROOT}/.." && pwd)/java-mosskb-ui"
 BACKEND_PORT="${BACKEND_PORT:-10060}"
 FRONTEND_PORT="${FRONTEND_PORT:-3000}"
 FRONTEND_HOST="${FRONTEND_HOST:-127.0.0.1}"
@@ -62,7 +62,7 @@ if [[ "${DO_BUILD}" -eq 1 ]]; then
   ( cd "${PROJECT_ROOT}" && "${MAVEN_BIN}" clean -Dmaven.test.skip=true -Dmaven.javadoc.skip=true -Dgpg.skip=true -Pproduction package )
 fi
 
-JAR="$(ls -t "${WEB_ROOT}"/target/maxkb-web-*.jar 2>/dev/null | grep -vE -- '-(sources|javadoc)\.jar$' | head -n 1 || true)"
+JAR="$(ls -t "${WEB_ROOT}"/target/mosskb-web-*.jar 2>/dev/null | grep -vE -- '-(sources|javadoc)\.jar$' | head -n 1 || true)"
 [[ -n "${JAR}" ]] || { echo "找不到后端 JAR，请先执行：./scripts/Start-Local.sh --build" >&2; exit 1; }
 
 mkdir -p "${WEB_ROOT}/logs"
@@ -76,7 +76,7 @@ fi
 
 if [[ "${BACKEND_ONLY}" -eq 0 ]]; then
   if [[ ! -f "${UI_ROOT}/node_modules/vite/bin/vite.js" ]]; then
-    echo "前端依赖未安装，请在 java-maxkb-ui 目录执行 npm install。" >&2
+    echo "前端依赖未安装，请在 java-mosskb-ui 目录执行 npm install。" >&2
     exit 1
   fi
   mkdir -p "${UI_ROOT}/.local"
@@ -90,4 +90,4 @@ if [[ "${BACKEND_ONLY}" -eq 0 ]]; then
 fi
 
 echo "UI: http://localhost:${FRONTEND_PORT}/ui/  Backend: http://localhost:${BACKEND_PORT}"
-echo "后端日志：maxkb-web/logs/startup.log，前端日志：java-maxkb-ui/.local/vite.log"
+echo "后端日志：mosskb-web/logs/startup.log，前端日志：java-mosskb-ui/.local/vite.log"

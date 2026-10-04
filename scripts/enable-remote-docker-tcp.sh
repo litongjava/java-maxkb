@@ -2,7 +2,7 @@
 set -euo pipefail
 # 在运行 Docker 的 Linux 主机上以 root 执行。
 #
-# 目的:让局域网里的 java-maxkb 通过 TCP 使用本机 Docker 引擎运行隔离 Python 容器。
+# 目的:让局域网里的 java-mosskb 通过 TCP 使用本机 Docker 引擎运行隔离 Python 容器。
 # 做法:用 socat 容器把 /var/run/docker.sock 转发到 TCP 端口,不修改 dockerd 配置、不重启 Docker,
 #       因此不会影响正在运行的容器。明文 Docker API 等同于该主机的 root 权限,所以默认只放行一个来源 IP。
 #

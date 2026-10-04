@@ -6,7 +6,7 @@ SHA-256：`9715ec1ac15de4127e53225694d2d6c411d2073e56f8ce3de5e550ef5abdf9dc`。
 
 ## 结论
 
-**针对这份文件的正文与重要日期保留，HunyuanOCR 表现最好；作为 MaxKB 默认的整份 PDF 解析服务，建议优先 PaddleOCR-VL-1.5。**
+**针对这份文件的正文与重要日期保留，HunyuanOCR 表现最好；作为 MossKB 默认的整份 PDF 解析服务，建议优先 PaddleOCR-VL-1.5。**
 
 - HunyuanOCR 的抽样正文无文字差异，22 项页内关键内容全部命中，同时识别了首页印章覆盖区域的日期和末页印发日期。但需要将 PDF 逐页转为图片，累计请求时间约 8 分 50 秒，表格结构仍有错误。
 - PaddleOCR-VL-1.5 的抽样正文也无文字差异，保留首页日期，整份文件约 95 秒完成，接口接入更直接。不过第 35 页仅返回空内容，遗漏末页印发信息。
@@ -42,7 +42,7 @@ SHA-256：`9715ec1ac15de4127e53225694d2d6c411d2073e56f8ce3de5e550ef5abdf9dc`。
 6. 另行核对首页、文号、日期、数字条款、附件表格、末页等 22 项内容。命中分数按对应结果页精确匹配。PDF-Extract-Kit 将“2021年12月底前完成85%以上”合并到前页，页内不命中，但全文存在，不能描述为实际漏字。
 7. 观察全部页的返回情况，重点核对物理页 1、3、12、27、28、30、33、34、35。没有逐字人工校对全部 35 页。**0.000% 仅表示抽样正文无归一化文字差异，不表示全文 100% 准确。**
 
-人工基准：[henan-2021-18-reference.json](../maxkb-business/src/test/resources/ocr/henan-2021-18-reference.json)。离线评价：[evaluate_ocr.py](../maxkb-business/src/test/scripts/evaluate_ocr.py)。详细差异保存在结果目录的 `evaluation/*-diffs.json`。
+人工基准：[henan-2021-18-reference.json](../mosskb-business/src/test/resources/ocr/henan-2021-18-reference.json)。离线评价：[evaluate_ocr.py](../mosskb-business/src/test/scripts/evaluate_ocr.py)。详细差异保存在结果目录的 `evaluation/*-diffs.json`。
 
 ## 人工核对证据
 
@@ -86,20 +86,20 @@ SHA-256：`9715ec1ac15de4127e53225694d2d6c411d2073e56f8ce3de5e550ef5abdf9dc`。
 
 ## 代码和故障处理
 
-- 新增 [DocumentOcrBenchmarkTest.java](../maxkb-business/src/test/java/nexus/io/maxkb/ocr/DocumentOcrBenchmarkTest.java)：默认跳过付费网络调用，显式开启后提交、轮询、保存原始响应与结果，保存任务 ID 支持续跑。
+- 新增 [DocumentOcrBenchmarkTest.java](../mosskb-business/src/test/java/nexus/io/mosskb/ocr/DocumentOcrBenchmarkTest.java)：默认跳过付费网络调用，显式开启后提交、轮询、保存原始响应与结果，保存任务 ID 支持续跑。
 - java-openai 增加 `GiteeClient.ocr(...)`、`GiteeOcrResponse`、可注入 HTTP 客户端的构造方法。官方示例返回 `text`，实测返回 `text_result`，现兼容两种形式。
 - 增加 `DeepSeekClient.getModels()`，密钥使用 `EnvUtils.get`，未写入源码和日志。默认运行目录 ID 使用 `nexus.io.tio.utils.snowflake.SnowflakeIdUtils.id()`。
-- maxkb-business 显式引用更新后的客户端；修复 SLF4J 与 Logback 不兼容导致的启动 `NoClassDefFoundError`。
+- mosskb-business 显式引用更新后的客户端；修复 SLF4J 与 Logback 不兼容导致的启动 `NoClassDefFoundError`。
 - PDF-Extract-Kit 首次因并发任务数超限失败，待其他任务结束后重试成功，两次响应都保留。
 - HunyuanOCR 首次通过异步 PDF 接口返回“暂不支持该接口”，按 [Gitee 官方文档](https://ai.gitee.com/docs/openapi/v1) 改为同步图片接口。字段映射修正后复用已保存的成功响应，未重新上传这些页面。
-- Gitee OCR 适配层 3 项测试通过；maxkb-business 编译通过，普通测试运行跳过付費 OCR 用例。同步更新 java-openai 文档和 tio-boot 的 Gitee OCR 说明。
+- Gitee OCR 适配层 3 项测试通过；mosskb-business 编译通过，普通测试运行跳过付費 OCR 用例。同步更新 java-openai 文档和 tio-boot 的 Gitee OCR 说明。
 
 ## 复跑
 
-确认当前 java-openai 已安装到本地 Maven 仓库，且 `maxkb-business/secrets.txt` 中有密钥。从项目根目录运行：
+确认当前 java-openai 已安装到本地 Maven 仓库，且 `mosskb-business/secrets.txt` 中有密钥。从项目根目录运行：
 
 ```powershell
-.\maxkb-business\src\test\scripts\run-ocr-benchmark.ps1 -Pdf '原始PDF的完整路径' -OutputDirectory 'target/ocr-benchmark/new-run'
+.\mosskb-business\src\test\scripts\run-ocr-benchmark.ps1 -Pdf '原始PDF的完整路径' -OutputDirectory 'target/ocr-benchmark/new-run'
 ```
 
 用 `-Models 'PaddleOCR-VL-1.5'` 指定模型。同一输出目录复用已有任务与成功页面，PDF 哈希不同则拒绝复用。明确失败的异步任务应使用新输出目录进行有意重试，不要删除成功记录后盲目重跑。被明确拒绝尺寸的 HunyuanOCR 页会在恢复运行时缩小后重试。
@@ -107,8 +107,8 @@ SHA-256：`9715ec1ac15de4127e53225694d2d6c411d2073e56f8ce3de5e550ef5abdf9dc`。
 离线复核不调用模型，也不需要密钥：
 
 ```powershell
-python .\maxkb-business\src\test\scripts\extract_ocr_reference_text.py '原始PDF的完整路径' '.\tmp\ocr-source'
-python .\maxkb-business\src\test\scripts\evaluate_ocr.py --runs '.\output\ocr-benchmark\henan-2021-18\henan-2021-18' '.\output\ocr-benchmark\henan-2021-18\henan-2021-18-pdf-retry' '.\output\ocr-benchmark\henan-2021-18\henan-2021-18-hunyuan' --reference '.\maxkb-business\src\test\resources\ocr\henan-2021-18-reference.json' --source-text '.\tmp\ocr-source' --output '.\tmp\ocr-evaluation'
+python .\mosskb-business\src\test\scripts\extract_ocr_reference_text.py '原始PDF的完整路径' '.\tmp\ocr-source'
+python .\mosskb-business\src\test\scripts\evaluate_ocr.py --runs '.\output\ocr-benchmark\henan-2021-18\henan-2021-18' '.\output\ocr-benchmark\henan-2021-18\henan-2021-18-pdf-retry' '.\output\ocr-benchmark\henan-2021-18\henan-2021-18-hunyuan' --reference '.\mosskb-business\src\test\resources\ocr\henan-2021-18-reference.json' --source-text '.\tmp\ocr-source' --output '.\tmp\ocr-evaluation'
 ```
 
 原生文本提取需要 `pypdf`，评价脚本只使用 Python 标准库。

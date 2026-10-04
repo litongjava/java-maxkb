@@ -1,12 +1,12 @@
-﻿# 初始化或升级 Java MaxKB 数据库。
+﻿# 初始化或升级 Java MossKB 数据库。
 #
-# 读取 maxkb-web/my.txt 里的连接参数，依次执行 db/schema.sql 与 db/seed.sql。
+# 读取 mosskb-web/my.txt 里的连接参数，依次执行 db/schema.sql 与 db/seed.sql。
 # 两个脚本都是幂等的：空库会建好 29 张业务表并写入管理员、默认模型、平台目录和
 # 内置函数模板；已有库会补齐缺失的表、列和索引，不删除已有数据。
 #
 # 参数：
 #   -PostgresBin  PostgreSQL 的 bin 目录。省略时使用 PATH 上的 psql。
-#   -ConfigFile   连接配置文件，默认 maxkb-web/my.txt。
+#   -ConfigFile   连接配置文件，默认 mosskb-web/my.txt。
 #   -Reset        先执行 db/reset.sql 删除全部业务表，再重建，适合本地反复验证。
 #
 # 示例：
@@ -16,7 +16,7 @@
 
 param(
   [string]$PostgresBin = '',
-  [string]$ConfigFile = (Join-Path $PSScriptRoot '../maxkb-web/my.txt'),
+  [string]$ConfigFile = (Join-Path $PSScriptRoot '../mosskb-web/my.txt'),
   [switch]$Reset
 )
 

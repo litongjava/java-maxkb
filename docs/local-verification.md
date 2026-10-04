@@ -1,12 +1,12 @@
-# Java MaxKB 本地验证记录
+# Java MossKB 本地验证记录
 
 日期：2026-10-02。
 
 ## 已运行的服务
 
-- 前端：`http://localhost:3000/ui/`，源代码位于相邻的 `MaxKB/ui`。
+- 前端：`http://localhost:3000/ui/`，源代码位于相邻的 `MossKB/ui`。
 - Java API：`http://localhost:10060`。
-- 数据库：使用 `maxkb-web/my.txt` 中配置的 `max_kb`。
+- 数据库：使用 `mosskb-web/my.txt` 中配置的 `moss_kb`。
 - 推理：Gitee `deepseek-v4.1-flash`。
 - 向量：Gitee `Qwen3-Embedding-8B`，1024 维。
 - 扫描解析：Gitee `PaddleOCR-VL-1.5`。
@@ -15,7 +15,7 @@
 
 ## 复现步骤
 
-1. 在 `MaxKB/ui` 安装前端依赖。
+1. 在 `MossKB/ui` 安装前端依赖。
 2. 在 Java 项目根目录执行 `scripts/Initialize-Database.ps1`，传入实际 PostgreSQL 的 `bin` 目录。
 3. 执行 `scripts/Start-Local.ps1 -Build`。可通过参数指定 Java、Node 和 Maven 路径。重新构建前先停止旧 Java 进程。
 4. 打开前端，进入“政法文档验证”知识库和“政法多轮问答验证”应用。

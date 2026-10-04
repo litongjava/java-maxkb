@@ -1,0 +1,127 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>nexus.io</groupId>
+    <artifactId>java-mosskb</artifactId>
+    <version>1.0.4</version>
+  </parent>
+  <artifactId>mosskb-web</artifactId>
+  <name>mosskb-web</name>
+  <properties>
+    <final.name>java-mosskb</final.name>
+    <main.class>nexus.io.mosskb.MossKbApp</main.class>
+  </properties>
+  <dependencies>
+    <dependency>
+      <groupId>nexus.io</groupId>
+      <artifactId>mosskb-business</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.projectlombok</groupId>
+      <artifactId>lombok</artifactId>
+      <version>${lombok-version}</version>
+      <optional>true</optional>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.12</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+  <profiles>
+    <!-- 开发环境配置 -->
+    <profile>
+      <id>development</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <build>
+        <plugins>
+          <!-- Spring Boot Maven 插件 -->
+          <plugin>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-maven-plugin</artifactId>
+            <version>2.7.4</version>
+            <configuration>
+              <fork>true</fork>
+              <mainClass>${main.class}</mainClass>
+              <excludeGroupIds>org.projectlombok</excludeGroupIds>
+              <arguments>
+                <argument>--mode=dev</argument>
+              </arguments>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+    <!-- 生产环境配置 -->
+    <profile>
+      <id>production</id>
+      <build>
+        <plugins>
+          <!-- Spring Boot Maven 插件 -->
+          <plugin>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-maven-plugin</artifactId>
+            <version>2.7.4</version>
+            <configuration>
+              <mainClass>${main.class}</mainClass>
+              <excludeGroupIds>org.projectlombok</excludeGroupIds>
+            </configuration>
+            <executions>
+              <execution>
+                <goals>
+                  <goal>repackage</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    <!-- assembly -->
+    <profile>
+      <id>assembly</id>
+      <build>
+        <plugins>
+          <!-- 组装文件并压缩zip插件 -->
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-assembly-plugin</artifactId>
+            <version>3.3.0</version>
+            <configuration>
+              <!-- not append assembly id in release file name -->
+              <appendAssemblyId>false</appendAssemblyId>
+              <descriptors>
+                <descriptor>assembly-${assembly}.xml</descriptor>
+              </descriptors>
+            </configuration>
+            <executions>
+              <execution>
+                <id>make-assembly</id>
+                <phase>package</phase>
+                <goals>
+                  <goal>single</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+        <!-- 多模块项目资源配置在classpath下 -->
+        <resources>
+          <resource>
+            <directory>src/main/resources</directory>
+            <includes>
+              <include>**/*.*</include>
+            </includes>
+          </resource>
+        </resources>
+      </build>
+    </profile>
+  </profiles>
+</project>

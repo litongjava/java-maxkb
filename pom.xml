@@ -3,13 +3,13 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>nexus.io</groupId>
-  <artifactId>java-maxkb</artifactId>
+  <artifactId>java-mosskb</artifactId>
   <version>1.0.4</version>
   <packaging>pom</packaging>
 
-  <name>java-maxkb</name>
-  <description>java-maxkb</description>
-  <url>https://github.com/litongjava/java-maxkb</url>
+  <name>java-mosskb</name>
+  <description>java-mosskb</description>
+  <url>https://github.com/litongjava/java-mosskb</url>
 
 
   <properties>
@@ -28,10 +28,10 @@
   </properties>
 
   <modules>
-    <!-- maxkb-business 必须先于 maxkb-web 构建:maxkb-web 会把 business 的 jar 打进 fat jar,
+    <!-- mosskb-business 必须先于 mosskb-web 构建:mosskb-web 会把 business 的 jar 打进 fat jar,
          顺序反了会嵌进上一次构建的旧 jar,改完 business 的代码跑起来还是旧逻辑。 -->
-    <module>maxkb-business</module>
-    <module>maxkb-web</module>
+    <module>mosskb-business</module>
+    <module>mosskb-web</module>
   </modules>
 
   <!-- t-io 各模块统一到 ${tio-boot.version}:
@@ -98,9 +98,9 @@
   </developers>
 
   <scm>
-    <connection>scm:git:git@github.com:litongjava/java-maxkb.git</connection>
-    <developerConnection>scm:git:git@github.com:litongjava/java-maxkb.git</developerConnection>
-    <url>git@github.com:litongjava/java-maxkb.git</url>
+    <connection>scm:git:git@github.com:litongjava/java-mosskb.git</connection>
+    <developerConnection>scm:git:git@github.com:litongjava/java-mosskb.git</developerConnection>
+    <url>git@github.com:litongjava/java-mosskb.git</url>
   </scm>
   <build>
     <plugins>

@@ -1,4 +1,4 @@
--- Java MaxKB 数据库结构
+-- Java MossKB 数据库结构
 --
 -- 幂等脚本：既能在空库上初始化，也能在已有库上重复执行。
 -- 只创建缺失的表、列和索引，不删除任何数据；需要清空重建时先执行 reset.sql。
@@ -19,7 +19,7 @@ CREATE EXTENSION IF NOT EXISTS pg_trgm;
 
 -- 用户、令牌与密钥 ---------------------------------------------------------
 -- 平台用户。token_version 用于让改密、停用后签发的旧令牌立即失效。
-CREATE TABLE IF NOT EXISTS "public"."max_kb_user" (
+CREATE TABLE IF NOT EXISTS "public"."moss_kb_user" (
   "id" BIGINT NOT NULL PRIMARY KEY,
   "email" VARCHAR,
   "phone" VARCHAR NOT NULL,
@@ -39,15 +39,15 @@ CREATE TABLE IF NOT EXISTS "public"."max_kb_user" (
   "token_version" BIGINT NOT NULL DEFAULT 0
 );
 
-CREATE INDEX IF NOT EXISTS "user_email_index_like" ON "public"."max_kb_user" USING btree (
+CREATE INDEX IF NOT EXISTS "user_email_index_like" ON "public"."moss_kb_user" USING btree (
   "email" varchar_pattern_ops
 );
-CREATE INDEX IF NOT EXISTS "user_username_index_like" ON "public"."max_kb_user" USING btree (
+CREATE INDEX IF NOT EXISTS "user_username_index_like" ON "public"."moss_kb_user" USING btree (
   "username" varchar_pattern_ops
 );
 
 -- 登录令牌。
-CREATE TABLE IF NOT EXISTS "public"."max_kb_user_token" (
+CREATE TABLE IF NOT EXISTS "public"."moss_kb_user_token" (
   "id" BIGINT NOT NULL PRIMARY KEY,
   "token" VARCHAR NOT NULL,
   "remark" VARCHAR(256),
@@ -60,7 +60,7 @@ CREATE TABLE IF NOT EXISTS "public"."max_kb_user_token" (
 );
 
 -- 账号级开放接口密钥。只保存明文前缀加随机串，删除为逻辑删除，停用后立即失效。
-CREATE TABLE IF NOT EXISTS "public"."max_kb_user_api_key" (
+CREATE TABLE IF NOT EXISTS "public"."moss_kb_user_api_key" (
   "id" BIGINT NOT NULL PRIMARY KEY,
   "secret_key" VARCHAR(128) NOT NULL,
   "user_id" BIGINT NOT NULL,
@@ -76,14 +76,14 @@ CREATE TABLE IF NOT EXISTS "public"."max_kb_user_api_key" (
   "tenant_id" BIGINT NOT NULL DEFAULT 0
 );
 
-CREATE UNIQUE INDEX IF NOT EXISTS "max_kb_user_api_key_secret_key"
-  ON "public"."max_kb_user_api_key" ("secret_key");
-CREATE INDEX IF NOT EXISTS "max_kb_user_api_key_user_id"
-  ON "public"."max_kb_user_api_key" ("user_id");
+CREATE UNIQUE INDEX IF NOT EXISTS "moss_kb_user_api_key_secret_key"
+  ON "public"."moss_kb_user_api_key" ("secret_key");
+CREATE INDEX IF NOT EXISTS "moss_kb_user_api_key_user_id"
+  ON "public"."moss_kb_user_api_key" ("user_id");
 
 -- 模型与模型目录 -----------------------------------------------------------
 -- 平台接入信息：接口地址、协议、能力与表单定义。模型目录以平台为单位挂在下面。
-CREATE TABLE IF NOT EXISTS "public"."max_kb_model_provider" (
+CREATE TABLE IF NOT EXISTS "public"."moss_kb_model_provider" (
   "provider" VARCHAR(128) NOT NULL PRIMARY KEY,
   "name" VARCHAR(200) NOT NULL,
   "icon" TEXT NOT NULL DEFAULT '',
@@ -98,7 +98,7 @@ CREATE TABLE IF NOT EXISTS "public"."max_kb_model_provider" (
 );
 
 -- 平台候选模型目录：管理员选择或同步得到的模型 ID。目录不代表模型一定可用。
-CREATE TABLE IF NOT EXISTS "public"."max_kb_model_catalog" (
+CREATE TABLE IF NOT EXISTS "public"."moss_kb_model_catalog" (
   "provider" VARCHAR(128) NOT NULL,
   "model_type" VARCHAR(30) NOT NULL,
   "model_id" VARCHAR(256) NOT NULL,
@@ -110,7 +110,7 @@ CREATE TABLE IF NOT EXISTS "public"."max_kb_model_catalog" (
 );
 
 -- 用户创建的模型实例：平台、模型 ID、凭据和参数表单。
-CREATE TABLE IF NOT EXISTS "public"."max_kb_model" (
+CREATE TABLE IF NOT EXISTS "public"."moss_kb_model" (
   "id" BIGINT NOT NULL PRIMARY KEY,
   "name" VARCHAR NOT NULL,
   "model_type" VARCHAR NOT NULL,
@@ -131,10 +131,10 @@ CREATE TABLE IF NOT EXISTS "public"."max_kb_model" (
   "model_params_form" JSONB NOT NULL DEFAULT '[]'
 );
 
-CREATE INDEX IF NOT EXISTS "idx_user_id" ON "public"."max_kb_model" USING btree ("user_id");
+CREATE INDEX IF NOT EXISTS "idx_user_id" ON "public"."moss_kb_model" USING btree ("user_id");
 
 -- 应用与访问凭据 -----------------------------------------------------------
-CREATE TABLE IF NOT EXISTS "public"."max_kb_application" (
+CREATE TABLE IF NOT EXISTS "public"."moss_kb_application" (
   "id" BIGINT PRIMARY KEY,
   "code" INT,
   "course_name" VARCHAR,
@@ -173,13 +173,13 @@ CREATE TABLE IF NOT EXISTS "public"."max_kb_application" (
   "tenant_id" BIGINT NOT NULL DEFAULT 0
 );
 
-CREATE INDEX IF NOT EXISTS "application_model_id" ON "public"."max_kb_application" USING btree ("model_id");
-CREATE INDEX IF NOT EXISTS "application_stt_model_id" ON "public"."max_kb_application" USING btree ("stt_model_id");
-CREATE INDEX IF NOT EXISTS "application_tts_model_id" ON "public"."max_kb_application" USING btree ("tts_model_id");
-CREATE INDEX IF NOT EXISTS "application_user_id" ON "public"."max_kb_application" USING btree ("user_id");
+CREATE INDEX IF NOT EXISTS "application_model_id" ON "public"."moss_kb_application" USING btree ("model_id");
+CREATE INDEX IF NOT EXISTS "application_stt_model_id" ON "public"."moss_kb_application" USING btree ("stt_model_id");
+CREATE INDEX IF NOT EXISTS "application_tts_model_id" ON "public"."moss_kb_application" USING btree ("tts_model_id");
+CREATE INDEX IF NOT EXISTS "application_user_id" ON "public"."moss_kb_application" USING btree ("user_id");
 
 -- 公开分享链接。language 为空表示跟随访客浏览器语言。
-CREATE TABLE IF NOT EXISTS "public"."max_kb_application_access_token" (
+CREATE TABLE IF NOT EXISTS "public"."moss_kb_application_access_token" (
   "application_id" BIGINT PRIMARY KEY,
   "access_token" BIGINT NOT NULL,
   "is_active" BOOLEAN NOT NULL,
@@ -197,12 +197,12 @@ CREATE TABLE IF NOT EXISTS "public"."max_kb_application_access_token" (
   "tenant_id" BIGINT NOT NULL DEFAULT 0
 );
 
-CREATE INDEX IF NOT EXISTS "max_kb_application_access_token_access_token" ON "public"."max_kb_application_access_token" USING btree ("access_token");
+CREATE INDEX IF NOT EXISTS "moss_kb_application_access_token_access_token" ON "public"."moss_kb_application_access_token" USING btree ("access_token");
 
-COMMENT ON COLUMN "public"."max_kb_application_access_token"."language" IS '公开分享链接的对话语言，为空表示跟随浏览器语言';
+COMMENT ON COLUMN "public"."moss_kb_application_access_token"."language" IS '公开分享链接的对话语言，为空表示跟随浏览器语言';
 
 -- 应用级开放接口密钥。
-CREATE TABLE IF NOT EXISTS "public"."max_kb_application_api_key" (
+CREATE TABLE IF NOT EXISTS "public"."moss_kb_application_api_key" (
   "id" BIGINT NOT NULL PRIMARY KEY,
   "secret_key" VARCHAR(128) NOT NULL,
   "application_id" BIGINT NOT NULL,
@@ -219,13 +219,13 @@ CREATE TABLE IF NOT EXISTS "public"."max_kb_application_api_key" (
   "tenant_id" BIGINT NOT NULL DEFAULT 0
 );
 
-CREATE UNIQUE INDEX IF NOT EXISTS "max_kb_application_api_key_secret_key"
-  ON "public"."max_kb_application_api_key" ("secret_key");
-CREATE INDEX IF NOT EXISTS "max_kb_application_api_key_application_id"
-  ON "public"."max_kb_application_api_key" ("application_id");
+CREATE UNIQUE INDEX IF NOT EXISTS "moss_kb_application_api_key_secret_key"
+  ON "public"."moss_kb_application_api_key" ("secret_key");
+CREATE INDEX IF NOT EXISTS "moss_kb_application_api_key_application_id"
+  ON "public"."moss_kb_application_api_key" ("application_id");
 
 -- 文件、知识库与文档 -------------------------------------------------------
-CREATE TABLE IF NOT EXISTS "public"."max_kb_file" (
+CREATE TABLE IF NOT EXISTS "public"."moss_kb_file" (
   "id" BIGINT PRIMARY KEY,
   "md5" VARCHAR(32) NOT NULL,
   "filename" TEXT NOT NULL,
@@ -245,7 +245,7 @@ CREATE TABLE IF NOT EXISTS "public"."max_kb_file" (
   "tenant_id" BIGINT NOT NULL DEFAULT 0
 );
 
-CREATE TABLE IF NOT EXISTS "public"."max_kb_dataset" (
+CREATE TABLE IF NOT EXISTS "public"."moss_kb_dataset" (
   "id" BIGINT PRIMARY KEY,
   "name" VARCHAR NOT NULL,
   "desc" VARCHAR,
@@ -263,13 +263,13 @@ CREATE TABLE IF NOT EXISTS "public"."max_kb_dataset" (
   "tenant_id" BIGINT NOT NULL DEFAULT 0
 );
 
-CREATE TABLE IF NOT EXISTS "public"."max_kb_application_dataset_mapping" (
+CREATE TABLE IF NOT EXISTS "public"."moss_kb_application_dataset_mapping" (
   "id" BIGINT PRIMARY KEY,
   "application_id" BIGINT NOT NULL,
   "dataset_id" BIGINT NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS "public"."max_kb_document" (
+CREATE TABLE IF NOT EXISTS "public"."moss_kb_document" (
   "id" BIGINT NOT NULL PRIMARY KEY,
   "file_id" BIGINT,
   "user_id" BIGINT,
@@ -296,7 +296,7 @@ CREATE TABLE IF NOT EXISTS "public"."max_kb_document" (
 );
 
 -- 解析任务进度。
-CREATE TABLE IF NOT EXISTS "public"."max_kb_task" (
+CREATE TABLE IF NOT EXISTS "public"."moss_kb_task" (
   "id" BIGINT NOT NULL PRIMARY KEY,
   "file_id" BIGINT,
   "file_name" VARCHAR NOT NULL,
@@ -314,7 +314,7 @@ CREATE TABLE IF NOT EXISTS "public"."max_kb_task" (
 );
 
 -- 分段与向量。embedding 与 title_embedding 使用知识库选定的同一个向量空间。
-CREATE TABLE IF NOT EXISTS "public"."max_kb_paragraph" (
+CREATE TABLE IF NOT EXISTS "public"."moss_kb_paragraph" (
   "id" BIGINT PRIMARY KEY,
   "source_id" BIGINT,
   "source_type" VARCHAR,
@@ -338,7 +338,7 @@ CREATE TABLE IF NOT EXISTS "public"."max_kb_paragraph" (
   "tenant_id" BIGINT NOT NULL DEFAULT 0
 );
 
-CREATE TABLE IF NOT EXISTS "public"."max_kb_sentence" (
+CREATE TABLE IF NOT EXISTS "public"."moss_kb_sentence" (
   "id" BIGINT PRIMARY KEY,
   "type" INT,
   "content" VARCHAR NOT NULL,
@@ -359,7 +359,7 @@ CREATE TABLE IF NOT EXISTS "public"."max_kb_sentence" (
 );
 
 -- 问题库与问题分段映射。
-CREATE TABLE IF NOT EXISTS "public"."max_kb_problem" (
+CREATE TABLE IF NOT EXISTS "public"."moss_kb_problem" (
   "id" BIGINT PRIMARY KEY,
   "content" VARCHAR NOT NULL,
   "hit_num" INT NOT NULL,
@@ -372,9 +372,9 @@ CREATE TABLE IF NOT EXISTS "public"."max_kb_problem" (
   "tenant_id" BIGINT NOT NULL DEFAULT 0
 );
 
-CREATE INDEX IF NOT EXISTS "max_kb_problem_dataset_id" ON "public"."max_kb_problem" USING btree ("dataset_id");
+CREATE INDEX IF NOT EXISTS "moss_kb_problem_dataset_id" ON "public"."moss_kb_problem" USING btree ("dataset_id");
 
-CREATE TABLE IF NOT EXISTS "public"."max_kb_problem_paragraph_mapping" (
+CREATE TABLE IF NOT EXISTS "public"."moss_kb_problem_paragraph_mapping" (
   "id" BIGINT PRIMARY KEY,
   "dataset_id" BIGINT NOT NULL,
   "document_id" BIGINT NOT NULL,
@@ -388,14 +388,14 @@ CREATE TABLE IF NOT EXISTS "public"."max_kb_problem_paragraph_mapping" (
   "tenant_id" BIGINT NOT NULL DEFAULT 0
 );
 
-CREATE INDEX IF NOT EXISTS "max_kb_problem_paragraph_mapping_dataset_id"   ON "public"."max_kb_problem_paragraph_mapping" USING btree ("dataset_id");
-CREATE INDEX IF NOT EXISTS "max_kb_problem_paragraph_mapping_document_id"  ON "public"."max_kb_problem_paragraph_mapping" USING btree ("document_id");
-CREATE INDEX IF NOT EXISTS "max_kb_problem_paragraph_mapping_paragraph_id" ON "public"."max_kb_problem_paragraph_mapping" USING btree ("paragraph_id");
-CREATE INDEX IF NOT EXISTS "max_kb_problem_paragraph_mapping_problem_id"   ON "public"."max_kb_problem_paragraph_mapping" USING btree ("problem_id");
+CREATE INDEX IF NOT EXISTS "moss_kb_problem_paragraph_mapping_dataset_id"   ON "public"."moss_kb_problem_paragraph_mapping" USING btree ("dataset_id");
+CREATE INDEX IF NOT EXISTS "moss_kb_problem_paragraph_mapping_document_id"  ON "public"."moss_kb_problem_paragraph_mapping" USING btree ("document_id");
+CREATE INDEX IF NOT EXISTS "moss_kb_problem_paragraph_mapping_paragraph_id" ON "public"."moss_kb_problem_paragraph_mapping" USING btree ("paragraph_id");
+CREATE INDEX IF NOT EXISTS "moss_kb_problem_paragraph_mapping_problem_id"   ON "public"."moss_kb_problem_paragraph_mapping" USING btree ("problem_id");
 
 -- 缓存 ---------------------------------------------------------------------
 -- 向量缓存：m 记录模型标识和维度，md5 是内容摘要，避免跨模型复用向量。
-CREATE TABLE IF NOT EXISTS "public"."max_kb_embedding_cache" (
+CREATE TABLE IF NOT EXISTS "public"."moss_kb_embedding_cache" (
   "id" BIGINT PRIMARY KEY,
   "t" TEXT,
   "m" VARCHAR,
@@ -403,16 +403,16 @@ CREATE TABLE IF NOT EXISTS "public"."max_kb_embedding_cache" (
   "md5" VARCHAR
 );
 
-CREATE INDEX IF NOT EXISTS "idx_max_kb_embedding_cache_md5" ON "public"."max_kb_embedding_cache" USING btree ("md5");
-CREATE INDEX IF NOT EXISTS "idx_max_kb_embedding_cache_md5_m" ON "public"."max_kb_embedding_cache" USING btree ("md5", "m");
+CREATE INDEX IF NOT EXISTS "idx_moss_kb_embedding_cache_md5" ON "public"."moss_kb_embedding_cache" USING btree ("md5");
+CREATE INDEX IF NOT EXISTS "idx_moss_kb_embedding_cache_md5_m" ON "public"."moss_kb_embedding_cache" USING btree ("md5", "m");
 
-CREATE TABLE IF NOT EXISTS "public"."max_kb_document_markdown_cache" (
+CREATE TABLE IF NOT EXISTS "public"."moss_kb_document_markdown_cache" (
   "id" VARCHAR PRIMARY KEY,
   "target" VARCHAR,
   "content" TEXT
 );
 
-CREATE TABLE IF NOT EXISTS "public"."max_kb_document_markdown_page_cache" (
+CREATE TABLE IF NOT EXISTS "public"."moss_kb_document_markdown_page_cache" (
   "id" VARCHAR PRIMARY KEY,
   "target" VARCHAR,
   "content" TEXT,
@@ -424,7 +424,7 @@ CREATE TABLE IF NOT EXISTS "public"."max_kb_document_markdown_page_cache" (
   "total_tokens" INT
 );
 
-CREATE TABLE IF NOT EXISTS "public"."max_kb_paragraph_summary_cache" (
+CREATE TABLE IF NOT EXISTS "public"."moss_kb_paragraph_summary_cache" (
   "id" BIGINT PRIMARY KEY,
   "md5" VARCHAR,
   "src" TEXT,
@@ -438,7 +438,7 @@ CREATE TABLE IF NOT EXISTS "public"."max_kb_paragraph_summary_cache" (
 );
 
 -- 会话与多轮上下文 ---------------------------------------------------------
-CREATE TABLE IF NOT EXISTS "public"."max_kb_application_chat" (
+CREATE TABLE IF NOT EXISTS "public"."moss_kb_application_chat" (
   "id" BIGINT PRIMARY KEY,
   "abstract" VARCHAR,
   "application_id" BIGINT NOT NULL,
@@ -453,9 +453,9 @@ CREATE TABLE IF NOT EXISTS "public"."max_kb_application_chat" (
   "tenant_id" BIGINT NOT NULL DEFAULT 0
 );
 
-CREATE INDEX IF NOT EXISTS "max_kb_application_chat_application_id" ON "public"."max_kb_application_chat" USING btree ("application_id");
+CREATE INDEX IF NOT EXISTS "moss_kb_application_chat_application_id" ON "public"."moss_kb_application_chat" USING btree ("application_id");
 
-CREATE TABLE IF NOT EXISTS "public"."max_kb_application_chat_record" (
+CREATE TABLE IF NOT EXISTS "public"."moss_kb_application_chat_record" (
   "id" BIGINT PRIMARY KEY,
   "vote_status" VARCHAR NOT NULL DEFAULT '-1',
   "problem_text" VARCHAR NOT NULL,
@@ -476,10 +476,10 @@ CREATE TABLE IF NOT EXISTS "public"."max_kb_application_chat_record" (
   "tenant_id" BIGINT NOT NULL DEFAULT 0
 );
 
-CREATE INDEX IF NOT EXISTS "max_kb_application_chat_record_chat_id" ON "public"."max_kb_application_chat_record" USING btree ("chat_id");
+CREATE INDEX IF NOT EXISTS "moss_kb_application_chat_record_chat_id" ON "public"."moss_kb_application_chat_record" USING btree ("chat_id");
 
 -- 会话持久摘要：只有历史 token 超出预算时才压缩，压缩水位记录在 through_record_id。
-CREATE TABLE IF NOT EXISTS "public"."max_kb_chat_context" (
+CREATE TABLE IF NOT EXISTS "public"."moss_kb_chat_context" (
   "chat_id" BIGINT NOT NULL PRIMARY KEY,
   "summary" TEXT NOT NULL DEFAULT '',
   "through_record_id" BIGINT NOT NULL DEFAULT 0,
@@ -488,16 +488,16 @@ CREATE TABLE IF NOT EXISTS "public"."max_kb_chat_context" (
   "update_time" TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT now()
 );
 
-CREATE INDEX IF NOT EXISTS "idx_chat_record_context" ON "public"."max_kb_application_chat_record" USING btree ("chat_id", "id") WHERE "answer_text" IS NOT NULL;
+CREATE INDEX IF NOT EXISTS "idx_chat_record_context" ON "public"."moss_kb_application_chat_record" USING btree ("chat_id", "id") WHERE "answer_text" IS NOT NULL;
 
 -- 调试配置按会话保存，避免多个调试窗口互相覆盖。
-CREATE TABLE IF NOT EXISTS "public"."max_kb_application_temp_setting" (
+CREATE TABLE IF NOT EXISTS "public"."moss_kb_application_temp_setting" (
   "id" BIGINT PRIMARY KEY,
   "setting" JSONB
 );
 
 -- 公开访问的访客计数。
-CREATE TABLE IF NOT EXISTS "public"."max_kb_application_public_access_client" (
+CREATE TABLE IF NOT EXISTS "public"."moss_kb_application_public_access_client" (
   "id" BIGINT PRIMARY KEY,
   "access_num" INT NOT NULL,
   "intraday_access_num" INT NOT NULL,
@@ -513,7 +513,7 @@ CREATE TABLE IF NOT EXISTS "public"."max_kb_application_public_access_client" (
 
 -- 函数库与文档转换 ---------------------------------------------------------
 -- 函数库：内置模板与用户函数共用一张表，function_type 区分 PUBLIC 内置模板和 INTERNAL 用户函数。
-CREATE TABLE IF NOT EXISTS "public"."max_kb_function_lib" (
+CREATE TABLE IF NOT EXISTS "public"."moss_kb_function_lib" (
   "id" BIGINT PRIMARY KEY,
   "user_id" BIGINT NOT NULL,
   "name" VARCHAR(128) NOT NULL,
@@ -530,11 +530,11 @@ CREATE TABLE IF NOT EXISTS "public"."max_kb_function_lib" (
   "function_type" VARCHAR(16) NOT NULL DEFAULT 'PUBLIC',
   "icon" VARCHAR(256) NOT NULL DEFAULT '/ui/favicon.ico',
   "template_id" BIGINT,
-  CONSTRAINT max_kb_function_lib_function_type_check CHECK (function_type IN ('PUBLIC', 'INTERNAL'))
+  CONSTRAINT moss_kb_function_lib_function_type_check CHECK (function_type IN ('PUBLIC', 'INTERNAL'))
 );
 
-CREATE INDEX IF NOT EXISTS "idx_function_owner" ON "public"."max_kb_function_lib" USING btree ("user_id") WHERE "deleted" = false;
-CREATE INDEX IF NOT EXISTS "idx_function_type" ON "public"."max_kb_function_lib" USING btree ("function_type") WHERE "deleted" = false;
+CREATE INDEX IF NOT EXISTS "idx_function_owner" ON "public"."moss_kb_function_lib" USING btree ("user_id") WHERE "deleted" = false;
+CREATE INDEX IF NOT EXISTS "idx_function_type" ON "public"."moss_kb_function_lib" USING btree ("function_type") WHERE "deleted" = false;
 
 CREATE TABLE IF NOT EXISTS "public"."libre_office_converted_mapping" (
   "id" BIGINT NOT NULL PRIMARY KEY,
@@ -554,29 +554,29 @@ CREATE TABLE IF NOT EXISTS "public"."libre_office_converted_mapping" (
 -- 外键 ---------------------------------------------------------------------
 DO $$
 BEGIN
-  IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'max_kb_chat_context_chat_id_fkey') THEN
-    ALTER TABLE "public"."max_kb_chat_context"
-      ADD CONSTRAINT "max_kb_chat_context_chat_id_fkey"
-      FOREIGN KEY ("chat_id") REFERENCES "public"."max_kb_application_chat"("id") ON DELETE CASCADE;
+  IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'moss_kb_chat_context_chat_id_fkey') THEN
+    ALTER TABLE "public"."moss_kb_chat_context"
+      ADD CONSTRAINT "moss_kb_chat_context_chat_id_fkey"
+      FOREIGN KEY ("chat_id") REFERENCES "public"."moss_kb_application_chat"("id") ON DELETE CASCADE;
   END IF;
-  IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'max_kb_model_catalog_provider_fkey') THEN
-    ALTER TABLE "public"."max_kb_model_catalog"
-      ADD CONSTRAINT "max_kb_model_catalog_provider_fkey"
-      FOREIGN KEY ("provider") REFERENCES "public"."max_kb_model_provider"("provider");
+  IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'moss_kb_model_catalog_provider_fkey') THEN
+    ALTER TABLE "public"."moss_kb_model_catalog"
+      ADD CONSTRAINT "moss_kb_model_catalog_provider_fkey"
+      FOREIGN KEY ("provider") REFERENCES "public"."moss_kb_model_provider"("provider");
   END IF;
 END $$;
 
 -- 旧库补齐 -----------------------------------------------------------------
 -- 下面语句让早期版本的数据库补齐后来新增的列。全新初始化时它们是空操作。
-ALTER TABLE "public"."max_kb_dataset" ADD COLUMN IF NOT EXISTS "llm_mode_id" BIGINT;
-ALTER TABLE "public"."max_kb_user" ADD COLUMN IF NOT EXISTS "token_version" BIGINT NOT NULL DEFAULT 0;
-ALTER TABLE "public"."max_kb_model" ADD COLUMN IF NOT EXISTS "model_params_form" JSONB NOT NULL DEFAULT '[]';
-ALTER TABLE "public"."max_kb_application_access_token" ADD COLUMN IF NOT EXISTS "language" VARCHAR(16);
-ALTER TABLE "public"."max_kb_function_lib" ADD COLUMN IF NOT EXISTS "function_type" VARCHAR(16) NOT NULL DEFAULT 'PUBLIC';
-ALTER TABLE "public"."max_kb_function_lib" ADD COLUMN IF NOT EXISTS "icon" VARCHAR(256) NOT NULL DEFAULT '/ui/favicon.ico';
-ALTER TABLE "public"."max_kb_function_lib" ADD COLUMN IF NOT EXISTS "template_id" BIGINT;
+ALTER TABLE "public"."moss_kb_dataset" ADD COLUMN IF NOT EXISTS "llm_mode_id" BIGINT;
+ALTER TABLE "public"."moss_kb_user" ADD COLUMN IF NOT EXISTS "token_version" BIGINT NOT NULL DEFAULT 0;
+ALTER TABLE "public"."moss_kb_model" ADD COLUMN IF NOT EXISTS "model_params_form" JSONB NOT NULL DEFAULT '[]';
+ALTER TABLE "public"."moss_kb_application_access_token" ADD COLUMN IF NOT EXISTS "language" VARCHAR(16);
+ALTER TABLE "public"."moss_kb_function_lib" ADD COLUMN IF NOT EXISTS "function_type" VARCHAR(16) NOT NULL DEFAULT 'PUBLIC';
+ALTER TABLE "public"."moss_kb_function_lib" ADD COLUMN IF NOT EXISTS "icon" VARCHAR(256) NOT NULL DEFAULT '/ui/favicon.ico';
+ALTER TABLE "public"."moss_kb_function_lib" ADD COLUMN IF NOT EXISTS "template_id" BIGINT;
 
 -- 文件名保存完整描述性名称，早期版本使用的是较短的类型。
-ALTER TABLE "public"."max_kb_file" ALTER COLUMN "filename" TYPE TEXT;
+ALTER TABLE "public"."moss_kb_file" ALTER COLUMN "filename" TYPE TEXT;
 
 COMMIT;

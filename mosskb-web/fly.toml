@@ -1,0 +1,22 @@
+app = "mosskb"
+primary_region = 'sjc'
+
+kill_signal = "SIGINT"
+kill_timeout = 5
+processes = []
+
+[[vm]]
+  cpu_kind = "performance"
+  cpus = 2
+  memory_mb = 4096
+
+[http_service]
+  internal_port = 8080
+  force_https = false
+  auto_stop_machines = true
+  auto_start_machines = true
+  min_machines_running = 1
+
+
+[env]
+  LANG="C.UTF-8"

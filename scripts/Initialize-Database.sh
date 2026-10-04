@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 #
-# 初始化或升级 Java MaxKB 数据库（Linux / WSL）。
+# 初始化或升级 Java MossKB 数据库（Linux / WSL）。
 #
-# 读取 maxkb-web/my.txt 里的连接参数，依次执行 db/schema.sql 与 db/seed.sql。
+# 读取 mosskb-web/my.txt 里的连接参数，依次执行 db/schema.sql 与 db/seed.sql。
 # 两个脚本都是幂等的：空库会建好 29 张业务表并写入管理员、默认模型、平台目录和
 # 内置函数模板；已有库会补齐缺失的表、列和索引，不删除已有数据。
 #
@@ -15,7 +15,7 @@
 set -euo pipefail
 
 PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-CONFIG_FILE="${PROJECT_ROOT}/maxkb-web/my.txt"
+CONFIG_FILE="${PROJECT_ROOT}/mosskb-web/my.txt"
 PSQL_BIN="${PSQL:-psql}"
 DO_RESET=0
 

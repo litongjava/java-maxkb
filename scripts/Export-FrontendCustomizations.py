@@ -29,7 +29,7 @@ def main():
     # Only source additions are eligible; do not export arbitrary local files or credentials.
     additions = [p for p in untracked if p.startswith('ui/src/') and Path(p).suffix in {'.vue', '.ts', '.js', '.css', '.scss'}]
     core = git(repo, 'diff', '--binary', '--full-index', base, '--', 'ui', ':(exclude)ui/yarn.lock')
-    sandbox = Path(tempfile.mkdtemp(prefix='maxkb-patch-check-'))
+    sandbox = Path(tempfile.mkdtemp(prefix='mosskb-patch-check-'))
     git(sandbox, 'init', '-q')
     for name in files:
         result = subprocess.run(['git', '-C', str(repo), 'show', f'{base}:{name}'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)

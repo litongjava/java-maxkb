@@ -1,0 +1,12 @@
+[prod.upload-run]
+url = "http://192.168.1.2:10405/deploy/file/upload-run/"
+p = "xxx"
+b = ".build.txt"
+file = "target/java-mosskb-1.0.0.zip"
+d = "unzip/java-mosskb"
+c1 = "mkdir -p /data/apps/java-mosskb && mkdir -p backup/java-mosskb"
+c2 = "[ -d /data/apps/java-mosskb ] && cp -r /data/apps/java-mosskb backup/java-mosskb/$(date +%Y%m%d_%H%M%S)"
+c3 = "cp -r unzip/java-mosskb/* /data/apps/java-mosskb/"
+c4 = "if [ $(docker ps -qa -f name=java-mosskb) ]; then docker stop java-mosskb && docker rm -f java-mosskb; fi"
+c5 = "cd /data/apps/java-mosskb/java-mosskb-1.0.0 && docker run -dit --name java-mosskb --restart=always --net=host -v $(pwd):/app -w /app -e TZ=Asia/Shanghai -e LANG=C.UTF-8 litongjava/jdk:8u391-chromium java -Xverify:none -cp ./config:./lib/*:./static com.litongjava.mosskb.MossKbApp --app.env=prod"
+c = "docker ps | grep java-mosskb"

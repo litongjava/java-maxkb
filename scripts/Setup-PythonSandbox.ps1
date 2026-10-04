@@ -10,4 +10,4 @@ if ($LASTEXITCODE -ne 0) {
 if ($LASTEXITCODE -ne 0) {
   throw 'Docker Engine setup failed. Review the output before retrying.'
 }
-Write-Output "Set kb.python.wsl.distribution=$Distribution in maxkb-web/my.txt, then restart the Java service."
+Write-Output "Set kb.python.wsl.distribution=$Distribution in mosskb-web/my.txt, then restart the Java service."

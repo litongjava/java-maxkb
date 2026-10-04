@@ -6,8 +6,8 @@ param(
 )
 $ErrorActionPreference = 'Stop'
 
-# 默认按 maxkb-web/my.txt 的实际配置验证,命令行参数只用于临时覆盖。
-$myTxt = Join-Path $PSScriptRoot '../maxkb-web/my.txt'
+# 默认按 mosskb-web/my.txt 的实际配置验证,命令行参数只用于临时覆盖。
+$myTxt = Join-Path $PSScriptRoot '../mosskb-web/my.txt'
 function Get-MySetting([string]$key) {
   if (!(Test-Path $myTxt)) {
     return $null
@@ -42,7 +42,7 @@ if ($DockerHost) {
   $docker += @('--host', $DockerHost)
 }
 
-$runner = Get-Content -Raw -Encoding utf8 (Join-Path $PSScriptRoot '../maxkb-business/src/main/resources/python/runner.py')
+$runner = Get-Content -Raw -Encoding utf8 (Join-Path $PSScriptRoot '../mosskb-business/src/main/resources/python/runner.py')
 $code = @'
 def main():
     import os, socket

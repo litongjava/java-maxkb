@@ -68,7 +68,7 @@ WSL 官方安装包已验证微软签名并安装成功。Windows 可选组件�
 
 ## 远程 Docker 引擎接入（2026-10-03）
 
-本机仍然没有 WSL 发行版和 Docker，改用局域网主机 `192.168.31.97`（Docker Engine 29.8.1，linux/amd64）作为隔离 Python 执行器的容器引擎。数据库不变，仍为本机 `127.0.0.1:5432/max_kb`。
+本机仍然没有 WSL 发行版和 Docker，改用局域网主机 `192.168.31.97`（Docker Engine 29.8.1，linux/amd64）作为隔离 Python 执行器的容器引擎。数据库不变，仍为本机 `127.0.0.1:5432/moss_kb`。
 
 改动：
 
@@ -82,7 +82,7 @@ WSL 官方安装包已验证微软签名并安装成功。Windows 可选组件�
 - `POST /api/function_lib/debug` 真实执行成功，返回容器内事实：`uid=65534`、主机名等于容器 ID、内核 `6.1.0-53-amd64`（证明执行发生在远程 Linux 容器而不是 Windows 宿主）、Python 3.12.15、根目录不可写、网络 blocked。
 - 参数与入口函数：按前端契约传 `init_params` + `debug_field_list` + `input_field_list` 得到 `2+40=42`；缺少必填参数返回“缺少函数参数：a”。
 - 错误路径：容器内 `1/0` 返回 `division by zero`；返回值超过 256 KiB 返回“函数返回结果超过 256 KiB”；无顶层函数返回“代码需要至少一个顶层函数”；`/pylint` 对语法错误返回行列信息。
-- 执行结束后远程 `maxkb-python-*` 容器为空，`--rm` 与失败清理都生效。
+- 执行结束后远程 `mosskb-python-*` 容器为空，`--rm` 与失败清理都生效。
 - 引擎不可用时（2375 尚未放开时实测）仍返回“Python 容器启动或执行失败”，不使用宿主机 Python 回退。
 - 后端回归 44 项通过（新增 `runnerIsPassedAsSpaceAndQuoteFreeBootstrap` 与 `remoteEngineHostIsPassedAsGlobalFlagBeforeRun`），clean package 与 jar 内容均已核对。
 
@@ -102,14 +102,14 @@ WSL 官方安装包已验证微软签名并安装成功。Windows 可选组件�
 验证方式与结果：
 
 - 单元测试 `IsolatedPythonExecutorTest` 增至 19 项：runuser 命令形状（不含 shell、不含 su）、显式 `su` 形式的 shell 安全性（引导脚本不含 `$`、反引号、反斜杠、双引号，且能解码回 runner.py）、六条拒绝路径、环境白名单不泄漏父进程变量。
-- 真实 Java 代码在 Linux 上执行：把 Temurin 21 JRE 与 `maxkb-business` 的 classes 复制进一个 Linux 容器（`python:3.12-slim`），以 root 运行 `RunHostProbe`（调用真实的 `IsolatedPythonExecutor.execute`），并把 `GITEE_API_KEY=must-not-leak` 注入 JVM 环境。结果：`uid=1001`、`user=sandbox`、`cwd`/`HOME` 等于沙箱目录、可见环境变量只有白名单那 7 个、`secret_absent=true`，同时 `JAVA_ENV_HAS_SECRET=true`——即 JVM 自己持有密钥而沙箱里看不到。
+- 真实 Java 代码在 Linux 上执行：把 Temurin 21 JRE 与 `mosskb-business` 的 classes 复制进一个 Linux 容器（`python:3.12-slim`），以 root 运行 `RunHostProbe`（调用真实的 `IsolatedPythonExecutor.execute`），并把 `GITEE_API_KEY=must-not-leak` 注入 JVM 环境。结果：`uid=1001`、`user=sandbox`、`cwd`/`HOME` 等于沙箱目录、可见环境变量只有白名单那 7 个、`secret_absent=true`，同时 `JAVA_ENV_HAS_SECRET=true`——即 JVM 自己持有密钥而沙箱里看不到。
 - `scripts/setup-python-host-sandbox.sh` 在同一 Linux 环境执行通过：创建用户与 0750 目录并用 `runuser` 校验 uid。
 - 改动后 Docker runner 复测：`POST /api/function_lib/debug` 返回 `uid=65534`、`secret_absent=true`；`Test-PythonSandbox.ps1` 仍为只读根、无网络、密钥不可见。
 - 后端回归 53 项通过（执行器 19 项），clean package 成功。
 
 如实说明的限制：
 
-- 上述 Linux 验证是在容器里模拟 Linux 宿主并以 root 运行真实 Java 代码，不是裸机 Linux 上以真实 java-maxkb 进程（含数据库启动）验收。
+- 上述 Linux 验证是在容器里模拟 Linux 宿主并以 root 运行真实 Java 代码，不是裸机 Linux 上以真实 java-mosskb 进程（含数据库启动）验收。
 - `host` runner 不提供断网、只读根文件系统、内存/CPU/pids 上限，也不提供一次性文件系统；沙箱用户可以读宿主上 others 可读的任何文件，所以 `my.txt`、`secrets.txt` 必须 `chmod 600`。需要这些保证时继续用 `kb.python.runner=docker`。
-- `host` runner 要求 java-maxkb 以 root 运行；非 root 部署只能用 Docker runner。
-- 官方 MaxKB 是“写脚本文件 + `su -c`”的方式，这里刻意不落文件：脚本文件的属主处理在 java-maxkb 非 root 时做不到，而走 stdin 既避免属主问题，也不留残留文件。
+- `host` runner 要求 java-mosskb 以 root 运行；非 root 部署只能用 Docker runner。
+- 官方 MossKB 是“写脚本文件 + `su -c`”的方式，这里刻意不落文件：脚本文件的属主处理在 java-mosskb 非 root 时做不到，而走 stdin 既避免属主问题，也不留残留文件。

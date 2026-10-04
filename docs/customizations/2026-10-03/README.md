@@ -28,7 +28,7 @@
 重新导出：
 
 ```powershell
-python scripts/Export-FrontendCustomizations.py --repo ../MaxKB --base <核对过的基准> --output docs/customizations/<日期>
+python scripts/Export-FrontendCustomizations.py --repo ../MossKB --base <核对过的基准> --output docs/customizations/<日期>
 python scripts/Export-BackendCustomizations.py --repo . --base <Java基准> --output docs/customizations/<日期>
 ```
 
