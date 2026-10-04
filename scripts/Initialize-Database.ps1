@@ -1,25 +1,92 @@
+﻿# 初始化或升级 Java MaxKB 数据库。
+#
+# 读取 maxkb-web/my.txt 里的连接参数，依次执行 db/schema.sql 与 db/seed.sql。
+# 两个脚本都是幂等的：空库会建好 29 张业务表并写入管理员、默认模型、平台目录和
+# 内置函数模板；已有库会补齐缺失的表、列和索引，不删除已有数据。
+#
+# 参数：
+#   -PostgresBin  PostgreSQL 的 bin 目录。省略时使用 PATH 上的 psql。
+#   -ConfigFile   连接配置文件，默认 maxkb-web/my.txt。
+#   -Reset        先执行 db/reset.sql 删除全部业务表，再重建，适合本地反复验证。
+#
+# 示例：
+#   .\scripts\Initialize-Database.ps1
+#   .\scripts\Initialize-Database.ps1 -Reset
+#   .\scripts\Initialize-Database.ps1 -PostgresBin 'D:\Program Files\PostgreSQL\18\bin'
+
 param(
-  [Parameter(Mandatory=$true)][string]$PostgresBin,
-  [string]$ConfigFile = (Join-Path $PSScriptRoot '../maxkb-web/my.txt')
+  [string]$PostgresBin = '',
+  [string]$ConfigFile = (Join-Path $PSScriptRoot '../maxkb-web/my.txt'),
+  [switch]$Reset
 )
+
 $ErrorActionPreference = 'Stop'
+
+if (!(Test-Path -LiteralPath $ConfigFile)) {
+  throw "找不到配置文件：$ConfigFile"
+}
+
+if ($PostgresBin) {
+  $psql = Join-Path $PostgresBin 'psql.exe'
+} else {
+  $command = Get-Command psql -ErrorAction SilentlyContinue
+  if (!$command) {
+    throw '找不到 psql。请把 PostgreSQL 的 bin 目录加入 PATH，或用 -PostgresBin 指定。'
+  }
+  $psql = $command.Source
+}
+if (!(Test-Path -LiteralPath $psql)) {
+  throw "找不到 psql：$psql"
+}
+
 $settings = @{}
 Get-Content -LiteralPath $ConfigFile | ForEach-Object {
   if ($_ -match '^([^#=]+)=(.*)$') {
     $settings[$matches[1].Trim()] = $matches[2].Trim()
   }
 }
+
+foreach ($key in @('jdbc.url', 'jdbc.user', 'jdbc.pswd')) {
+  if (!$settings.ContainsKey($key)) {
+    throw "配置文件缺少 $key：$ConfigFile"
+  }
+}
+
 $databaseUri = [uri]($settings['jdbc.url'] -replace '^jdbc:', '')
+$databaseName = $databaseUri.AbsolutePath.TrimStart('/')
+$dbRoot = (Resolve-Path (Join-Path $PSScriptRoot '../db')).Path
+
+$scripts = New-Object System.Collections.Generic.List[string]
+if ($Reset) {
+  $scripts.Add((Join-Path $dbRoot 'reset.sql'))
+}
+$scripts.Add((Join-Path $dbRoot 'schema.sql'))
+$scripts.Add((Join-Path $dbRoot 'seed.sql'))
+
 $previousPassword = $env:PGPASSWORD
+$previousEncoding = $env:PGCLIENTENCODING
+$previousOptions = $env:PGOPTIONS
 try {
   $env:PGPASSWORD = $settings['jdbc.pswd']
-  foreach ($migration in @('init-db.sql', '002-gitee-models.sql', '003-filename-capacity.sql', '004-keyword-search.sql', '005-agent-context.sql', '006-python-functions.sql', '007-user-sessions.sql', '008-model-catalog.sql', '009-model-catalog-snapshot.sql', '010-api-keys.sql', '011-share-link.sql')) {
-    & (Join-Path $PostgresBin 'psql.exe') -X -w -h $databaseUri.Host -p $databaseUri.Port -U $settings['jdbc.user'] -d $databaseUri.AbsolutePath.TrimStart('/') -v ON_ERROR_STOP=1 -f (Join-Path $PSScriptRoot $migration)
+  $env:PGCLIENTENCODING = 'UTF8'
+  # NOTICE 走 stderr，会被 PowerShell 当成错误记录，这里只保留 warning 及以上。
+  $env:PGOPTIONS = '-c client_min_messages=warning'
+  foreach ($script in $scripts) {
+    Write-Output "执行 $([System.IO.Path]::GetFileName($script))"
+    & $psql -X -w -q -h $databaseUri.Host -p $databaseUri.Port -U $settings['jdbc.user'] -d $databaseName -v ON_ERROR_STOP=1 -f $script
     if ($LASTEXITCODE -ne 0) {
-      throw "Database migration failed: $migration"
+      throw "数据库脚本执行失败：$script"
     }
+  }
+  $tableCount = & $psql -X -w -q -h $databaseUri.Host -p $databaseUri.Port -U $settings['jdbc.user'] -d $databaseName -Atc "SELECT count(*) FROM information_schema.tables WHERE table_schema = 'public';"
+  if ($LASTEXITCODE -ne 0) {
+    throw '读取表数量失败。'
   }
 } finally {
   $env:PGPASSWORD = $previousPassword
+  $env:PGCLIENTENCODING = $previousEncoding
+  $env:PGOPTIONS = $previousOptions
 }
-Write-Output 'Database schema and Gitee model entries are ready.'
+
+Write-Output "数据库结构与初始数据已就绪，public 表 $tableCount 张。"
+exit 0

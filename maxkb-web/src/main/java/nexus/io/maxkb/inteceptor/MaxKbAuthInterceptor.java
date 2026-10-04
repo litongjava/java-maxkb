@@ -38,6 +38,10 @@ public class MaxKbAuthInterceptor implements HttpRequestInterceptor {
       Pattern.compile("/api/application/\\d+/chat/\\d+/chat_record/\\d+(/vote)?"),
       Pattern.compile("/api/application/\\d+/document/\\d+/preview")};
 
+  /** 函数图标：文件名是随机串，列表页和第三方嵌入页都要直接引用，取图不要求登录。 */
+  private static final Pattern FUNCTION_ICON_PATH = Pattern
+      .compile("/api/function_lib/icon/[0-9a-f]{32}\\.(png|jpg|jpeg|gif|webp|bmp)");
+
   private static final Pattern RESOURCE_PATH = Pattern.compile("^/api/(dataset|application|model)/(\\d+)(/.*)?$");
 
   /**
@@ -106,6 +110,14 @@ public class MaxKbAuthInterceptor implements HttpRequestInterceptor {
     // 文档预览按分享链接处理：没有登录令牌也放行，登录与否得到的结果一致。
     // 带了有效令牌时仍然记下身份，方便日志与审计。
     if (isDocumentPreviewPath(path)) {
+      if (userId != null) {
+        TioRequestContext.setUserId(userId);
+      }
+      return null;
+    }
+
+    // 函数图标同理：文件名是随机串，列表页和嵌入页都要能直接取图。
+    if (FUNCTION_ICON_PATH.matcher(path).matches()) {
       if (userId != null) {
         TioRequestContext.setUserId(userId);
       }

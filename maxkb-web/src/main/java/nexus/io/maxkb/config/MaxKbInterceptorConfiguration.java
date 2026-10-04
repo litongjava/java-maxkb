@@ -17,7 +17,9 @@ public class MaxKbInterceptorConfiguration {
 
     model.addAllowUrls(TioBootAdminUrls.ALLLOW_URLS);
     model.addAllowUrls("", "/");
+    // 前端静态资源，以及写在静态资源目录里的函数图标
     model.addAllowUrls("/ui/**");
+    model.addAllowUrls("/pages/**");
     model.addAllowUrls("/sse", "/api/user/login");
 
     model.addAllowUrls("/api/profile", "/api/application/authentication");

@@ -2,7 +2,7 @@
 
 基于 tio-boot 的 Java 知识库后端，复用 MaxKB 前端。通过文档检测、结构提取、远程 OCR、向量检索和多轮问答，将文档转为可追溯的知识库回答。模型生成复用 `java-openai` 的 `UniChatClient`，本机无需部署模型权重。
 
-[前端仓库](https://github.com/litongjava/MaxKB/tree/main/ui) · [Java 后端仓库](https://github.com/litongjava/java-maxkb) · [演示视频](https://www.bilibili.com/video/BV1yJU8YHEgg/)
+[前端仓库](https://gitee.com/ppnt/java-maxkb-ui) · [Java 后端仓库](https://gitee.com/ppnt/java-maxkb) · [演示视频](https://www.bilibili.com/video/BV1yJU8YHEgg/)
 
 开发文档维护在 `tio-boot-docs/docs/zh/61_knowledge-base`。本地文档根目录为 `D:/code/markdown/project-litongjava/tio-boot-docs/docs/zh/61_knowledge-base`，主要章节：
 
@@ -14,8 +14,8 @@
 | `31.md` / `32.md` | 单次提问内的迭代检索、会话历史与 token 阈值压缩 |
 | `34.md` / `39.md` | 爬取网页数据、离线运行向量模型 |
 | `35.md` / `36.md` / `37.md` | 隔离 Python 执行环境（Docker over TCP / 宿主沙箱）、执行器与函数库接口 |
-| `38.md` | Windows 部署 Java MaxKB 与远程模型 |
-| `41.md` / `42.md` | 官方前端升级与定制恢复、前端适配与验收 |
+| `38.md` | Windows 与 Linux 部署、数据库初始化脚本 |
+| `41.md` | 存储文件到云存储（尚未实现，仅记录设计） |
 
 ## 当前能力
 
@@ -36,12 +36,13 @@
 ```text
 project-maxkb/
   java-maxkb/
+    db/                   数据库结构与初始数据脚本
     maxkb-business/       业务逻辑与测试
     maxkb-web/            HTTP 入口和本地配置
     scripts/             初始化、启动、目录同步与补丁导出
     docs/                验证记录、定制说明和补丁
-  MaxKB/
-    ui/                  官方前端及已记录的必要定制
+  java-maxkb-ui/
+    src/                  前端源码（基于官方界面，保留必要定制）
 ```
 
 需要 JDK 21、Maven、Node.js/npm、已启动的 PostgreSQL，以及安装在数据库服务端的 pgvector 和 pg_trgm。默认远程服务需要可用的 Gitee API Key。Docker 仅为隔离 Python 执行功能所需，且不必装在本机；Linux 上也可以用宿主的 `runuser` 沙箱替代 Docker。
@@ -68,15 +69,21 @@ GITEE_API_KEY=<自己的密钥>
 
 这两个文件、运行日志和测试令牌保持在 Git 忽略范围，不放入前端配置或补丁。
 
-如果出现 `extension "vector" is not available`，需要先在实际运行 PostgreSQL 的机器上安装扩展文件，再连接业务数据库启用扩展；仅执行 SQL 不能安装缺失的二进制。Windows 编译安装步骤见文档第 29 章。
+如果出现 `extension "vector" is not available`，需要先在实际运行 PostgreSQL 的机器上安装扩展文件，再连接业务数据库启用扩展；仅执行 SQL 不能安装缺失的二进制。Windows 与 Linux 的编译安装步骤见 `38.md`。
 
 已有数据库不需要删除重建。在 Java 仓库根目录执行：
 
 ```powershell
-.\scripts\Initialize-Database.ps1 -PostgresBin '<PostgreSQL安装目录>\bin'
+.\scripts\Initialize-Database.ps1
 ```
 
-脚本读取 `my.txt`，执行 `init-db.sql` 与 `002` 至 `011` 的迁移，包括默认模型、会话摘要、用户令牌版本、数据库模型目录、目录快照、API Key 与分享链接。升级已有数据库前先备份；幂等脚本不会自动转换所有历史表结构。
+Linux 使用同名 Shell 脚本：
+
+```bash
+./scripts/Initialize-Database.sh
+```
+
+两个脚本都读取 `my.txt`，依次执行 `db/schema.sql` 与 `db/seed.sql`：前者建立扩展、29 张业务表、索引与外键并补齐旧库缺少的列，后者写入管理员账号、默认模型、平台接入信息、平台模型目录快照与内置函数模板。两者都是幂等的，可以在已有数据库上重复执行。需要清空重建时加 `-Reset`（或 `--reset`），它会先执行 `db/reset.sql` 删除业务表。升级已有数据库前先备份。
 
 ### 隔离 Python 执行器
 
@@ -141,7 +148,7 @@ docker --host tcp://192.168.31.97:2375 pull python:3.12-slim
 
 ## 构建与启动
 
-先在 `MaxKB/ui` 安装前端依赖：
+先在 `java-maxkb-ui` 目录安装前端依赖：
 
 ```powershell
 npm install
@@ -153,12 +160,18 @@ npm install
 .\scripts\Start-Local.ps1 -Build
 ```
 
-该脚本后台启动 Java 与 Vite；`-Build` 构建会跳过测试并跳过 GPG 签名。可用 `-JavaExecutable`、`-NodeExecutable`、`-MavenExecutable` 指定实际可执行文件路径。已有端口监听会被复用；修改代码后需停止确认属于本项目的旧进程，再重新构建启动。
+Linux 与 WSL 使用同名 Shell 脚本：
+
+```bash
+./scripts/Start-Local.sh --build
+```
+
+该脚本后台启动 Java 与 Vite；`-Build` 构建会跳过测试并跳过 GPG 签名。可用 `-JavaExecutable`、`-NodeExecutable`、`-MavenExecutable` 指定实际可执行文件路径（Shell 脚本用 `JAVA_BIN`、`NODE_BIN`、`MAVEN_BIN` 环境变量）。已有端口监听会被复用；修改代码后需停止确认属于本项目的旧进程，再重新构建启动。
 
 - 前端：<http://localhost:3000/ui/>
 - Java API：<http://localhost:10060/api>
 - 后端日志：`maxkb-web/logs/startup.log`、`startup-error.log`
-- 前端日志：`MaxKB/ui/.local/vite.log`、`vite-error.log`
+- 前端日志：`java-maxkb-ui/.local/vite.log`、`vite-error.log`
 
 也可以分别执行：
 
@@ -211,7 +224,7 @@ python scripts/Sync-ModelCatalog.py --source gitee --token-file <管理员令牌
 mvn '-Dtest=ModelCatalogTest,UserPasswordTest,IterativeRetrievalServiceTest,ConversationContextServiceTest,IsolatedPythonExecutorTest,GiteeAuxiliaryModelTest,DocumentParsingServiceTest' '-Dsurefire.failIfNoSpecifiedTests=false' '-Dmaven.javadoc.skip=true' '-Dgpg.skip=true' test
 ```
 
-2026-10-03 的构建回归共 53 项通过。另验证了真实 Gitee 创建/掩码编辑、跨平台密钥保护、UI 目录及手动 ID、知识库连续追问，以及局域网远程 Docker 引擎上的容器隔离执行和 Linux 宿主 `runuser` 沙箱执行。其他平台没有提供真实 Key，尚未进行全部平台的推理验收。前端构建在 `MaxKB/ui` 执行 `npm run build`。两种 runner 的执行记录见[验证记录](docs/agent-verification.md)。
+2026-10-03 的构建回归共 53 项通过。另验证了真实 Gitee 创建/掩码编辑、跨平台密钥保护、UI 目录及手动 ID、知识库连续追问，以及局域网远程 Docker 引擎上的容器隔离执行和 Linux 宿主 `runuser` 沙箱执行。其他平台没有提供真实 Key，尚未进行全部平台的推理验收。前端构建在 `java-maxkb-ui` 执行 `npm run build`。两种 runner 的执行记录见[验证记录](docs/agent-verification.md)。
 
 ## 前端基线与定制恢复
 
