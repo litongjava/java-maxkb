@@ -2,6 +2,7 @@ package nexus.io.mosskb.service;
 
 import java.util.List;
 
+import com.alibaba.fastjson2.JSONObject;
 import com.jfinal.kit.Kv;
 
 import nexus.io.db.TableInput;
@@ -54,6 +55,19 @@ public class KbUserService {
       limit ? offset ?
       """;
 
+  /**
+   * 修改当前登录用户的密码。改密后递增 token_version，旧令牌在拦截器里立刻失效。
+   */
+  private static final String RESET_CURRENT_PASSWORD = """
+      update moss_kb_user
+      set password = ?,
+          token_version = token_version + 1,
+          update_time = now()
+      where id = ?
+        and deleted = 0
+        and is_active = true
+      """;
+
   public ResultVo login(UserLoginReqVo vo) {
     if (vo == null || vo.getUsername() == null || vo.getPassword() == null) {
       return ResultVo.fail("用户名或者密码不正确");
@@ -78,6 +92,30 @@ public class KbUserService {
   }
 
   public ResultVo logout(Long userId) {
+    TokenManager.logout(userId);
+    return ResultVo.ok();
+  }
+
+  /**
+   * 修改当前登录用户的密码，不校验邮箱验证码：调用方已经在拦截器里通过登录令牌确定身份。
+   *
+   * @param userId 当前登录用户，取自令牌，绝不从请求体读取
+   * @param input  请求体，只读取 password 与 re_password
+   */
+  public ResultVo resetCurrentPassword(Long userId, JSONObject input) {
+    if (userId == null) {
+      return ResultVo.fail("未登录");
+    }
+    String password = input == null ? null : input.getString("password");
+    String rePassword = input == null ? null : input.getString("re_password");
+    if (password == null || password.length() < 6 || password.length() > 20 || !password.equals(rePassword)) {
+      return ResultVo.fail("密码需为 6～20 位，且两次输入一致");
+    }
+    int updated = Db.update(RESET_CURRENT_PASSWORD, UserPassword.hash(password), userId);
+    if (updated != 1) {
+      return ResultVo.fail("用户不存在或已被禁用");
+    }
+    // 令牌版本已经变化，这里再清掉当前会话，前端会跳回登录页重新登录。
     TokenManager.logout(userId);
     return ResultVo.ok();
   }
