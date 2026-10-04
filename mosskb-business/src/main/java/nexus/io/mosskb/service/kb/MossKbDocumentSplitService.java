@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import com.jfinal.kit.Kv;
 
@@ -28,6 +30,12 @@ import nexus.io.openai.token.OpenAiTokenizer;
  */
 @Slf4j
 public class MossKbDocumentSplitService {
+
+  /** Markdown 标题行，用于给分段补上所属标题。 */
+  private static final Pattern HEADING = Pattern.compile("^(#{1,6})\\s+(.*)$");
+
+  /** 单个分段标题的长度上限，和段落标题列的容量保持一致。 */
+  private static final int TITLE_MAX_LENGTH = 255;
 
   /**
    * 拆分文档（多并发）
@@ -72,14 +80,15 @@ public class MossKbDocumentSplitService {
     }
   }
 
-  /** 把解析结果按分词器切成段落，并组装成前端提交分段需要的结构。 */
-  private List<Kv> splitParsed(DocumentParsingService.Parsed parsed, String filename, UploadResult vo) {
+  /** 把解析结果按分词器切成段落，并组装成前端提交分段需要的结构；包内可见便于直接回归测试。 */
+  List<Kv> splitParsed(DocumentParsingService.Parsed parsed, String filename, UploadResult vo) {
     String markdown = parsed.text();
     List<TextSegment> segments = split(markdown);
     Kv fileSplitResult = Kv.by("name", filename).set("id", vo.getId());
+    List<String> titles = segmentTitles(segments, filename);
     List<Kv> contents = new ArrayList<>();
-    for (TextSegment textSegment : segments) {
-      contents.add(Kv.by("title", "").set("content", textSegment.text()));
+    for (int i = 0; i < segments.size(); i++) {
+      contents.add(Kv.by("title", titles.get(i)).set("content", segments.get(i).text()));
     }
     fileSplitResult.set("content", contents).set("parse_strategy", parsed.strategy()).set("page_count", parsed.pages());
     if (parsed.ocrPages() > 0) {
@@ -91,6 +100,69 @@ public class MossKbDocumentSplitService {
     List<Kv> results = new ArrayList<>();
     results.add(fileSplitResult);
     return results;
+  }
+
+  /**
+   * 为每个分段补上所属的标题。
+   *
+   * <p>解析结果本身就是 Markdown，标题层级构成标题链，和网页导入的 {@code WebCrawlService#split} 保持一致。
+   * 分段里出现过标题时用第一个标题的标题链：一个分段常常横跨几页和小节，用第一个标题能保住文档标题，
+   * 用最后一个就会只剩最后一个小节。整篇没有标题（例如纯文本或识别不出小标题的扫描件）时退回原文件名，
+   * 这样分段列表不会出现一整列空标题。
+   */
+  List<String> segmentTitles(List<TextSegment> segments, String filename) {
+    List<String> titles = new ArrayList<>(segments.size());
+    List<String> chain = new ArrayList<>();
+    for (TextSegment segment : segments) {
+      List<String> firstTitle = new ArrayList<>();
+      fillChain(chain, segment.text(), firstTitle);
+      titles.add(buildTitle(firstTitle.isEmpty() ? chain : firstTitle, filename));
+    }
+    return titles;
+  }
+
+  /** 按当前标题链生成标题：没有标题链时用原文件名兜底，并按段落标题列的长度截断。 */
+  private String buildTitle(List<String> chain, String filename) {
+    String title = chain.isEmpty() ? filename : String.join(" ", chain);
+    title = title.strip();
+    if (title.length() <= TITLE_MAX_LENGTH) {
+      return title;
+    }
+    return title.substring(0, TITLE_MAX_LENGTH);
+  }
+
+  /**
+   * 扫描分段里的 Markdown 标题并按层级维护标题链：低级标题替换掉同级的旧标题，一级标题开始新的顶层章节。
+   *
+   * @param firstTitle 非 null 时记下本段第一个标题的标题链，供分段标题使用
+   */
+  private void fillChain(List<String> chain, String text, List<String> firstTitle) {
+    if (text == null || text.isEmpty()) {
+      return;
+    }
+    for (String line : text.replace("\r\n", "\n").replace('\r', '\n').split("\n", -1)) {
+      Matcher matcher = HEADING.matcher(line.strip());
+      if (!matcher.matches()) {
+        continue;
+      }
+      int level = matcher.group(1).length();
+      String heading = matcher.group(2).strip();
+      if (heading.isEmpty()) {
+        continue;
+      }
+      if (level == 1 && !chain.isEmpty()) {
+        chain.clear();
+      }
+      while (chain.size() >= level) {
+        chain.remove(chain.size() - 1);
+      }
+      if (chain.isEmpty() || !chain.get(chain.size() - 1).equals(heading)) {
+        chain.add(heading);
+      }
+      if (firstTitle != null && firstTitle.isEmpty()) {
+        firstTitle.addAll(chain);
+      }
+    }
   }
 
   public List<TextSegment> split(String markdown) {

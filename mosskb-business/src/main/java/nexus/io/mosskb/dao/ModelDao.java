@@ -19,6 +19,14 @@ public class ModelDao {
   }
 
   public boolean saveOrUpdate(Long userId, ModelVo modelVo) {
+    String provider = modelVo.getProvider();
+    // 模型必须挂在一个启用中的平台上：凭空写进来的 provider 会让模型在选择列表里
+    // 挂到空分组、也无法用于创建知识库，历史上就是测试直接调 DAO 留下的脏数据。
+    if (provider == null
+        || Db.queryLong("select count(*) from moss_kb_model_provider where provider=? and enabled=true", provider) <= 0) {
+      throw new IllegalArgumentException("供应商不存在或已停用：" + provider);
+    }
+
     Row record = new Row();
     record.set("name", modelVo.getName()).set("model_type", modelVo.getModel_type()).set("model_name", modelVo.getModel_name())
         //
@@ -26,10 +34,7 @@ public class ModelDao {
         //
         .set("credential", modelVo.getCredential()).set("status", "SUCCESS");
 
-    String provider = modelVo.getProvider();
-    if (provider != null) {
-      record.set("provider", provider);
-    }
+    record.set("provider", provider);
 
     if (modelVo.getModel_params_form() != null) {
       record.set("model_params_form", modelVo.getModel_params_form());

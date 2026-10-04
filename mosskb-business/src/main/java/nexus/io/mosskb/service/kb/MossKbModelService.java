@@ -39,10 +39,14 @@ public class MossKbModelService {
     MossKbUserService mossKbUserService = Aop.get(MossKbUserService.class);
 
     String[] jsonFields = new String[] { "meta" };
+    // 只列出平台接入仍然有效的模型：平台被停用或删除后，其模型无法再被选用，
+    // 留在列表里只会造成重名与无法创建知识库的困惑。选择界面按 provider 分组，
+    // provider 不存在的模型会在下拉里挂到一个空分组下面。
+    String columns = "select m.id,m.provider,m.name,m.model_type,m.model_name,m.status,m.meta,m.permission_type,m.user_id from %s m "
+        + "where exists(select 1 from moss_kb_model_provider p where p.provider=m.provider and p.enabled=true)";
     String sql = null;
     if (name == null) {
-      sql = "select id,provider,name,model_type,model_name,status,meta,permission_type,user_id from %s";
-      sql = String.format(sql, MossKbTableNames.moss_kb_model);
+      sql = String.format(columns, MossKbTableNames.moss_kb_model);
       List<Row> list = Db.findWithJsonField(sql, jsonFields);
       List<Kv> kvs = new ArrayList<>();
       for (Row r : list) {
@@ -70,8 +74,7 @@ public class MossKbModelService {
       return ResultVo.ok(kvs);
     }
 
-    sql = "select id,provider,name,model_type,model_name,status,meta,permission_type,user_id from %s where name=?";
-    sql = String.format(sql, MossKbTableNames.moss_kb_model);
+    sql = String.format(columns, MossKbTableNames.moss_kb_model) + " and m.name=?";
 
     List<Kv> kvs = new ArrayList<>();
     List<Row> list = Db.findWithJsonField(sql, jsonFields, name);

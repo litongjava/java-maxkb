@@ -34,13 +34,13 @@ public class SystemFileService {
       SystemUploadFileDao systemUploadFileDao = Aop.get(SystemUploadFileDao.class);
       Row record = systemUploadFileDao.getFileBasicInfoByMd5(bucketName, digestHex);
 
-      // 如果文件已存在，返回已有文件信息
+      // 如果文件已存在，复用已有的物理文件，但名字用本次上传的原文件名：
+      // 分段预览和知识库文档列表都用这个返回值，按 MD5 去重返回旧名字会让两处都显示上一次的文件名。
       if (record != null) {
         Long id = record.getLong("id");
-        String filename = record.getStr("filename");
         String targetName = record.getStr("target_name");
         String url = getUrl(bucketName, targetName);
-        return new UploadResult(id, filename, url, digestHex);
+        return new UploadResult(id, uploadFile.getName(), url, digestHex);
       }
 
       // 生成新的文件名和路径
