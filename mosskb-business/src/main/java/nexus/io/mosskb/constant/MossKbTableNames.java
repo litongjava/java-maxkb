@@ -6,7 +6,6 @@ public interface MossKbTableNames {
   String moss_kb_model = "moss_kb_model";
   String moss_kb_user_token = "moss_kb_user_token";
   String moss_kb_application = "moss_kb_application";
-  String moss_kb_user_application = "moss_kb_user_application";
   String moss_kb_dataset = "moss_kb_dataset";
   String moss_kb_application_dataset_mapping = "moss_kb_application_dataset_mapping";
   String moss_kb_document = "moss_kb_document";

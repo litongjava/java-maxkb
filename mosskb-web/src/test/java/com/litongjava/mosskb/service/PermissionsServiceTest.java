@@ -16,7 +16,9 @@ public class PermissionsServiceTest {
   public void test() {
     EnvUtils.load();
     new MossKbDbConfig().config();
-    List<String> permissions = Aop.get(PermissionsService.class).getPermissionsByRole("ADMIN");
+    // 单参数重载要从 TioRequestContext 取当前用户，脱离 HTTP 请求会取到 null；
+    // 这里直接走带 userId 的重载，用种子里的管理员账号。
+    List<String> permissions = Aop.get(PermissionsService.class).getPermissionsByRole("ADMIN", 1L);
     System.out.println(JsonUtils.toJson(permissions));
   }
 

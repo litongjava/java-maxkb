@@ -14,7 +14,18 @@ import nexus.io.tio.utils.environment.EnvUtils;
 @Slf4j
 public class MossKbDbConfig {
 
+  /**
+   * 连接池与 ActiveRecord 配置在一个 JVM 里只能建一次：ActiveRecordPlugin.start() 会把配置
+   * 注册成全局唯一的名字，重复注册会抛 IllegalArgumentException: Config already exists: main。
+   * 生产启动只会调用一次；测试里多个测试类会各自调用 config()，靠这个标记保证幂等。
+   */
+  private static boolean configured;
+
   public void config() {
+    if (configured) {
+      log.debug("数据库配置已存在，跳过重复初始化");
+      return;
+    }
     String jdbcUrl = EnvUtils.getStr("jdbc.url");
     String jdbcUser = EnvUtils.getStr("jdbc.user");
     String jdbcPswd = EnvUtils.getStr("jdbc.pswd");
@@ -44,6 +55,7 @@ public class MossKbDbConfig {
     engine.setCompressorOn('\n');
     // start
     arp.start();
+    configured = true;
     // add stop
     HookCan.me().addDestroyMethod(() -> {
       arp.stop();

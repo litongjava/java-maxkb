@@ -24,14 +24,14 @@ public class KbParagraphService {
    * @return List<KbParagraph>
    */
   public List<KbParagraph> embedding() {
-    List<KbParagraph> all = Db.findAll(KbParagraph.class, "paragraph");
+    List<KbParagraph> all = Db.findAll(KbParagraph.class, "moss_kb_paragraph");
     log.info("size:{}", all.size());
     return all;
   }
 
   public void reEmbedding() {
     // Step 1: 根据 paragraph_id 查询 paragraph 表的数据
-    String paragraphQuery = "SELECT p.id,p.content, p.dataset_id, p.document_id FROM paragraph p";
+    String paragraphQuery = "SELECT p.id,p.content, p.dataset_id, p.document_id FROM moss_kb_paragraph p";
     List<Row> records = Db.find(paragraphQuery);
     for (Row paragraphResult : records) {
       String content = paragraphResult.get("content");
@@ -92,7 +92,7 @@ public class KbParagraphService {
    */
   public void embedding(String id) {
     // Step 1: 根据 paragraph_id 查询 paragraph 表的数据
-    String paragraphQuery = "SELECT p.content, p.dataset_id, p.document_id FROM paragraph p WHERE p.id = ?";
+    String paragraphQuery = "SELECT p.content, p.dataset_id, p.document_id FROM moss_kb_paragraph p WHERE p.id = ?";
     Row paragraphResult = Db.findFirst(paragraphQuery, UUID.fromString(id));
     if (paragraphResult == null) {
       log.warn("No paragraph found for id: {}", id);

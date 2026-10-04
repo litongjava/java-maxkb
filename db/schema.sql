@@ -17,6 +17,16 @@ BEGIN;
 CREATE EXTENSION IF NOT EXISTS vector;
 CREATE EXTENSION IF NOT EXISTS pg_trgm;
 
+-- 系统设置 -----------------------------------------------------------------
+-- 按类型保存单条系统级配置：type=0 是邮箱设置，type=1 是 RSA 私钥与公钥。
+-- 这张表沿用上游项目的命名约定，不带 moss_kb_ 前缀。
+CREATE TABLE IF NOT EXISTS "public"."system_setting" (
+  "type" INTEGER NOT NULL PRIMARY KEY,
+  "meta" JSONB NOT NULL DEFAULT '{}'::jsonb,
+  "create_time" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  "update_time" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
 -- 用户、令牌与密钥 ---------------------------------------------------------
 -- 平台用户。token_version 用于让改密、停用后签发的旧令牌立即失效。
 CREATE TABLE IF NOT EXISTS "public"."moss_kb_user" (

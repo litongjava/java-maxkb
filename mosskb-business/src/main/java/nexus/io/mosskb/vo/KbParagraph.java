@@ -8,7 +8,7 @@ import nexus.io.db.annotation.ATableName;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@ATableName("paragraph")
+@ATableName("moss_kb_paragraph")
 public class KbParagraph {
   private Long id;
   private String title;

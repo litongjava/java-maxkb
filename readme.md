@@ -1,21 +1,35 @@
 # Java MossKB
 
-基于 tio-boot 的 Java 知识库后端，复用 MossKB 前端。通过文档检测、结构提取、远程 OCR、向量检索和多轮问答，将文档转为可追溯的知识库回答。模型生成复用 `java-openai` 的 `UniChatClient`，本机无需部署模型权重。
+基于 tio-boot 的 Java 知识库后端，复用 MossKB 前端。通过文档检测、结构提取、远程 OCR、向量检索和多轮问答，把文档转成可追溯的知识库回答。模型生成复用 `java-openai` 的 `UniChatClient`，本机无需部署模型权重。
 
-[前端仓库](https://github.com/litongjava/java-mosskb-ui) · [Java 后端仓库](https://github.com/litongjava/java-mosskb) · [演示视频](https://www.bilibili.com/video/BV1yJU8YHEgg/)
+[前端仓库](https://github.com/litongjava/java-mosskb-ui) · [Java 后端仓库](https://github.com/litongjava/java-mosskb) · [开发文档](https://tio-boot.com/zh/knowledge-base/) · [演示视频](https://www.bilibili.com/video/BV1yJU8YHEgg/)
 
-开发文档维护在 `tio-boot-docs/docs/zh/61_knowledge-base`。本地文档根目录为 `D:/code/markdown/project-litongjava/tio-boot-docs/docs/zh/61_knowledge-base`，主要章节：
+![JDK 21](https://img.shields.io/badge/JDK-21-blue) ![Maven](https://img.shields.io/badge/build-Maven-orange) ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-pgvector-336791) ![License](https://img.shields.io/badge/license-MIT-green)
 
-| 章节 | 内容 |
-| --- | --- |
-| `01.md` | 数据库设计 |
-| `03.md` / `33.md` | 模型管理、数据库模型目录、平台接入与自定义模型 ID |
-| `25.md` | 独立用户和资源权限 |
-| `31.md` / `32.md` | 单次提问内的迭代检索、会话历史与 token 阈值压缩 |
-| `34.md` / `39.md` | 爬取网页数据、离线运行向量模型 |
-| `35.md` / `36.md` / `37.md` | 隔离 Python 执行环境（Docker over TCP / 宿主沙箱）、执行器与函数库接口 |
-| `38.md` | Windows 与 Linux 部署、数据库初始化脚本 |
-| `41.md` | 存储文件到云存储（尚未实现，仅记录设计） |
+## 界面预览
+
+<table>
+<tr>
+<td><img src="docs/verification/model-catalog-ui.jpg" alt="模型管理与平台目录" width="480"><br>
+<b>模型管理与平台目录</b>：在「系统 → 模型」里按平台筛选，从目录中选模型，或直接输入完整模型 ID；右侧是默认的 Gitee 向量模型实例。</td>
+<td><img src="docs/verification/iterative-rag-ui.jpg" alt="迭代检索过程" width="480"><br>
+<b>迭代检索过程</b>：一次提问内按“检索 → 判断资料是否充足 → 补充检索”执行多轮，逐轮列出检索词、新增片段数与仍然缺失的资料。</td>
+</tr>
+<tr>
+<td><img src="docs/verification/multi-turn-ui.jpg" alt="应用调试与多轮追问" width="480"><br>
+<b>应用调试与多轮追问</b>：应用设置右侧直接预览，回答带引用片段、token 用量与耗时；追问沿用上文。</td>
+<td><img src="docs/verification/public-chat-ui.jpg" alt="独立分享页" width="480"><br>
+<b>独立分享页</b>：刷新后恢复历史并继续追问，回答附知识来源与引用文档卡片。</td>
+</tr>
+<tr>
+<td><img src="docs/verification/compact-agent-ui.jpg" alt="上下文压缩与迭代检索" width="480"><br>
+<b>上下文压缩</b>：只有历史超过 token 预算才压缩，界面显示已压缩轮数与保留的近期原文。</td>
+<td><img src="docs/verification/create-user-ui.jpg" alt="创建用户" width="480"><br>
+<b>用户与资源隔离</b>：管理员创建普通账号，账号各自拥有应用、知识库与私有模型。</td>
+</tr>
+</table>
+
+以上截图来自本机的真实联调记录，逐条验收过程见[验证记录](docs/agent-verification.md)与[本机验证记录](docs/local-verification.md)。
 
 ## 当前能力
 
@@ -28,6 +42,21 @@
 - 隔离 Python 执行器从不以 Java 进程身份运行用户代码：默认走一次性 Docker 容器（引擎可在本机，也可在局域网内已装 Docker 的主机），Linux 上也可用 `kb.python.runner=host` 切到沙箱用户后在独立目录里执行；两种 runner 不可用时都明确拒绝执行，不使用宿主机 Python 回退。
 
 统计分析、Milvus 替代方案和完整官方工作流能力，不因前端有菜单或文档有设计示例就视为已全部实现。
+
+## 架构与请求链路
+
+```mermaid
+flowchart LR
+  UI["MossKB 前端<br/>Vue 3 + Vite"] -->|"/api 与 SSE"| WEB["mosskb-web<br/>tio-boot HTTP 入口"]
+  WEB --> BIZ["mosskb-business<br/>文档解析 / 检索 / 问答"]
+  BIZ --> DB[("PostgreSQL<br/>pgvector + pg_trgm")]
+  BIZ -->|"UniChatClient"| CHAT["兼容 OpenAI 的推理服务<br/>默认 deepseek-v4.1-flash"]
+  BIZ -->|"embeddings，1024 维"| VEC["远程向量模型<br/>默认 Qwen3-Embedding-8B"]
+  BIZ -->|"异步文档解析"| OCR["远程 OCR<br/>默认 PaddleOCR-VL-1.5"]
+  BIZ -->|"一次性容器 / runuser 沙箱"| PY["隔离 Python 执行器"]
+```
+
+后端只负责编排与存储：模型权重、OCR 与向量都在远程服务上，本机需要的是 JDK、PostgreSQL（含 pgvector 与 pg_trgm）和可选的一份 Docker 客户端。三类远程模型的名字、平台与配置键见[模型配置](#模型配置)。
 
 ## 目录与运行环境
 
@@ -69,7 +98,7 @@ GITEE_API_KEY=<自己的密钥>
 
 这两个文件、运行日志和测试令牌保持在 Git 忽略范围，不放入前端配置或补丁。
 
-如果出现 `extension "vector" is not available`，需要先在实际运行 PostgreSQL 的机器上安装扩展文件，再连接业务数据库启用扩展；仅执行 SQL 不能安装缺失的二进制。Windows 与 Linux 的编译安装步骤见 `38.md`。
+如果出现 `extension "vector" is not available`，需要先在实际运行 PostgreSQL 的机器上安装扩展文件，再连接业务数据库启用扩展；仅执行 SQL 不能安装缺失的二进制。Windows 与 Linux 的编译安装步骤见[部署章节](https://tio-boot.com/zh/knowledge-base/38)。
 
 已有数据库不需要删除重建。在 Java 仓库根目录执行：
 
@@ -83,7 +112,7 @@ Linux 使用同名 Shell 脚本：
 ./scripts/Initialize-Database.sh
 ```
 
-两个脚本都读取 `my.txt`，依次执行 `db/schema.sql` 与 `db/seed.sql`：前者建立扩展、29 张业务表、索引与外键并补齐旧库缺少的列，后者写入管理员账号、默认模型、平台接入信息、平台模型目录快照与内置函数模板。两者都是幂等的，可以在已有数据库上重复执行。需要清空重建时加 `-Reset`（或 `--reset`），它会先执行 `db/reset.sql` 删除业务表。升级已有数据库前先备份。
+两个脚本都读取 `my.txt`，依次执行 `db/schema.sql` 与 `db/seed.sql`：前者建立扩展、30 张业务表、索引与外键并补齐旧库缺少的列，后者写入管理员账号、默认模型、平台接入信息、平台模型目录快照与内置函数模板。两者都是幂等的，可以在已有数据库上重复执行。需要清空重建时加 `-Reset`（或 `--reset`），它会先执行 `db/reset.sql` 删除业务表。升级已有数据库前先备份。
 
 ### 隔离 Python 执行器
 
@@ -192,17 +221,21 @@ Java 运行工作目录为 `mosskb-web`，以便加载本地配置。实际可�
 
 平台信息存于 `moss_kb_model_provider`，候选模型存于 `moss_kb_model_catalog`，用户创建的实例与凭据存于 `moss_kb_model`。运行时不再读取固定供应商 JSON。
 
+<img src="docs/verification/custom-model-id-ui.jpg" alt="添加自定义模型 ID" width="720">
+
 在“系统 → 模型 → 添加模型”选择平台，选择或手动输入完整模型 ID 后按回车，再填写 API 地址及 Key。保存校验使用实际填写的模型 ID；编辑时掩码 Key 保留原凭据，更换 API 地址必须重新填写新平台 Key。
 
 预置 OpenAI、Gitee、OpenRouter、硅基流动、DeepSeek、百炼、Kimi、智谱、Gemini 兼容接口、火山方舟和自定义中转入口。Claude 可以通过兼容中转使用，不代表已接通全部厂商原生协议。不同平台需要各自的有效密钥。
 
 默认 Gitee 配置：
 
-| 用途 | 模型 |
-| --- | --- |
-| 最终回答默认模型、问题改写、证据核验和摘要 | `deepseek-v4.1-flash` |
-| 默认远程向量 | `Qwen3-Embedding-8B`，1024 维 |
-| 扫描页与图片 OCR | `PaddleOCR-VL-1.5` |
+| 用途 | 模型 | 平台与配置键 |
+| --- | --- | --- |
+| 最终回答默认模型、问题改写、证据核验和摘要 | `deepseek-v4.1-flash` | Gitee 兼容接口，`kb.chat.model` |
+| 默认远程向量 | `Qwen3-Embedding-8B`，1024 维 | Gitee embeddings，`kb.embedding.model` |
+| 扫描页与图片 OCR | `PaddleOCR-VL-1.5` | Gitee 异步文档解析接口 |
+
+`deepseek-v4.1-flash` 属 DeepSeek Flash 系列，DeepSeek 官方平台把同系列模型 ID 写作 `deepseek-flash`，两者是不同平台的 ID，不要混填。
 
 应用选择的模型用于最终回答；辅助步骤仍使用配置的 Gitee 模型。向量模型必须返回 1024 维，已有文档的知识库不能直接切换向量空间，需要新建知识库并重新导入文档。
 
@@ -216,15 +249,54 @@ python scripts/Sync-ModelCatalog.py --source gitee --token-file <管理员令牌
 
 其他兼容平台可通过管理员接口 `POST /api/provider/catalog/discover` 发现 ID，再用 `PUT /api/provider/catalog` 明确类型并登记。同步不自动删除未返回项，停用项由管理员明确设置 `enabled:false`。目录维护不需要重新编译。
 
+## 开发文档
+
+设计、实现过程与逐章源码说明维护在 tio-boot 文档站的《Java MossKB 知识库》章节：
+
+**<https://tio-boot.com/zh/knowledge-base/>**
+
+| 章节 | 内容 |
+| --- | --- |
+| [01 数据库设计](https://tio-boot.com/zh/knowledge-base/01) | 30 张业务表的字段、索引与外键 |
+| [03 模型管理](https://tio-boot.com/zh/knowledge-base/03) / [33 支持自定义模型](https://tio-boot.com/zh/knowledge-base/33) | 平台目录、模型实例、自定义模型 ID 与保存校验 |
+| [17 VL 模型文档解析方案和费用对比](https://tio-boot.com/zh/knowledge-base/17) / [18 文档解析模型实测](https://tio-boot.com/zh/knowledge-base/18) / [19 文档解析优化](https://tio-boot.com/zh/knowledge-base/19) / [22 多文档解析](https://tio-boot.com/zh/knowledge-base/22) | 解析策略、OCR 模型横评与逐页处理 |
+| [25 创建独立用户与账号资源管理](https://tio-boot.com/zh/knowledge-base/25) | 独立用户与资源权限 |
+| [31 多轮检索](https://tio-boot.com/zh/knowledge-base/31) / [32 上下文压缩](https://tio-boot.com/zh/knowledge-base/32) | 单次提问内的迭代检索、会话历史与 token 阈值压缩 |
+| [34 爬取网页数据](https://tio-boot.com/zh/knowledge-base/34) / [39 离线运行向量模型](https://tio-boot.com/zh/knowledge-base/39) | 网页知识库、离线向量方案 |
+| [35 隔离 Python 执行环境配置](https://tio-boot.com/zh/knowledge-base/35) / [36 隔离 Python 执行器](https://tio-boot.com/zh/knowledge-base/36) / [37 函数库与调用接口](https://tio-boot.com/zh/knowledge-base/37) | Docker over TCP / 宿主沙箱、执行器与函数库接口 |
+| [38 Windows 与 Linux 部署](https://tio-boot.com/zh/knowledge-base/38) | 数据库初始化脚本、后端与前端构建启动 |
+| [41 存储文件到云存储](https://tio-boot.com/zh/knowledge-base/41) | 尚未实现，仅记录设计 |
+
+文档站提供 [llms.txt 与分章节语料](https://tio-boot.com/ai-retrieval.html)，可以直接交给 AI 工具检索。
+
 ## 验证
 
-本次后端回归命令：
+改代码或改数据库结构之后，先跑一遍回归测试：
 
 ```powershell
-mvn '-Dtest=ModelCatalogTest,UserPasswordTest,IterativeRetrievalServiceTest,ConversationContextServiceTest,IsolatedPythonExecutorTest,GiteeAuxiliaryModelTest,DocumentParsingServiceTest' '-Dsurefire.failIfNoSpecifiedTests=false' '-Dmaven.javadoc.skip=true' '-Dgpg.skip=true' test
+mvn test
 ```
 
-2026-10-03 的构建回归共 53 项通过。另验证了真实 Gitee 创建/掩码编辑、跨平台密钥保护、UI 目录及手动 ID、知识库连续追问，以及局域网远程 Docker 引擎上的容器隔离执行和 Linux 宿主 `runuser` 沙箱执行。其他平台没有提供真实 Key，尚未进行全部平台的推理验收。前端构建在 `java-mosskb-ui` 执行 `npm run build`。两种 runner 的执行记录见[验证记录](docs/agent-verification.md)。
+当前结果：`mosskb-business` 84 项、`mosskb-web` 40 项，共 124 项，0 失败；其中 7 项因为缺少外部服务或私有数据自动跳过（JUnit `Assume`），跳过原因会打印在测试输出里。
+
+`mosskb-web` 下的 `com.litongjava.mosskb.regression` 包专门盯住改名之后最容易回退的地方：
+
+| 测试类 | 覆盖内容 |
+| --- | --- |
+| `BrandingRegressionTest` | 全仓库源码、配置、脚本与文档里不再出现旧品牌字样，只放行要求的用户手册链接 |
+| `SchemaRegressionTest` | `MossKbTableNames` 登记的表在库里都存在、常量名与表名一致、没有旧品牌前缀的表、扩展已安装、表数量与 `db/schema.sql` 一致 |
+| `SeedDataRegressionTest` | 管理员账号与文档记录的初始密码、默认推理与向量模型、平台接入、模型目录快照、内置函数模板 |
+| `ApiContractRegressionTest` | `/api/display/info` 下发的标题、项目地址、论坛地址与手册链接，以及 `app.name` |
+
+部署完成后用冒烟脚本核对正在运行的服务：
+
+```powershell
+.\scripts\Test-Deployment.ps1 -PostgresBin 'D:\Program Files\PostgreSQL\18\bin'
+```
+
+它覆盖服务就绪、外观接口内容、未登录取 401、管理员登录、带令牌接口与数据库结构，当前 15 项全部通过。
+
+2026-10-04 的构建与部署回归：`mvn test` 124 项通过（7 项跳过），`Test-Deployment.ps1` 15 项通过，Windows 本机实测记录见[部署章节](https://tio-boot.com/zh/knowledge-base/38)第六节。此前另验证了真实 Gitee 创建/掩码编辑、跨平台密钥保护、UI 目录及手动 ID、知识库连续追问，以及局域网远程 Docker 引擎上的容器隔离执行和 Linux 宿主 `runuser` 沙箱执行；其他平台没有提供真实 Key，尚未进行全部平台的推理验收。前端构建在 `java-mosskb-ui` 执行 `npm run build`。两种 runner 的执行记录见[验证记录](docs/agent-verification.md)。
 
 ## 前端基线与定制恢复
 
@@ -239,6 +311,16 @@ mvn '-Dtest=ModelCatalogTest,UserPasswordTest,IterativeRetrievalServiceTest,Conv
 
 通过检查后再用 `-Apply` 应用；锁文件补丁单独保存，升级时不要盲目覆盖。前端和后端导出脚本会在临时目录应用补丁并校验内容，不修改工作仓库索引。Java 新增或修改的 `if` 语句必须使用 `{}`，Maven 构建可加 `-Dgpg.skip=true` 跳过签名。
 
+## 交流学习
+
+- 微信：**jdk131219**，添加时请备注 **java-mosskb**，拉你进交流群。
+- 使用问题、缺陷与建议请提到 [Issues](https://github.com/litongjava/java-mosskb/issues)，方便其他人检索同样的答案。
+- 文档站与仓库的改进建议都欢迎：提 [Issue](https://github.com/litongjava/java-mosskb/issues)，或加上面的微信直接交流。
+
+## 商务合作
+
+商务合作、定制开发与私有化部署请联系：**<https://bytemoss.cn/contact.html>**
+
 ## 许可证
 
-Java 项目许可证以 [LICENSE](LICENSE) 为准。前端及其他依赖遵循各自仓库的许可证。
+Java 项目许可证以 [LICENSE](LICENSE) 为准（MIT）。前端及其他依赖遵循各自仓库的许可证。
